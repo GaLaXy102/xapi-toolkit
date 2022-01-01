@@ -112,6 +112,17 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<image>
+						<name>${env.REGISTRY_UPLOAD_HOST}/${project.groupId}/${project.artifactId}:${project.version}</name>
+						<publish>true</publish>
+					</image>
+					<docker>
+						<publishRegistry>
+							<url>https://${env.REGISTRY_UPLOAD_HOST}/</url>
+							<username>${env.REGISTRY_UPLOAD_USER}</username>
+							<password>${env.REGISTRY_UPLOAD_PASSWORD}</password>
+						</publishRegistry>
+					</docker>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
@@ -119,8 +130,16 @@
 						</exclude>
 					</excludes>
 				</configuration>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>build-image</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
