@@ -1,0 +1,9 @@
+---
+version: '1'
+docker:
+  auth: '{{DOCKER_AUTH_JSON}}'
+jobs:
+  build:
+    image: openjdk:17-jdk-slim
+    script:
+      - ./mvnw spring-boot:build-image
