@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "spring.security.realm",
+      "type": "java.lang.String",
+      "description": "BasicAuth realm for Spring Security."
+  }
+] }
