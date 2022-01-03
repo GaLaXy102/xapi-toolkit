@@ -1,0 +1,32 @@
+---
+version: "3.9"
+networks:
+  datatools0: {}
+volumes:
+  datatools_simulations: {}
+
+services:
+  datatools:
+    # Image is built by CI of this project.
+    image: nexus.galaxion.de:5050/de.tudresden.inf.rn.xapi/datatools:latest
+    networks:
+      - datatools0
+    volumes:
+      - datatools_simulations:/data
+    ports:
+      - "8080:8888"                                                 # The service is mapped to port 8888 on localhost without TLS. Perhaps integrate Træfik?
+    environment:
+      DATATOOLS_SEC_USERNAME: foo
+      DATATOOLS_SEC_PASSWORD: bar
+      # TODO: Implement consumer for variable below in #1
+      DATATOOLS_SIM_BACKEND_BASE_URL: http://datasim_service:9090   # This is the Docker-relative base path.
+      # TODO: Implement consumer for variable below in #10
+      DATATOOLS_SIM_STORAGE_DIR: /data                              # This path also is Docker-relative. See volumes section.
+  datasim:
+    # Image is built by CI of DATASIM "mirror"
+    image: nexus.galaxion.de:5050/yetanalytics/datasim:latest
+    entrypoint: bin/server.sh                                       # The default is to run DATASIM in CLI mode. We probably want to override that.
+    networks:
+      datatools0:
+        aliases:
+          - datasim_service

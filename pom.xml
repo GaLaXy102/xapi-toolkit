@@ -116,8 +116,7 @@
 						<name>${env.REGISTRY_UPLOAD_HOST}/${project.groupId}/${project.artifactId}</name>
 						<publish>true</publish>
 						<tags>
-							<tag>${project.artifactId}:${project.version}</tag>
-							<tag>${project.artifactId}:latest</tag>
+							<tag>${env.REGISTRY_UPLOAD_HOST}/${project.groupId}/${project.artifactId}:${project.version}</tag>
 						</tags>
 					</image>
 					<docker>
