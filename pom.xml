@@ -113,8 +113,12 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>${env.REGISTRY_UPLOAD_HOST}/${project.groupId}/${project.artifactId}:${project.version}</name>
+						<name>${env.REGISTRY_UPLOAD_HOST}/${project.groupId}/${project.artifactId}</name>
 						<publish>true</publish>
+						<tags>
+							<tag>${project.artifactId}:${project.version}</tag>
+							<tag>${project.artifactId}:latest</tag>
+						</tags>
 					</image>
 					<docker>
 						<publishRegistry>
