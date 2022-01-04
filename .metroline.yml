@@ -6,4 +6,4 @@ jobs:
   build:
     image: openjdk:17-jdk-slim
     script:
-      - ./mvnw spring-boot:build-image
+      - ./mvnw spring-boot:build-image -Ddocker.publish=true

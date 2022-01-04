@@ -8,7 +8,7 @@ Die BasicAuth-Zugangsdaten müssen mit den Umgebungsvariablen `DATATOOLS_SEC_USE
 
 ## CI/CD
 
-Docker-Images können mit dem Target `spring-boot:build-image` gebaut und hochgeladen werden.
+Docker-Images können mit dem Target `spring-boot:build-image` gebaut und mit der Property `-Ddocker.publish=true` hochgeladen werden.
 Dafür ist Zugriff auf den Docker-Daemon nötig, sowie folgende Umgebungsvariablen:
 
 |          Variable          | Bedeutung                                            |
