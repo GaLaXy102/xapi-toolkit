@@ -16,3 +16,11 @@ Dafür ist Zugriff auf den Docker-Daemon nötig, sowie folgende Umgebungsvariabl
 |   `REGISTRY_UPLOAD_HOST`   | Registry für Upload des Docker-Images, ggf. mit Port |
 |   `REGISTRY_UPLOAD_USER`   | Nutzername für Push des Docker-Images                |
 | `REGISTRY_UPLOAD_PASSWORD` | Passwort für Push des Docker-Images                  |
+
+## Developers and Administrators
+
+Remember to make `dev` your default application profile while developing. Like that, automatic seeding will happen.
+
+In the Docker Image, the `prod` profile is active by default.
+
+Tests can activate the `test` profile as they wish.
