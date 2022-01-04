@@ -1,5 +1,6 @@
 package de.tudresden.inf.rn.xapi.datatools.lrs;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
@@ -7,6 +8,7 @@ import java.net.URL;
 import java.util.Optional;
 
 @Component
+@Profile("dev")
 public class LrsConnectionSeeder {
     private final LrsConnectionRepository lrsConnectionRepository;
 

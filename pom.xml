@@ -18,6 +18,23 @@
 		<testcontainers.version>1.16.2</testcontainers.version>
 		<docker.publish>false</docker.publish>
 	</properties>
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<activation>
+				<activeByDefault>true</activeByDefault> <!-- This enables the profile also in the Docker image by default -->
+			</activation>
+			<properties>
+				<spring.profiles.active>prod</spring.profiles.active>
+			</properties>
+		</profile>
+	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -111,11 +128,18 @@
 	</dependencyManagement>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<profiles>dev</profiles>  <!-- This is used only for the target spring-boot:run -->
 					<image>
 						<name>${env.REGISTRY_UPLOAD_HOST}/${project.groupId}/${project.artifactId}</name>
 						<publish>${docker.publish}</publish>
