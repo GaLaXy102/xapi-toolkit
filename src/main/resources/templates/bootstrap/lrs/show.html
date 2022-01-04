@@ -32,7 +32,11 @@
             <td th:text="${connection.getEndpoint()}"></td>
             <td th:text="${connection.getClientKey()}"></td>
             <td th:text="${connection.getClientSecret()}"></td>
-            <td class="text-center"><button type="button" class="btn btn-outline-primary"><i class="bi bi-pencil-fill"></i></button></td>
+            <td class="text-center">
+                <form method="GET" th:action="@{/ui/manage/lrs/{cid}(cid=${connection.getUuid().get()})}">
+                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-pencil-fill"></i></button>
+                </form>
+            </td>
             <td class="text-center">
                 <form th:if="${connection.getEnabled().get()}" method="POST" th:action="@{/ui/manage/lrs/delete}">
                     <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">

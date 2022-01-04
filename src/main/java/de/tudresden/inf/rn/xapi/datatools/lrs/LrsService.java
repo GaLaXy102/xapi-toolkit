@@ -50,12 +50,13 @@ public class LrsService {
 
     @Transactional
     LrsConnection updateConnection(LrsConnectionTO lrsData) {
-        LrsConnection saved = this.getConnection(lrsData.getUuid().orElseThrow(IllegalArgumentException::new));
-        saved.setFriendlyName(lrsData.getName());
-        saved.setXApiEndpoint(lrsData.getEndpoint());
-        saved.setXApiClientKey(lrsData.getClientKey());
-        saved.setXApiClientSecret(lrsData.getClientSecret());
-        saved.setEnabled(lrsData.getEnabled().orElse(saved.isEnabled()));
-        return saved;
+        LrsConnection found = this.getConnection(lrsData.getUuid().orElseThrow(IllegalArgumentException::new));
+        found.setFriendlyName(lrsData.getName());
+        found.setXApiEndpoint(lrsData.getEndpoint());
+        found.setXApiClientKey(lrsData.getClientKey());
+        found.setXApiClientSecret(lrsData.getClientSecret());
+        found.setEnabled(lrsData.getEnabled().orElse(found.isEnabled()));
+        this.lrsConnectionRepository.save(found);
+        return found;
     }
 }
