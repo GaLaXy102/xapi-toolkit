@@ -14,7 +14,7 @@ services:
     volumes:
       - datatools_simulations:/data
     ports:
-      - "8080:8888"                                                 # The service is mapped to port 8888 on localhost without TLS. Perhaps integrate Træfik?
+      - "8888:8080"                                                 # The service is mapped to port 8888 on localhost without TLS. Perhaps integrate Træfik?
     environment:
       DATATOOLS_SEC_USERNAME: foo
       DATATOOLS_SEC_PASSWORD: bar
