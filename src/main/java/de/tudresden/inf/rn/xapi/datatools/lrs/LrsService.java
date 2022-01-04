@@ -13,6 +13,9 @@ public class LrsService {
 
     private final LrsConnectionRepository lrsConnectionRepository;
 
+    /**
+     * Create an LRS connection from a Transfer Object and save it
+     */
     @Transactional
     LrsConnection createConnection(LrsConnectionTO lrsData) {
         LrsConnection created = lrsData.toNewLrsConnection();
@@ -20,6 +23,11 @@ public class LrsService {
         return created;
     }
 
+    /**
+     * Deactivate an LRS connection by its UUID
+     *
+     * @throws IllegalArgumentException When there is no connection with such ID
+     */
     @Transactional
     LrsConnection deactivateConnection(UUID connectionId) {
         LrsConnection connection = this.getConnection(connectionId);
@@ -28,6 +36,11 @@ public class LrsService {
         return connection;
     }
 
+    /**
+     * Activate an LRS connection by its UUID
+     *
+     * @throws IllegalArgumentException When there is no connection with such ID
+     */
     @Transactional
     LrsConnection activateConnection(UUID connectionId) {
         LrsConnection connection = this.getConnection(connectionId);
@@ -36,6 +49,11 @@ public class LrsService {
         return connection;
     }
 
+    /**
+     * Get a list of saved LRS connections
+     *
+     * @param activeOnly When true, only enabled connections will be returned
+     */
     List<LrsConnection> getConnections(boolean activeOnly) {
         if (activeOnly) {
             return this.lrsConnectionRepository.findByEnabledIsTrue().toList();
@@ -44,10 +62,20 @@ public class LrsService {
         }
     }
 
+    /**
+     * Get a specific LRS connection entity by its UUID
+     *
+     * @throws IllegalArgumentException When there is no connection with such ID
+     */
     LrsConnection getConnection(UUID connectionId) {
         return this.lrsConnectionRepository.findById(connectionId).orElseThrow(IllegalArgumentException::new);
     }
 
+    /**
+     * Update an LRS connection from a Transfer Object
+     *
+     * @throws IllegalArgumentException When there is no connection with the ID specified in the Transfer Object or the ID is not given.
+     */
     @Transactional
     LrsConnection updateConnection(LrsConnectionTO lrsData) {
         LrsConnection found = this.getConnection(lrsData.getUuid().orElseThrow(IllegalArgumentException::new));

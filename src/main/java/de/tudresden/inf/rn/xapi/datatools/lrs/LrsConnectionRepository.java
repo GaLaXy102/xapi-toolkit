@@ -6,6 +6,9 @@ import org.springframework.data.util.Streamable;
 
 import java.util.UUID;
 
+/**
+ * Repository for {@link LrsConnection} entity
+ */
 public interface LrsConnectionRepository extends CrudRepository<LrsConnection, UUID> {
     @Override
     @NonNull

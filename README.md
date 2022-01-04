@@ -6,6 +6,10 @@ Datengenerierungs- und auswertungsanwendung für xAPI-Kommunikation
 
 Die BasicAuth-Zugangsdaten müssen mit den Umgebungsvariablen `DATATOOLS_SEC_USERNAME` und `DATATOOLS_SEC_PASSWORD` gesetzt werden.
 
+## Hinweise zur Datensicherheit
+
+Die Verbindungsdaten für LRS werden unverschlüsselt gespeichert.
+
 ## CI/CD
 
 Docker-Images können mit dem Target `spring-boot:build-image` gebaut und mit der Property `-Ddocker.publish=true` hochgeladen werden.
