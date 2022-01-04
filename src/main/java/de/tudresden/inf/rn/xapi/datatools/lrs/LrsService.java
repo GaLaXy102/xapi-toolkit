@@ -24,6 +24,15 @@ public class LrsService {
     LrsConnection deactivateConnection(UUID connectionId) {
         LrsConnection connection = this.getConnection(connectionId);
         connection.setEnabled(false);
+        this.lrsConnectionRepository.save(connection);
+        return connection;
+    }
+
+    @Transactional
+    LrsConnection activateConnection(UUID connectionId) {
+        LrsConnection connection = this.getConnection(connectionId);
+        connection.setEnabled(true);
+        this.lrsConnectionRepository.save(connection);
         return connection;
     }
 

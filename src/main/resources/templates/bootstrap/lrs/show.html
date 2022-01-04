@@ -3,6 +3,18 @@
 <head th:include="bootstrap/header.html :: scripted_head ('LRS Connection')"></head>
 <body>
 <div class="container">
+    <div th:unless="${#strings.equals(param.get('active_only'), 'false')}">
+        <form method="GET">
+            <input type="hidden" name="active_only" value="false">
+            <button type="submit" class="btn btn-primary">Also show inactive</button>
+        </form>
+    </div>
+    <div th:if="${#strings.equals(param.get('active_only'), 'false')}">
+    <form method="GET">
+        <input type="hidden" name="active_only" value="true">
+        <button type="submit" class="btn btn-primary">Don't show inactive</button>
+    </form>
+    </div>
     <table class="table table-striped">
         <thead>
         <tr>
@@ -20,8 +32,17 @@
             <td th:text="${connection.getEndpoint()}"></td>
             <td th:text="${connection.getClientKey()}"></td>
             <td th:text="${connection.getClientSecret()}"></td>
-            <td class="text-center"><button type="button" class="btn btn-outline-success"><i class="bi bi-pencil-fill"></i></button></td>
-            <td class="text-center"><button type="button" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></button></td>
+            <td class="text-center"><button type="button" class="btn btn-outline-primary"><i class="bi bi-pencil-fill"></i></button></td>
+            <td class="text-center">
+                <form th:if="${connection.getEnabled().get()}" method="POST" th:action="@{/ui/manage/lrs/delete}">
+                    <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
+                    <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
+                </form>
+                <form th:unless="${connection.getEnabled().get()}" method="POST" th:action="@{/ui/manage/lrs/reactivate}">
+                    <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
+                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-reply-fill"></i></button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>

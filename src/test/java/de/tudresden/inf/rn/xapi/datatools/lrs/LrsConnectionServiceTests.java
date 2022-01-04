@@ -54,10 +54,18 @@ public class LrsConnectionServiceTests {
     @Test @Transactional
     void testDeactivate() {
         LrsConnection created = this.lrsService.createConnection(this.sample);
-        LrsConnection expected = this.lrsService.deactivateConnection(created.getConnectionId());
+        this.lrsService.deactivateConnection(created.getConnectionId());
         LrsConnection saved = this.lrsService.getConnection(created.getConnectionId());
-        assertThat(saved).isEqualTo(expected);
         assertThat(saved.isEnabled()).isFalse();
+    }
+
+    @Test @Transactional
+    void testReactivate() {
+        LrsConnection created = this.lrsService.createConnection(this.sample);
+        this.lrsService.deactivateConnection(created.getConnectionId());
+        this.lrsService.activateConnection(created.getConnectionId());
+        LrsConnection saved = this.lrsService.getConnection(created.getConnectionId());
+        assertThat(saved.isEnabled()).isTrue();
     }
 
     @Test @Transactional
