@@ -3,17 +3,26 @@
 <head th:include="bootstrap/header.html :: scripted_head ('LRS Connection')"></head>
 <body>
 <div class="container">
-    <div th:unless="${#strings.equals(param.get('active_only'), 'false')}">
-        <form method="GET">
-            <input type="hidden" name="active_only" value="false">
-            <button type="submit" class="btn btn-primary">Also show inactive</button>
-        </form>
-    </div>
-    <div th:if="${#strings.equals(param.get('active_only'), 'false')}">
-    <form method="GET">
-        <input type="hidden" name="active_only" value="true">
-        <button type="submit" class="btn btn-primary">Don't show inactive</button>
-    </form>
+    <div class="row">
+        <div th:unless="${#strings.equals(param.get('active_only'), 'false')}" class="col">
+            <form method="GET">
+                <input type="hidden" name="active_only" value="false">
+                <button type="submit" class="btn btn-primary">Also show inactive</button>
+            </form>
+        </div>
+        <div th:if="${#strings.equals(param.get('active_only'), 'false')}" class="col">
+            <form method="GET">
+                <input type="hidden" name="active_only" value="true">
+                <button type="submit" class="btn btn-primary">Don't show inactive</button>
+            </form>
+        </div>
+        <div class="col">
+            <a th:href="@{/ui/manage/lrs/add}" class="float-end">
+                <button type="button" class="btn btn-success">
+                    <i class="bi bi-plus"></i>
+                </button>
+            </a>
+        </div>
     </div>
     <table class="table table-striped">
         <thead>
@@ -33,7 +42,8 @@
             <td th:text="${connection.getClientKey()}"></td>
             <td th:text="${connection.getClientSecret()}"></td>
             <td class="text-center">
-                <form method="GET" th:action="@{/ui/manage/lrs/{cid}(cid=${connection.getUuid().get()})}">
+                <form method="GET" th:action="@{/ui/manage/lrs/edit}">
+                    <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
                     <button type="submit" class="btn btn-outline-primary"><i class="bi bi-pencil-fill"></i></button>
                 </form>
             </td>

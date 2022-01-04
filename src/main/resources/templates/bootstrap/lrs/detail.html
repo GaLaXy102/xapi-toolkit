@@ -3,22 +3,26 @@
 <head th:include="bootstrap/header.html :: scripted_head ('LRS Detail')"></head>
 <body>
 <div class="container">
-    <form method="POST" th:action="@{/ui/manage/lrs/edit}">
+    <form method="POST" th:action="@{/ui/manage/lrs/{method}(method=${method})}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <div class="mb-3 form-floating">
-            <input class="form-control" id="nameInput" type="text" minlength="3" name="name" th:value="${connection.getName()}" placeholder="pseudo" required>
+            <input th:if="${connection}" class="form-control" id="nameInput" type="text" minlength="3" name="name" th:value="${connection.getName()}" placeholder="pseudo" required>
+            <input th:unless="${connection}" class="form-control" id="nameInput" type="text" minlength="3" name="name" placeholder="pseudo" required>
             <label for="nameInput">Name</label>
         </div>
         <div class="mb-3 form-floating">
-            <input class="form-control" id="endpointInput" type="url" name="endpoint" th:value="${connection.getEndpoint()}" placeholder="pseudo" required>
+            <input th:if="${connection}" class="form-control" id="endpointInput" type="url" name="endpoint" th:value="${connection.getEndpoint()}" placeholder="pseudo" required>
+            <input th:unless="${connection}" class="form-control" id="endpointInput" type="url" name="endpoint" placeholder="pseudo" required>
             <label for="endpointInput">Endpoint</label>
         </div>
         <div class="mb-3 form-floating">
-            <input class="form-control" id="keyInput" type="text" name="clientKey" th:value="${connection.getClientKey()}" placeholder="pseudo" required>
+            <input th:if="${connection}" class="form-control" id="keyInput" type="text" name="clientKey" th:value="${connection.getClientKey()}" placeholder="pseudo" required>
+            <input th:unless="${connection}" class="form-control" id="keyInput" type="text" name="clientKey" placeholder="pseudo" required>
             <label for="keyInput">Client Key</label>
         </div>
         <div class="mb-3 form-floating">
-            <input class="form-control" id="secretInput" type="text" name="clientSecret" th:value="${connection.getClientSecret()}" placeholder="pseudo" required>
+            <input th:if="${connection}" class="form-control" id="secretInput" type="text" name="clientSecret" th:value="${connection.getClientSecret()}" placeholder="pseudo" required>
+            <input th:unless="${connection}" class="form-control" id="secretInput" type="text" name="clientSecret" placeholder="pseudo" required>
             <label for="secretInput">Client Secret</label>
         </div>
         <div class="row">
@@ -31,8 +35,8 @@
                 <button class="col btn btn-success float-end" type="submit">Save</button>
             </div>
         </div>
-        <input type="hidden" name="uuid" th:value="${connection.getUuid().get()}">
-        <input type="hidden" name="enabled" th:value="${connection.getEnabled().get()}">
+        <input th:if="${connection}" type="hidden" name="uuid" th:value="${connection.getUuid().get()}">
+        <input th:if="${connection}" type="hidden" name="enabled" th:value="${connection.getEnabled().get()}">
     </form>
 </div>
 </body>

@@ -40,12 +40,13 @@ public class LrsMavController {
         return new ModelAndView("redirect:/ui/manage/lrs/");
     }
 
-    @GetMapping("/{lrs_uuid}")
-    public ModelAndView showEditLrsConnection(@PathVariable(name = "lrs_uuid") UUID lrsUuid) {
+    @GetMapping("/edit")
+    public ModelAndView showEditLrsConnection(@RequestParam(name = "lrs_uuid") UUID lrsUuid) {
         // TODO: This can throw an IAE. See this in #16
         LrsConnection found = this.lrsService.getConnection(lrsUuid);
         ModelAndView mav = new ModelAndView("bootstrap/lrs/detail");
         mav.addObject("connection", LrsConnectionTO.of(found));
+        mav.addObject("method", "edit");
         return mav;
     }
 
@@ -53,6 +54,19 @@ public class LrsMavController {
     public ModelAndView editLrsConnection(@Validated LrsConnectionTO data) {
         // TODO: This can throw an IAE. See this in #16
         this.lrsService.updateConnection(data);
+        return new ModelAndView("redirect:/ui/manage/lrs/");
+    }
+
+    @GetMapping("/add")
+    public ModelAndView showAddLrsConnection() {
+        ModelAndView mav = new ModelAndView("bootstrap/lrs/detail");
+        mav.addObject("method", "add");
+        return mav;
+    }
+
+    @PostMapping("/add")
+    public ModelAndView addLrsConnection(@Validated LrsConnectionTO data) {
+        this.lrsService.createConnection(data);
         return new ModelAndView("redirect:/ui/manage/lrs/");
     }
 }
