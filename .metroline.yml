@@ -6,4 +6,5 @@ jobs:
   build:
     image: openjdk:17-jdk-slim
     script:
+      - echo "192.168.188.11 nexus.galaxion.de" >> /etc/hosts && mkdir -p $HOME/.m2 && echo "<settings><mirrors><mirror><id>nexus-central-proxy</id><name>Nexus Central Proxy</name><url>https://nexus.galaxion.de/repository/maven_central_proxy/</url><mirrorOf>central</mirrorOf></mirror></mirrors></settings>" > $HOME/.m2/settings.xml
       - ./mvnw spring-boot:build-image -Ddocker.publish=true
