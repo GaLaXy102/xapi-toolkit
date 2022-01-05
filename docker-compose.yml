@@ -30,3 +30,5 @@ services:
       datatools0:
         aliases:
           - datasim_service
+    ports:
+      - "9090:9090"
