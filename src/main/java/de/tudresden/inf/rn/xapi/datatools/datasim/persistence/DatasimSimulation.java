@@ -27,40 +27,41 @@ public class DatasimSimulation {
     private UUID id;
 
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     private String remark;
 
     // The properties below are required by DATASIM
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     @ManyToMany
     @Cascade(CascadeType.ALL)
     private Set<DatasimPersonaGroup> personaGroups;
 
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     @OneToMany
     @Cascade(CascadeType.ALL)
-    private Map<DatasimPersona, DatasimAlignment> alignments;
+    // each alignment has one Persona associated
+    private Map<DatasimAlignment, DatasimPersona> alignments;
 
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     @OneToOne
     @Cascade(CascadeType.ALL)
-    private DatasimSimulationParams params;
+    private DatasimSimulationParams parameters;
 
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     @ManyToOne
     // Profiles are reusable, thus no cascade
     private DatasimProfile profile;
 
-    public DatasimSimulation(String remark, Set<DatasimPersonaGroup> personaGroups, Map<DatasimPersona, DatasimAlignment> alignments,
-                             DatasimSimulationParams params, DatasimProfile profile) {
+    DatasimSimulation(String remark, Set<DatasimPersonaGroup> personaGroups, Map<DatasimAlignment, DatasimPersona> alignments,
+                      DatasimSimulationParams parameters, DatasimProfile profile) {
         this.remark = remark;
         this.personaGroups = personaGroups;
         this.alignments = alignments;
-        this.params = params;
+        this.parameters = parameters;
         this.profile = profile;
     }
 }

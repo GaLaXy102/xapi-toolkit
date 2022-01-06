@@ -1,6 +1,7 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class DatasimSimulationParams {
     @GeneratedValue
     @Id
@@ -21,27 +23,31 @@ public class DatasimSimulationParams {
     private UUID id;
 
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     private Long max;
 
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     @Positive
     private Long seed;
 
-    // Timezone is included here
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     private LocalDateTime start;
 
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     private LocalDateTime end;
 
-    public DatasimSimulationParams(Long max, Long seed, LocalDateTime start, LocalDateTime end) {
+    @Getter
+    @Setter(AccessLevel.PACKAGE)
+    private String timezone;
+
+    DatasimSimulationParams(Long max, Long seed, LocalDateTime start, LocalDateTime end, String timezone) {
         this.max = max;
         this.seed = seed;
         this.start = start;
         this.end = end;
+        this.timezone = timezone;
     }
 }

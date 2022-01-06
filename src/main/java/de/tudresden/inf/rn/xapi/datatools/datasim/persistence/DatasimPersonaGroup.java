@@ -1,6 +1,7 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,35 +15,27 @@ import java.util.UUID;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DatasimPersonaGroup implements DatasimActor {
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
+public class DatasimPersonaGroup {
     @GeneratedValue
     @Id
     @Getter
     private UUID id;
 
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     private String name;
 
     @ManyToMany
     @Getter
-    @Setter
+    @Setter(AccessLevel.PACKAGE)
     // Members are reusable, thus no Cascade
     private Set<DatasimPersona> member;
 
-    public DatasimPersonaGroup(String name, Set<DatasimPersona> member) {
+    DatasimPersonaGroup(String name, Set<DatasimPersona> member) {
         this.name = name;
         this.member = member;
     }
 
-    @Override
-    public String getIri() {
-        // There is no documentation on this yet.
-        return "group::" + this.name;
-    }
 
-    @Override
-    public DatasimActorType getType() {
-        return DatasimActorType.GROUP;
-    }
 }
