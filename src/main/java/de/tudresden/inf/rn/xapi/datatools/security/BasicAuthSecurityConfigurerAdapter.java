@@ -29,11 +29,12 @@ public class BasicAuthSecurityConfigurerAdapter extends WebSecurityConfigurerAda
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/**").authenticated()
+                .antMatchers("/**", "!/h2-console/**").authenticated()
                 .and()
                 .httpBasic()
                 .authenticationEntryPoint(entryPoint)
                 .and()
                 .csrf().csrfTokenRepository(new CookieCsrfTokenRepository());
+        http.authorizeRequests().antMatchers("/h2-console/**").permitAll().and().headers().frameOptions().sameOrigin().and().csrf().disable();
     }
 }
