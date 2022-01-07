@@ -47,4 +47,11 @@ public class DatasimSimulationMavController {
         attributes.addAttribute("flow", createdFlow.getId());
         return new RedirectView("/ui/datasim/new/persona");
     }
+
+    @GetMapping("/new/persona")
+    public ModelAndView showSelectPersona(@RequestParam(name = "flow") UUID simulationId) {
+        // TODO: Implement this.
+        DatasimSimulation existingFlow = this.datasimSimulationService.getSimulation(simulationId);
+        return new ModelAndView();
+    }
 }
