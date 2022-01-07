@@ -24,7 +24,11 @@ public class DatasimProfile {
     @Setter(AccessLevel.PACKAGE)
     private String name;
 
-    DatasimProfile(String name) {
+    @Getter
+    private String filename;
+
+    DatasimProfile(String name, String filename) {
         this.name = name;
+        this.filename = filename;
     }
 }
