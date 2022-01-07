@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="bootstrap/header.html :: scripted_head ('Select Profile')"></head>
+<body>
+<div class="container">
+    <form method="POST" th:action="@{/ui/datasim/new/profile}">
+        <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
+        <div class="mb-3 form-floating">
+            <select class="form-select" id="profileInput" name="profile_id">
+                <option th:each="profile: ${profiles}" th:value="${profile.getId().get()}" th:text="${profile.getName()}"></option>
+            </select>
+            <label for="profileInput">xAPI Profile</label>
+        </div>
+        <div class="row">
+            <div class="col">
+                <a href="#">
+                    <button class="col btn btn-outline-danger" type="button" disabled>Back</button>
+                </a>
+            </div>
+            <div class="col">
+                <button class="col btn btn-success float-end" type="submit">Save</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
