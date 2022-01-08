@@ -46,4 +46,10 @@ public class DatasimSimulationService {
         simulation.setProfile(profile);
         this.simulationRepository.save(simulation);
     }
+
+    @Transactional
+    public void setSimulationRemark(DatasimSimulation simulation, String remark) {
+        simulation.setRemark(remark);
+        this.simulationRepository.save(simulation);
+    }
 }
