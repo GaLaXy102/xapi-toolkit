@@ -39,6 +39,10 @@ public class DatasimPersonaGroupTO implements DatasimActor {
         return new DatasimPersonaGroup(this.id.orElseThrow(() -> new IllegalStateException("UUID must not be empty when updating.")), this.name, members);
     }
 
+    public static DatasimPersonaGroupTO empty(String name) {
+        return new DatasimPersonaGroupTO(Optional.empty(), name, Set.of());
+    }
+
     @Override
     public String getIri() {
         // There is no documentation on this yet.

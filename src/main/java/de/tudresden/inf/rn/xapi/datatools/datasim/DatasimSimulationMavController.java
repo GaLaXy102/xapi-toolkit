@@ -1,5 +1,7 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim;
 
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersona;
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimProfileTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
 import org.springframework.stereotype.Controller;
@@ -11,8 +13,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/ui/datasim")
@@ -56,17 +58,41 @@ public class DatasimSimulationMavController {
     }
 
     @PostMapping("/new/profile")
-    public RedirectView selectProfile(@RequestParam(name = "profile_id") UUID profileId, RedirectAttributes attributes) {
-        DatasimSimulation createdFlow = this.datasimSimulationService.createEmptySimulation();
-        this.datasimSimulationService.updateSimulationProfile(createdFlow, this.datasimSimulationService.getProfile(profileId));
-        attributes.addAttribute("flow", createdFlow.getId());
-        return new RedirectView("./new/persona");
+    public RedirectView selectProfile(@RequestParam(name = "flow") UUID simulationId,
+                                      @RequestParam(name = "profile_id") UUID profileId, RedirectAttributes attributes) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        this.datasimSimulationService.updateSimulationProfile(simulation, this.datasimSimulationService.getProfile(profileId));
+        attributes.addAttribute("flow", simulation.getId());
+        return new RedirectView("./persona");
     }
 
     @GetMapping("/new/persona")
     public ModelAndView showSelectPersona(@RequestParam(name = "flow") UUID simulationId) {
-        // TODO: Implement this.
-        DatasimSimulation existingFlow = this.datasimSimulationService.getSimulation(simulationId);
-        return new ModelAndView();
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        ModelAndView mav = new ModelAndView("bootstrap/datasim/persona");
+        mav.addObject("flow", simulation.getId().toString());
+        List<Map.Entry<DatasimPersonaTO, Boolean>> payload = new ArrayList<>(this.datasimSimulationService.getPersonasWithSelected(simulation).entrySet());
+        payload.sort(Comparator.comparing(entry -> entry.getKey().getId().toString()));
+        mav.addObject("personas", payload);
+        return mav;
+    }
+
+    @PostMapping("/new/persona/add")
+    public RedirectView addPersonaToSimulation(@RequestParam(name = "flow") UUID simulationId, DatasimPersonaTO persona, RedirectAttributes attributes) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimPersona created = this.datasimSimulationService.createPersona(persona);
+        this.datasimSimulationService.addPersonaToSimulation(simulation, created);
+        attributes.addAttribute("flow", simulationId.toString());
+        return new RedirectView("../persona");
+    }
+
+    @PostMapping("/new/persona")
+    public RedirectView selectPersona(@RequestParam(name = "flow") UUID simulationId,
+                                      @RequestParam("persona_id") Set<UUID> personaIds, RedirectAttributes attributes) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        Set<DatasimPersona> personae = personaIds.stream().map(this.datasimSimulationService::getPersona).collect(Collectors.toSet());
+        this.datasimSimulationService.setPersonaeOfSimulation(simulation, personae);
+        attributes.addAttribute("flow", simulationId.toString());
+        return new RedirectView("./persona");  // TODO set correct link
     }
 }

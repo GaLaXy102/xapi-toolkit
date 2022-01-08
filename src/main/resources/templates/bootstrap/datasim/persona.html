@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="bootstrap/header.html :: scripted_head ('Select Personae')"></head>
+<body>
+<div class="container">
+    <form method="POST" th:action="@{/ui/datasim/new/persona/add}">
+        <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
+        <input type="hidden" name="flow" th:value="${flow}">
+        <div class="form-control mt-3 mb-3">
+            <div class="row">
+                <label>Add new Persona</label>
+                <div class="col-5">
+                    <div class="mb-3 mt-3 form-floating">
+                        <input type="text" class="form-control" minlength="3" name="name" id="newPersonaName" placeholder="pseudo">
+                        <label for="newPersonaName">Persona Name</label>
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div class="mb-3 mt-3 form-floating">
+                        <input type="email" class="form-control" minlength="3" name="mbox" id="newPersonaMbox" placeholder="pseudo">
+                        <label for="newPersonaMbox">Persona Mail (without mbox:)</label>
+                    </div>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1 align-self-center">
+                    <button class="col btn btn-success float-end" type="submit">+</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form method="POST" th:action="@{/ui/datasim/new/persona}">
+        <input type="hidden" name="flow" th:value="${flow}">
+        <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
+        <div class="mb-3 form-control">
+            <label for="personaInput">Select Personae for Simulation</label>
+            <select class="form-select mt-3 mb-3" multiple id="personaInput" name="persona_id">
+                <option th:each="persona: ${personas}" th:value="${persona.getKey().getId().orElseThrow()}" th:text="${persona.getKey().getName()}"
+                        th:selected="${persona.getValue()}">
+                </option>
+            </select>
+        </div>
+        <div class="row">
+            <div class="col">
+                <a th:href="'/ui/datasim/new/profile?flow=' + ${flow}">
+                    <button class="col btn btn-outline-danger" type="button">Back</button>
+                </a>
+            </div>
+            <div class="col">
+                <button class="col btn btn-success float-end" type="submit">Continue</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,7 +30,8 @@ public class DatasimPersonaGroup {
 
     @ManyToMany
     @Getter
-    @Setter(AccessLevel.PACKAGE)
+    @Setter
+    @Cascade(CascadeType.ALL)
     // Members are reusable, thus no Cascade
     private Set<DatasimPersona> member;
 
