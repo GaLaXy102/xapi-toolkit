@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:include="bootstrap/header.html :: scripted_head ('Select Profile')"></head>
+<head th:include="bootstrap/header.html :: scripted_head ('Set Title')"></head>
 <body>
 <div class="container">
     <form method="POST" th:action="@{/ui/datasim/new}">
         <input type="hidden" name="flow" th:value="${flow}" th:if="${flow}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
-        <div class="mb-3 form-floating">
+        <div class="mb-3 mt-3 form-floating">
             <input class="form-control" id="remarkInput" name="remark" th:value="${simulationRemark}" minlength="3" placeholder="pseudo"/>
             <label for="remarkInput">Simulation Title</label>
         </div>
