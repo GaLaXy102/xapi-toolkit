@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +38,7 @@ public class DatasimSimulation {
 
     @Getter
     @Setter
-    @OneToMany
+    @ManyToMany
     @Cascade(CascadeType.ALL)
     // each alignment has one Persona associated
     private Map<DatasimAlignment, DatasimPersona> alignments;

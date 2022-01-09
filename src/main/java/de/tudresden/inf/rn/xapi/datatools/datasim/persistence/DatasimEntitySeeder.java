@@ -17,31 +17,24 @@ import java.util.stream.Collectors;
 @Profile("dev")
 public class DatasimEntitySeeder {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
-    private final DatasimProfileRepository profileRepository;
+    private final DatasimPersonaRepository personaRepository;
 
-    public DatasimEntitySeeder(DatasimProfileRepository profileRepository) {
-        this.profileRepository = profileRepository;
+    public DatasimEntitySeeder(DatasimPersonaRepository personaRepository) {
+        this.personaRepository = personaRepository;
         this.seed();
     }
 
     private void seed() {
-        this.profileRepository.saveAll(this.findProfiles());
+        this.logger.info("Seeding personae");
+        this.personaRepository.saveAll(this.createSamplePersonae());
     }
 
-    private Set<DatasimProfile> findProfiles() {
-        File profileFolder;
-        try {
-            profileFolder = new ClassPathResource("xapi/profiles").getFile();
-        } catch (IOException e) {
-            this.logger.warning("Could not seed profiles. The Classpath folder is not there.");
-            return Set.of();
-        }
-        return Arrays.stream(Objects.requireNonNull(
-                        profileFolder.listFiles((dir, name) -> name.toLowerCase(Locale.ROOT).endsWith(".json"))
-                ))
-                .map(File::getName)
-                .map(name -> new DatasimProfile(name.replace(".json", ""), name))
-                .peek(profile -> this.logger.info("Seeding profile "+ profile.getName()))
-                .collect(Collectors.toSet());
+    private Set<DatasimPersona> createSamplePersonae() {
+        return Set.of(
+                new DatasimPersona("Sample Persona 1", "mail1@example.org"),
+                new DatasimPersona("Sample Persona 2", "mail2@example.org"),
+                new DatasimPersona("Sample Persona 3", "mail3@example.org"),
+                new DatasimPersona("Sample Persona 4", "mail4@example.org")
+        );
     }
 }

@@ -1,23 +1,28 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim;
 
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.*;
+import org.springframework.data.util.Pair;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DatasimSimulationService {
     private final DatasimSimulationRepository simulationRepository;
     private final DatasimProfileRepository profileRepository;
     private final DatasimPersonaRepository personaRepository;
+    private final DatasimAlignmentRepository alignmentRepository;
 
     public DatasimSimulationService(DatasimSimulationRepository simulationRepository, DatasimProfileRepository profileRepository,
-                                    DatasimPersonaRepository personaRepository) {
+                                    DatasimPersonaRepository personaRepository, DatasimAlignmentRepository alignmentRepository) {
         this.simulationRepository = simulationRepository;
         this.profileRepository = profileRepository;
         this.personaRepository = personaRepository;
+        this.alignmentRepository = alignmentRepository;
     }
 
     public Streamable<DatasimProfile> getProfiles() {
@@ -84,6 +89,56 @@ public class DatasimSimulationService {
     public void setPersonaeOfSimulation(DatasimSimulation simulation, Set<DatasimPersona> personae) {
         DatasimPersonaGroup group = simulation.getPersonaGroups().stream().findFirst().orElseThrow(RuntimeException::new);
         group.setMember(personae);
+        // Delete for deselected personae
+        simulation.getAlignments().entrySet().removeIf((entry) -> !personae.contains(entry.getValue()));
+        // Create neutral alignments for all components for all selected personae if there is no alignment
+        Map<URL, Set<Pair<DatasimPersona, Integer>>> componentAligns = this.getComponentAlignsByUrl(simulation.getAlignments());
+        Map<URL, Set<DatasimPersona>> componentPersonae = componentAligns.entrySet().stream()
+                .map((entry) ->
+                        Pair.of(
+                                entry.getKey(),
+                                entry.getValue().stream().map(Pair::getFirst).collect(Collectors.toSet()))
+                ).collect(Pair.toMap());
+        componentPersonae.forEach((key, value) -> {
+                    // Create for newly selected personae
+                    personae.forEach((persona) -> {
+                        if (!value.contains(persona)) {
+                            DatasimAlignment created = DatasimAlignmentTO.neutral(key).toNewDatasimAlignment();
+                            this.alignmentRepository.save(created);
+                            simulation.getAlignments().put(created, persona);
+                        }
+                    });
+                }
+        );
         this.simulationRepository.save(simulation);
+    }
+
+    public Map<URL, Set<Pair<DatasimPersona, Integer>>> getComponentAlignsByUrl(Map<DatasimAlignment, DatasimPersona> alignments) {
+        Map<URL, Set<Pair<DatasimPersona, Integer>>> out = new HashMap<>();
+        alignments.forEach(
+                (align, value) -> {
+                    Set<Pair<DatasimPersona, Integer>> pairs = out.getOrDefault(align.getComponent(), new HashSet<>());
+                    pairs.add(Pair.of(value, align.getWeight()));
+                    out.put(
+                            align.getComponent(),
+                            pairs
+                    );
+                }
+        );
+        return out;
+    }
+
+    @Transactional
+    public void addComponentToSimulationWithNeutralWeight(DatasimSimulation simulation, URL componentUrl) {
+        simulation.getPersonaGroups().stream()
+                .map(DatasimPersonaGroup::getMember)
+                .flatMap(Collection::stream)
+                .forEach((persona) -> {
+                    DatasimAlignment created = DatasimAlignmentTO.neutral(componentUrl).toNewDatasimAlignment();
+                    this.alignmentRepository.save(created);
+                    simulation.getAlignments().put(created, persona);
+                });
+        simulation.setAlignments(new HashMap<>(simulation.getAlignments()));
+        this.simulationRepository.save(simulation); // Cascades
     }
 }

@@ -1,9 +1,6 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim;
 
-import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersona;
-import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaTO;
-import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimProfileTO;
-import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -93,6 +91,24 @@ public class DatasimSimulationMavController {
         Set<DatasimPersona> personae = personaIds.stream().map(this.datasimSimulationService::getPersona).collect(Collectors.toSet());
         this.datasimSimulationService.setPersonaeOfSimulation(simulation, personae);
         attributes.addAttribute("flow", simulationId.toString());
-        return new RedirectView("./persona");  // TODO set correct link
+        return new RedirectView("./alignment");
+    }
+
+    @GetMapping("/new/alignment")
+    public ModelAndView showCreateAlignment(@RequestParam(name = "flow") UUID simulationId) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        ModelAndView mav = new ModelAndView("bootstrap/datasim/alignment");
+        mav.addObject("flow", simulationId.toString());
+        mav.addObject("alignments", this.datasimSimulationService.getComponentAlignsByUrl(simulation.getAlignments()));
+        return mav;
+    }
+
+    @PostMapping("/new/alignment/add")
+    public RedirectView addComponentToSimulation(@RequestParam(name = "flow") UUID simulationId,
+                                                 @RequestParam(name = "component") URL componentUrl, RedirectAttributes attributes) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        this.datasimSimulationService.addComponentToSimulationWithNeutralWeight(simulation, componentUrl);
+        attributes.addAttribute("flow", simulationId.toString());
+        return new RedirectView("../alignment");
     }
 }

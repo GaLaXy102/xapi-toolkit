@@ -26,6 +26,10 @@ public class DatasimAlignmentTO {
         return new DatasimAlignmentTO(Optional.of(alignment.getId()), alignment.getComponent(), alignment.getWeight());
     }
 
+    public static DatasimAlignmentTO neutral(URL componentUrl) {
+        return new DatasimAlignmentTO(Optional.empty(), componentUrl, 0);
+    }
+
     public DatasimAlignment toNewDatasimAlignment() {
         if (Math.abs(this.weight) > 1) {
             throw new IllegalArgumentException("Alignment weight must be in [-1, 1]");
