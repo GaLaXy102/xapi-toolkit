@@ -26,10 +26,10 @@ public class DatasimAlignment {
     private URL component;
 
     @Getter
-    @Setter(AccessLevel.PACKAGE)
-    private Integer weight;
+    @Setter
+    private Float weight;
 
-    DatasimAlignment(URL component, Integer weight) {
+    DatasimAlignment(URL component, Float weight) {
         this.component = component;
         this.weight = weight;
     }

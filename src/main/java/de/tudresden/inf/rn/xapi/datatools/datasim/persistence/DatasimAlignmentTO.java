@@ -20,14 +20,14 @@ public class DatasimAlignmentTO {
 
     @Getter
     @Setter
-    private Integer weight;
+    private Float weight;
 
     public static DatasimAlignmentTO of(DatasimAlignment alignment) {
         return new DatasimAlignmentTO(Optional.of(alignment.getId()), alignment.getComponent(), alignment.getWeight());
     }
 
     public static DatasimAlignmentTO neutral(URL componentUrl) {
-        return new DatasimAlignmentTO(Optional.empty(), componentUrl, 0);
+        return new DatasimAlignmentTO(Optional.empty(), componentUrl, 0.0f);
     }
 
     public DatasimAlignment toNewDatasimAlignment() {

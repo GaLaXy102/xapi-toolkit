@@ -92,7 +92,7 @@ public class DatasimSimulationService {
         // Delete for deselected personae
         simulation.getAlignments().entrySet().removeIf((entry) -> !personae.contains(entry.getValue()));
         // Create neutral alignments for all components for all selected personae if there is no alignment
-        Map<URL, Set<Pair<DatasimPersona, Integer>>> componentAligns = this.getComponentAlignsByUrl(simulation.getAlignments());
+        Map<URL, Set<Pair<DatasimPersona, Float>>> componentAligns = DatasimSimulationService.getComponentAlignsByUrl(simulation.getAlignments());
         Map<URL, Set<DatasimPersona>> componentPersonae = componentAligns.entrySet().stream()
                 .map((entry) ->
                         Pair.of(
@@ -113,11 +113,11 @@ public class DatasimSimulationService {
         this.simulationRepository.save(simulation);
     }
 
-    public Map<URL, Set<Pair<DatasimPersona, Integer>>> getComponentAlignsByUrl(Map<DatasimAlignment, DatasimPersona> alignments) {
-        Map<URL, Set<Pair<DatasimPersona, Integer>>> out = new HashMap<>();
+    public static Map<URL, Set<Pair<DatasimPersona, Float>>> getComponentAlignsByUrl(Map<DatasimAlignment, DatasimPersona> alignments) {
+        Map<URL, Set<Pair<DatasimPersona, Float>>> out = new HashMap<>();
         alignments.forEach(
                 (align, value) -> {
-                    Set<Pair<DatasimPersona, Integer>> pairs = out.getOrDefault(align.getComponent(), new HashSet<>());
+                    Set<Pair<DatasimPersona, Float>> pairs = out.getOrDefault(align.getComponent(), new HashSet<>());
                     pairs.add(Pair.of(value, align.getWeight()));
                     out.put(
                             align.getComponent(),
