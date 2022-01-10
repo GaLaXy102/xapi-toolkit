@@ -141,4 +141,19 @@ public class DatasimSimulationService {
         simulation.setAlignments(new HashMap<>(simulation.getAlignments()));
         this.simulationRepository.save(simulation); // Cascades
     }
+
+    public static DatasimAlignment getAlignment(DatasimSimulation simulation, URL componentUrl, DatasimPersona persona) {
+        return simulation.getAlignments().entrySet().stream()
+                .filter((entry) -> entry.getKey().getComponent().equals(componentUrl))
+                .filter((entry) -> entry.getValue().equals(persona))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElseThrow(IllegalStateException::new);
+    }
+
+    @Transactional
+    public void setAlignmentWeight(DatasimAlignment alignment, Float weight) {
+        alignment.setWeight(weight);
+        this.alignmentRepository.save(alignment);
+    }
 }

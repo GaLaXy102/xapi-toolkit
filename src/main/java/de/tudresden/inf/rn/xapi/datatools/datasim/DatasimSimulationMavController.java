@@ -1,6 +1,7 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim;
 
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.*;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -95,11 +97,11 @@ public class DatasimSimulationMavController {
     }
 
     @GetMapping("/new/alignment")
-    public ModelAndView showCreateAlignment(@RequestParam(name = "flow") UUID simulationId) {
+    public ModelAndView showCreateAlignments(@RequestParam(name = "flow") UUID simulationId) {
         DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
         ModelAndView mav = new ModelAndView("bootstrap/datasim/alignment");
         mav.addObject("flow", simulationId.toString());
-        mav.addObject("alignments", this.datasimSimulationService.getComponentAlignsByUrl(simulation.getAlignments()));
+        mav.addObject("alignments", DatasimSimulationService.getComponentAlignsByUrl(simulation.getAlignments()));
         return mav;
     }
 
@@ -110,5 +112,30 @@ public class DatasimSimulationMavController {
         this.datasimSimulationService.addComponentToSimulationWithNeutralWeight(simulation, componentUrl);
         attributes.addAttribute("flow", simulationId.toString());
         return new RedirectView("../alignment");
+    }
+
+    @PostMapping("/new/alignment")
+    public RedirectView createAlignments(@RequestParam(name = "flow") UUID simulationId,
+                                         @RequestParam Map<String, String> componentAligns, RedirectAttributes attributes) {
+        // TODO: Map<String, String> maps all attributes. This could be considered technical debt.
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        componentAligns.entrySet().stream()
+                .filter((entry) -> entry.getKey().contains("@"))
+                .map((entry) -> Pair.of(entry.getKey().split("@", 2), Float.parseFloat(entry.getValue())))
+                .map((pair) -> {
+                    try {
+                        return Pair.of(
+                                DatasimSimulationService.getAlignment(
+                                        simulation,
+                                        new URL(pair.getFirst()[1]),
+                                        this.datasimSimulationService.getPersona(UUID.fromString(pair.getFirst()[0]))),
+                                pair.getSecond());
+                    } catch (MalformedURLException e) {
+                        throw new IllegalArgumentException("Bad component URL");
+                    }
+                })
+                .forEach((pair) -> this.datasimSimulationService.setAlignmentWeight(pair.getFirst(), pair.getSecond()));
+        attributes.addAttribute("flow", simulationId.toString());
+        return new RedirectView("./alignment");
     }
 }
