@@ -1,6 +1,12 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim;
 
-import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.*;
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersona;
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaGroupTO;
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaTO;
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimProfileTO;
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulationParamsTO;
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulationTO;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -222,19 +229,38 @@ public class DatasimSimulationMavController {
     }
 
     @GetMapping("/show")
-    public ModelAndView showDetail(@RequestParam(name = "flow") UUID simulationId) {
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+    public ModelAndView showDetail(@RequestParam(name = "flow") Optional<UUID> simulationId) {
         ModelAndView mav = new ModelAndView("bootstrap/datasim/detail");
-        mav.addObject("simulation", DatasimSimulationTO.of(simulation));
-        mav.addObject("numPersonae", simulation.getPersonaGroups().stream().map(DatasimPersonaGroup::getMember).flatMap(Collection::stream).distinct().count());
+        Map<DatasimSimulationTO, Long> numPersonae = new HashMap<>();
+        List<DatasimSimulationTO> simulations = simulationId
+                .map(this.datasimSimulationService::getSimulation)
+                .map(DatasimSimulationTO::of)
+                .map(List::of)
+                .orElseGet(
+                        () -> this.datasimSimulationService.getAllSimulations()
+                                .sorted(
+                                        Comparator
+                                                .comparing(DatasimSimulation::getRemark, Comparator.naturalOrder())
+                                                .thenComparing(DatasimSimulation::getId, Comparator.naturalOrder())
+                                )
+                                .map(DatasimSimulationTO::of)
+                                .toList()
+                );
+        simulations.forEach(
+                (simulation) -> numPersonae.put(
+                        simulation,
+                        simulation.getPersonaGroups().stream().map(DatasimPersonaGroupTO::getMember).flatMap(Collection::stream).distinct().count()
+                )
+        );
+        mav.addObject("simulations", simulations);
+        mav.addObject("numPersonae", numPersonae);
         return mav;
     }
 
     @PostMapping("/finalize")
-    public RedirectView finalizeSimulation(@RequestParam(name = "flow") UUID simulationId, RedirectAttributes attributes) {
+    public RedirectView finalizeSimulation(@RequestParam(name = "flow") UUID simulationId, HttpServletRequest request, RedirectAttributes attributes) {
         DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
         this.datasimSimulationService.finalizeSimulation(simulation);
-        attributes.addAttribute("flow", simulationId.toString());
-        return new RedirectView("./show");
+        return new RedirectView(request.getHeader("Referer"));
     }
 }

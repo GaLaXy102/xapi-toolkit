@@ -30,6 +30,26 @@ public class DatasimEntitySeeder {
         DatasimSimulation simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
         this.simulationRepository.save(simulation);
         this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
+        sampleGroup = new DatasimPersonaGroup("Default Group", this.createSamplePersonae());
+        sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
+        simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
+        this.simulationRepository.save(simulation);
+        this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
+        sampleGroup = new DatasimPersonaGroup("Default Group", this.createSamplePersonae());
+        sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
+        simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
+        this.simulationRepository.save(simulation);
+        this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
+        sampleGroup = new DatasimPersonaGroup("Default Group", this.createSamplePersonae());
+        sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
+        simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
+        this.simulationRepository.save(simulation);
+        this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
+        sampleGroup = new DatasimPersonaGroup("Default Group", this.createSamplePersonae());
+        sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
+        simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
+        this.simulationRepository.save(simulation);
+        this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
     }
 
     private Set<DatasimPersona> createSamplePersonae() {

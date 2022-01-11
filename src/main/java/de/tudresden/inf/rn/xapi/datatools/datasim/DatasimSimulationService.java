@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class DatasimSimulationService {
@@ -31,6 +32,10 @@ public class DatasimSimulationService {
 
     public DatasimProfile getProfile(UUID profileId) {
         return this.profileRepository.findById(profileId).orElseThrow(() -> new IllegalArgumentException("No such profile."));
+    }
+
+    public Stream<DatasimSimulation> getAllSimulations() {
+        return this.simulationRepository.findAll().stream();
     }
 
     public DatasimSimulation getSimulation(UUID simulationId) {
