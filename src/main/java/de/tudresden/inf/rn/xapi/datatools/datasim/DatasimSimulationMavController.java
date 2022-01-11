@@ -145,6 +145,27 @@ public class DatasimSimulationMavController {
                 })
                 .forEach((pair) -> this.datasimSimulationService.setAlignmentWeight(pair.getFirst(), pair.getSecond()));
         attributes.addAttribute("flow", simulationId.toString());
-        return new RedirectView("./alignment");
+        return new RedirectView("./parameters");
+    }
+
+    @GetMapping("/new/parameters")
+    public ModelAndView showSetSimulationParameters(@RequestParam(name = "flow") UUID simulationId) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        ModelAndView mav = new ModelAndView("bootstrap/datasim/parameters");
+        mav.addObject("flow", simulationId.toString());
+        mav.addObject("parameters", DatasimSimulationParamsTO.of(simulation.getParameters()));
+        return mav;
+    }
+
+    @PostMapping("/new/parameters")
+    public RedirectView setSimulationParameters(@RequestParam(name = "flow") UUID simulationId,
+                                                DatasimSimulationParamsTO simulationParams,
+                                                TimeZone userTimezone, RedirectAttributes attributes) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        // This can't be mapped automagically
+        simulationParams.setTimezone(userTimezone.toZoneId());
+        this.datasimSimulationService.setSimulationParams(simulation, simulationParams.toExistingSimulationParams());
+        attributes.addAttribute("flow", simulationId.toString());
+        return new RedirectView("./parameters");
     }
 }

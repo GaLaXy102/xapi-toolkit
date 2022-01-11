@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.Positive;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
@@ -33,21 +33,16 @@ public class DatasimSimulationParams {
 
     @Getter
     @Setter(AccessLevel.PACKAGE)
-    private LocalDateTime start;
+    private ZonedDateTime start;
 
     @Getter
     @Setter(AccessLevel.PACKAGE)
-    private LocalDateTime end;
+    private ZonedDateTime end;
 
-    @Getter
-    @Setter(AccessLevel.PACKAGE)
-    private String timezone;
-
-    DatasimSimulationParams(Long max, Long seed, LocalDateTime start, LocalDateTime end, String timezone) {
+    DatasimSimulationParams(Long max, Long seed, ZonedDateTime start, ZonedDateTime end) {
         this.max = max;
         this.seed = seed;
-        this.start = start;
-        this.end = end;
-        this.timezone = timezone;
+        this.start = start.withNano(0);
+        this.end = end.withNano(0);
     }
 }

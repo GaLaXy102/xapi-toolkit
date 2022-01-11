@@ -44,7 +44,7 @@ public class DatasimSimulationService {
     @Transactional
     public DatasimSimulation createEmptySimulation() {
         DatasimPersonaGroup personaGroup = DatasimPersonaGroupTO.empty("Default Group").toNewPersonaGroup();
-        DatasimSimulation created = new DatasimSimulation("", new HashSet<>(Set.of(personaGroup)), new HashMap<>(), null, null);
+        DatasimSimulation created = new DatasimSimulation("", new HashSet<>(Set.of(personaGroup)), new HashMap<>(), DatasimSimulationParamsTO.empty().toNewSimulationParams(), null);
         this.simulationRepository.save(created);
         return created;
     }
@@ -164,5 +164,12 @@ public class DatasimSimulationService {
     public void setAlignmentWeight(DatasimAlignment alignment, Float weight) {
         alignment.setWeight(weight);
         this.alignmentRepository.save(alignment);
+    }
+
+    @Transactional
+    public void setSimulationParams(DatasimSimulation simulation, DatasimSimulationParams params) {
+        if (!simulation.getParameters().getId().equals(params.getId())) throw new IllegalArgumentException("Params do not match Simulation.");
+        simulation.setParameters(params);
+        this.simulationRepository.save(simulation);
     }
 }
