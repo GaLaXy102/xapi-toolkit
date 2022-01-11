@@ -62,10 +62,35 @@
                     </li>
                 </ul>
                 <div class="card-footer">
-                    <form method="POST" th:action="@{/ui/datasim/finalize}" class="d-flex" th:unless="${simulation.getFinalized().get()}">
-                        <input type="hidden" name="flow" th:value="${simulation.getId().get()}">
-                        <button type="submit" class="btn btn-warning flex-fill">Finalize</button>
-                    </form>
+                    <div class="row mb-2">
+                        <div class="col">
+                            <form method="POST" th:action="@{/ui/datasim/copy}" class="flex-fill d-flex">
+                                <input type="hidden" name="flow" th:value="${simulation.getId().get()}">
+                                <button type="submit" class="btn btn-primary flex-fill">Copy</button>
+                            </form>
+                        </div>
+                        <div class="col">
+                            <form method="POST" th:action="@{/ui/datasim/delete}" class="flex-fill d-flex">
+                                <input type="hidden" name="flow" th:value="${simulation.getId().get()}">
+                                <button type="submit" class="btn btn-danger flex-fill">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <form method="POST" th:action="@{/ui/datasim/finalize}" th:unless="${simulation.getFinalized().get()}" class="flex-fill d-flex">
+                                <input type="hidden" name="flow" th:value="${simulation.getId().get()}">
+                                <button type="submit" class="btn btn-warning flex-fill">Finalize</button>
+                            </form>
+                            <form method="POST" th:action="@{/ui/datasim/perform}" th:if="${simulation.getFinalized().get()}" class="flex-fill d-flex">
+                                <input type="hidden" name="flow" th:value="${simulation.getId().get()}">
+                                <button type="submit" class="btn btn-outline-success flex-fill">Perform</button>
+                            </form>
+                            <a th:href="'/ui/datasim/retrieve?flow=' + ${simulation.getId().get()}" th:if="false" target="_blank">
+                                <button type="button" class="btn btn-success flex-fill">Retrieve</button>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
