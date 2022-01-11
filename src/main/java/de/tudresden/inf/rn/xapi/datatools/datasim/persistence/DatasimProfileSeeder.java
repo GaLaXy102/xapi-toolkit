@@ -1,5 +1,6 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
+@Profile("!dev")
 public class DatasimProfileSeeder {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final DatasimProfileRepository profileRepository;
