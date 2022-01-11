@@ -10,6 +10,7 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -62,7 +63,8 @@ public class DatasimSimulationParamsTO {
     }
 
     public static DatasimSimulationParamsTO empty() {
-        return new DatasimSimulationParamsTO(Optional.empty(), 1000L, 1337L, LocalDateTime.now(), LocalDateTime.now().plusWeeks(1), ZoneId.systemDefault());
+        Random random = new Random();
+        return new DatasimSimulationParamsTO(Optional.empty(), 1000L, random.nextLong(5000L), LocalDateTime.now(), LocalDateTime.now().plusWeeks(1), ZoneId.systemDefault());
     }
 
     public DatasimSimulationParams toExistingSimulationParams() {

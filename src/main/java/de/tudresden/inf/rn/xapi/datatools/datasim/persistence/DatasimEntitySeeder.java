@@ -25,7 +25,8 @@ public class DatasimEntitySeeder {
         DatasimProfile sampleProfile = new DatasimProfile("ya-cmi5", "ya-cmi5.json");
         this.profileRepository.save(sampleProfile);
         DatasimPersonaGroup sampleGroup = new DatasimPersonaGroup("Default Group", this.createSamplePersonae());
-        DatasimSimulationParams sampleParams = new DatasimSimulationParams(1000L, 1337L, LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
+        Random random = new Random();
+        DatasimSimulationParams sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
         DatasimSimulation simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
         this.simulationRepository.save(simulation);
         this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/new?flow=" + simulation.getId());
