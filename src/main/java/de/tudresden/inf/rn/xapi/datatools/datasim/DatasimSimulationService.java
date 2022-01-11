@@ -37,6 +37,14 @@ public class DatasimSimulationService {
         return this.simulationRepository.findById(simulationId).orElseThrow(() -> new IllegalArgumentException("No such simulation."));
     }
 
+    public DatasimSimulation getUnfinalizedSimulation(UUID simulationId) {
+        DatasimSimulation found = this.getSimulation(simulationId);
+        if (found.isFinalized()) {
+            throw new IllegalStateException("The given Simulation has been finalized.");
+        }
+        return found;
+    }
+
     public DatasimPersona getPersona(UUID personaId) {
         return this.personaRepository.findById(personaId).orElseThrow(() -> new IllegalArgumentException("No such persona."));
     }
@@ -170,6 +178,12 @@ public class DatasimSimulationService {
     public void setSimulationParams(DatasimSimulation simulation, DatasimSimulationParams params) {
         if (!simulation.getParameters().getId().equals(params.getId())) throw new IllegalArgumentException("Params do not match Simulation.");
         simulation.setParameters(params);
+        this.simulationRepository.save(simulation);
+    }
+
+    @Transactional
+    public void finalizeSimulation(DatasimSimulation simulation) {
+        simulation.setFinalized(true);
         this.simulationRepository.save(simulation);
     }
 }

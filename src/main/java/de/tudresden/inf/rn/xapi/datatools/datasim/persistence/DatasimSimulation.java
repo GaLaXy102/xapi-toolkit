@@ -55,6 +55,10 @@ public class DatasimSimulation {
     // Profiles are reusable, thus no cascade
     private DatasimProfile profile;
 
+    @Getter
+    @Setter
+    private boolean finalized;
+
     public DatasimSimulation(String remark, Set<DatasimPersonaGroup> personaGroups, Map<DatasimAlignment, DatasimPersona> alignments,
                       DatasimSimulationParams parameters, DatasimProfile profile) {
         this.remark = remark;
@@ -62,5 +66,6 @@ public class DatasimSimulation {
         this.alignments = alignments;
         this.parameters = parameters;
         this.profile = profile;
+        this.finalized = false;
     }
 }

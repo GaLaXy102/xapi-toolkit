@@ -41,6 +41,10 @@ public class DatasimSimulationTO {
     @Setter
     private DatasimProfileTO profile;
 
+    @Getter
+    @Setter
+    private Optional<Boolean> finalized;
+
     private static Map<DatasimActor, Set<DatasimAlignmentTO>> mapAlignsFromEntity(Map<DatasimAlignment, DatasimPersona> entityAligns) {
         Map<DatasimPersona, DatasimActor> actorConversion = new HashMap<>();
         entityAligns.values()
@@ -65,9 +69,7 @@ public class DatasimSimulationTO {
                 alignmentSet.forEach((align) -> out.put(align.toExistingDatasimAlignment(), ((DatasimPersonaTO) actor).toExistingDatasimPersona()));
             } else if (actor.getType().equals(DatasimActorType.GROUP)) {
                 Set<DatasimPersona> personasFromGroup = ((DatasimPersonaGroupTO) actor).toExistingPersonaGroup().getMember();
-                alignmentSet.forEach((align) -> {
-                    personasFromGroup.forEach(persona -> out.put(align.toExistingDatasimAlignment(), persona));
-                });
+                alignmentSet.forEach((align) -> personasFromGroup.forEach(persona -> out.put(align.toExistingDatasimAlignment(), persona)));
             }
         });
         return out;
@@ -82,7 +84,8 @@ public class DatasimSimulationTO {
                 personae,
                 aligns,
                 DatasimSimulationParamsTO.of(simulation.getParameters()),
-                DatasimProfileTO.of(simulation.getProfile())
+                DatasimProfileTO.of(simulation.getProfile()),
+                Optional.of(simulation.isFinalized())
         );
     }
 

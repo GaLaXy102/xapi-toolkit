@@ -36,7 +36,7 @@ public class DatasimSimulationMavController {
         ModelAndView mav = new ModelAndView("bootstrap/datasim/remark");
         mav.addObject("simulationRemark",
                 simulationId
-                        .map(this.datasimSimulationService::getSimulation)
+                        .map(this.datasimSimulationService::getUnfinalizedSimulation)
                         .map(DatasimSimulation::getRemark)
                         .orElse("")
         );
@@ -55,7 +55,7 @@ public class DatasimSimulationMavController {
     @PostMapping("/new")
     public RedirectView setRemarkAndCreate(@RequestParam(name = "flow") Optional<UUID> simulationId, String remark, Mode mode, RedirectAttributes attributes) {
         DatasimSimulation simulation = simulationId
-                .map(this.datasimSimulationService::getSimulation)
+                .map(this.datasimSimulationService::getUnfinalizedSimulation)
                 .orElseGet(this.datasimSimulationService::createEmptySimulation);
         this.datasimSimulationService.setSimulationRemark(simulation, remark);
         attributes.addAttribute("flow", simulation.getId());
@@ -82,7 +82,7 @@ public class DatasimSimulationMavController {
     public RedirectView selectProfile(@RequestParam(name = "flow") UUID simulationId,
                                       @RequestParam(name = "profile_id") UUID profileId,
                                       Mode mode, RedirectAttributes attributes) {
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         this.datasimSimulationService.updateSimulationProfile(simulation, this.datasimSimulationService.getProfile(profileId));
         attributes.addAttribute("flow", simulation.getId());
         return new RedirectView(Mode.CREATING.equals(mode) ? "./persona" : "../show");
@@ -90,7 +90,7 @@ public class DatasimSimulationMavController {
 
     @GetMapping("/new/persona")
     public ModelAndView showSelectPersona(@RequestParam(name = "flow") UUID simulationId) {
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         ModelAndView mav = new ModelAndView("bootstrap/datasim/persona");
         mav.addObject("flow", simulation.getId().toString());
         List<Map.Entry<DatasimPersonaTO, Boolean>> payload = new ArrayList<>(this.datasimSimulationService.getPersonasWithSelected(simulation).entrySet());
@@ -110,7 +110,7 @@ public class DatasimSimulationMavController {
     @PostMapping("/new/persona/add")
     public RedirectView addPersonaToSimulation(@RequestParam(name = "flow") UUID simulationId, DatasimPersonaTO persona,
                                                Mode mode, RedirectAttributes attributes) {
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         DatasimPersona created = this.datasimSimulationService.createPersona(persona);
         this.datasimSimulationService.addPersonaToSimulation(simulation, created);
         attributes.addAttribute("flow", simulationId.toString());
@@ -121,7 +121,7 @@ public class DatasimSimulationMavController {
     public RedirectView selectPersona(@RequestParam(name = "flow") UUID simulationId,
                                       @RequestParam("persona_id") Set<UUID> personaIds,
                                       Mode mode, RedirectAttributes attributes) {
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         Set<DatasimPersona> personae = personaIds.stream().map(this.datasimSimulationService::getPersona).collect(Collectors.toSet());
         this.datasimSimulationService.setPersonaeOfSimulation(simulation, personae);
         attributes.addAttribute("flow", simulationId.toString());
@@ -130,7 +130,7 @@ public class DatasimSimulationMavController {
 
     @GetMapping("/new/alignment")
     public ModelAndView showCreateAlignments(@RequestParam(name = "flow") UUID simulationId) {
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         ModelAndView mav = new ModelAndView("bootstrap/datasim/alignment");
         mav.addObject("flow", simulationId.toString());
         mav.addObject("alignments", DatasimSimulationService.getComponentAlignsByUrl(simulation.getAlignments()));
@@ -149,7 +149,7 @@ public class DatasimSimulationMavController {
     public RedirectView addComponentToSimulation(@RequestParam(name = "flow") UUID simulationId,
                                                  @RequestParam(name = "component") URL componentUrl,
                                                  Mode mode, RedirectAttributes attributes) {
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         this.datasimSimulationService.addComponentToSimulationWithNeutralWeight(simulation, componentUrl);
         attributes.addAttribute("flow", simulationId.toString());
         return new RedirectView(Mode.CREATING.equals(mode) ? "../alignment" : "../../edit/alignment");
@@ -159,7 +159,7 @@ public class DatasimSimulationMavController {
     public RedirectView removeComponentFromSimulation(@RequestParam(name = "flow") UUID simulationId,
                                                       @RequestParam(name = "component") URL componentUrl,
                                                       Mode mode, RedirectAttributes attributes) {
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         this.datasimSimulationService.removeComponentFromSimulation(simulation, componentUrl);
         attributes.addAttribute("flow", simulationId.toString());
         return new RedirectView(Mode.CREATING.equals(mode) ? "../alignment" : "../../edit/alignment");
@@ -170,7 +170,7 @@ public class DatasimSimulationMavController {
                                          @RequestParam Map<String, String> componentAligns,
                                          Mode mode, RedirectAttributes attributes) {
         // TODO: Map<String, String> maps all attributes. This could be considered technical debt.
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         componentAligns.entrySet().stream()
                 .filter((entry) -> entry.getKey().contains("@"))
                 .map((entry) -> Pair.of(entry.getKey().split("@", 2), Float.parseFloat(entry.getValue())))
@@ -193,7 +193,7 @@ public class DatasimSimulationMavController {
 
     @GetMapping("/new/parameters")
     public ModelAndView showSetSimulationParameters(@RequestParam(name = "flow") UUID simulationId) {
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         ModelAndView mav = new ModelAndView("bootstrap/datasim/parameters");
         mav.addObject("flow", simulationId.toString());
         mav.addObject("parameters", DatasimSimulationParamsTO.of(simulation.getParameters()));
@@ -213,7 +213,7 @@ public class DatasimSimulationMavController {
                                                 DatasimSimulationParamsTO simulationParams,
                                                 TimeZone userTimezone,
                                                 Mode mode, RedirectAttributes attributes) {
-        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         // This can't be mapped automagically
         simulationParams.setTimezone(userTimezone.toZoneId());
         this.datasimSimulationService.setSimulationParams(simulation, simulationParams.toExistingSimulationParams());
@@ -228,5 +228,13 @@ public class DatasimSimulationMavController {
         mav.addObject("simulation", DatasimSimulationTO.of(simulation));
         mav.addObject("numPersonae", simulation.getPersonaGroups().stream().map(DatasimPersonaGroup::getMember).flatMap(Collection::stream).distinct().count());
         return mav;
+    }
+
+    @PostMapping("/finalize")
+    public RedirectView finalizeSimulation(@RequestParam(name = "flow") UUID simulationId, RedirectAttributes attributes) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        this.datasimSimulationService.finalizeSimulation(simulation);
+        attributes.addAttribute("flow", simulationId.toString());
+        return new RedirectView("./show");
     }
 }
