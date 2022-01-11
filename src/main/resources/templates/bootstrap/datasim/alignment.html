@@ -6,6 +6,7 @@
     <form method="POST" th:action="@{/ui/datasim/new/alignment/add}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <input type="hidden" name="flow" th:value="${flow}">
+        <input type="hidden" name="mode" th:value="${mode}">
         <div class="form-control mt-3 mb-3">
             <div class="row">
                 <label>Add new Component</label>
@@ -24,6 +25,7 @@
     </form>
     <form method="POST" th:action="@{/ui/datasim/new/alignment}">
         <input type="hidden" name="flow" th:value="${flow}">
+        <input type="hidden" name="mode" th:value="${mode}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <div class="mb-3 form-control">
             <label class="mb-3">Map Affinities</label>
@@ -51,7 +53,10 @@
         </div>
         <div class="row">
             <div class="col">
-                <a th:href="'/ui/datasim/new/persona?flow=' + ${flow}">
+                <a th:href="'/ui/datasim/new/persona?flow=' + ${flow}" th:if="${mode == mode.CREATING}">
+                    <button class="col btn btn-outline-danger" type="button">Back</button>
+                </a>
+                <a th:href="'/ui/datasim/show?flow=' + ${flow}" th:if="${mode == mode.EDITING}">
                     <button class="col btn btn-outline-danger" type="button">Back</button>
                 </a>
             </div>
@@ -64,6 +69,7 @@
     <div class="hidden">
         <form method="POST" th:action="@{/ui/datasim/new/alignment/delete}" id="deleteComponentForm">
             <input type="hidden" name="flow" th:value="${flow}">
+            <input type="hidden" name="mode" th:value="${mode}">
             <input type="hidden" name="component" id="deleteComponentUrl">
         </form>
     </div>

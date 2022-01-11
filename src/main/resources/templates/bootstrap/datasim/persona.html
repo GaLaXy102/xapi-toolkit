@@ -6,6 +6,7 @@
     <form method="POST" th:action="@{/ui/datasim/new/persona/add}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <input type="hidden" name="flow" th:value="${flow}">
+        <input type="hidden" name="mode" th:value="${mode}">
         <div class="form-control mt-3 mb-3">
             <div class="row">
                 <label>Add new Persona</label>
@@ -30,6 +31,7 @@
     </form>
     <form method="POST" th:action="@{/ui/datasim/new/persona}">
         <input type="hidden" name="flow" th:value="${flow}">
+        <input type="hidden" name="mode" th:value="${mode}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <div class="mb-3 form-control">
             <label for="personaInput">Select Personae for Simulation</label>
@@ -41,7 +43,10 @@
         </div>
         <div class="row">
             <div class="col">
-                <a th:href="'/ui/datasim/new/profile?flow=' + ${flow}">
+                <a th:href="'/ui/datasim/new/profile?flow=' + ${flow}" th:if="${mode == mode.CREATING}">
+                    <button class="col btn btn-outline-danger" type="button">Back</button>
+                </a>
+                <a th:href="'/ui/datasim/show?flow=' + ${flow}" th:if="${mode == mode.EDITING}">
                     <button class="col btn btn-outline-danger" type="button">Back</button>
                 </a>
             </div>

@@ -5,6 +5,7 @@
 <div class="container">
     <form method="POST" th:action="@{/ui/datasim/new/profile}">
         <input type="hidden" name="flow" th:value="${flow}">
+        <input type="hidden" name="mode" th:value="${mode}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <div class="mb-3 mt-3 form-floating">
             <select class="form-select" id="profileInput" name="profile_id">
@@ -14,7 +15,10 @@
         </div>
         <div class="row">
             <div class="col">
-                <a th:href="'/ui/datasim/new?flow=' + ${flow}">
+                <a th:href="'/ui/datasim/new?flow=' + ${flow}" th:if="${mode == mode.CREATING}">
+                    <button class="col btn btn-outline-danger" type="button">Back</button>
+                </a>
+                <a th:href="'/ui/datasim/show?flow=' + ${flow}" th:if="${mode == mode.EDITING}">
                     <button class="col btn btn-outline-danger" type="button">Back</button>
                 </a>
             </div>
