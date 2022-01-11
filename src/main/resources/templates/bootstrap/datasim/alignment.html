@@ -26,17 +26,23 @@
         <input type="hidden" name="flow" th:value="${flow}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <div class="mb-3 form-control">
-            <label>Map Affinities</label>
+            <label class="mb-3">Map Affinities</label>
             <div class="accordion">
                 <div class="accordion-item" th:each="alignment, loop: ${alignments}">
-                    <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" th:data-bs-target="'#body' + ${loop.index}" th:text="${alignment.getKey()}" aria-expanded="false"></button>
-                    </h2>
+                    <div class="accordion-header btn-group d-flex">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" th:data-bs-target="'#body' + ${loop.index}"
+                                th:text="${alignment.getKey()}" aria-expanded="false"></button>
+                        <button class="btn float-end" type="button" th:data-component="${alignment.getKey()}"
+                                onclick="document.getElementById('deleteComponentUrl').value = this.getAttribute('data-component');document.getElementById('deleteComponentForm').submit()">
+                            <i class="bi-trash"></i></button>
+                    </div>
                     <div class="accordion-body collapsed collapse" th:id="'body' + ${loop.index}">
                         <div class="row mb-3" th:each="personaAlign : ${alignment.getValue()}">
-                            <label class="col-6 col-form-label" th:text="${personaAlign.getFirst().getName()}" th:for="'range' + ${personaAlign.getFirst().getId()}"></label>
+                            <label class="col-6 col-form-label" th:text="${personaAlign.getFirst().getName()}"
+                                   th:for="'range' + ${personaAlign.getFirst().getId()}"></label>
                             <div class="col-6">
-                                <input type="range" class="form-range" min="-1" max="1" step="0.1" th:id="'range' + ${personaAlign.getFirst().getId()}" th:value="${personaAlign.getSecond()}" th:name="${personaAlign.getFirst().getId()} + '@' + ${alignment.getKey()}">
+                                <input type="range" class="form-range" min="-1" max="1" step="0.1" th:id="'range' + ${personaAlign.getFirst().getId()}"
+                                       th:value="${personaAlign.getSecond()}" th:name="${personaAlign.getFirst().getId()} + '@' + ${alignment.getKey()}">
                             </div>
                         </div>
                     </div>
@@ -54,6 +60,13 @@
             </div>
         </div>
     </form>
+    <!-- Form to remove a component, filled and sent by JS -->
+    <div class="hidden">
+        <form method="POST" th:action="@{/ui/datasim/new/alignment/delete}" id="deleteComponentForm">
+            <input type="hidden" name="flow" th:value="${flow}">
+            <input type="hidden" name="component" id="deleteComponentUrl">
+        </form>
+    </div>
 </div>
 </body>
 </html>

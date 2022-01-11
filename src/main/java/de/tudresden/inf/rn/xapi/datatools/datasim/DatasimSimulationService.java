@@ -142,6 +142,15 @@ public class DatasimSimulationService {
         this.simulationRepository.save(simulation); // Cascades
     }
 
+    @Transactional
+    public void removeComponentFromSimulation(DatasimSimulation simulation, URL componentUrl) {
+        Set<DatasimAlignment> toDelete = simulation.getAlignments().keySet().stream().filter((align) -> align.getComponent().equals(componentUrl)).collect(Collectors.toSet());
+        simulation.getAlignments().entrySet().removeIf((entry) -> toDelete.contains(entry.getKey()));
+        // Remove orphans
+        this.simulationRepository.save(simulation);
+        this.alignmentRepository.deleteAll(toDelete);
+    }
+
     public static DatasimAlignment getAlignment(DatasimSimulation simulation, URL componentUrl, DatasimPersona persona) {
         return simulation.getAlignments().entrySet().stream()
                 .filter((entry) -> entry.getKey().getComponent().equals(componentUrl))

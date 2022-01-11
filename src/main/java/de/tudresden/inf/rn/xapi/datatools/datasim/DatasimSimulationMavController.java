@@ -114,6 +114,15 @@ public class DatasimSimulationMavController {
         return new RedirectView("../alignment");
     }
 
+    @PostMapping("/new/alignment/delete")
+    public RedirectView removeComponentFromSimulation(@RequestParam(name = "flow") UUID simulationId,
+                                                      @RequestParam(name = "component") URL componentUrl, RedirectAttributes attributes) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        this.datasimSimulationService.removeComponentFromSimulation(simulation, componentUrl);
+        attributes.addAttribute("flow", simulationId.toString());
+        return new RedirectView("../alignment");
+    }
+
     @PostMapping("/new/alignment")
     public RedirectView createAlignments(@RequestParam(name = "flow") UUID simulationId,
                                          @RequestParam Map<String, String> componentAligns, RedirectAttributes attributes) {
