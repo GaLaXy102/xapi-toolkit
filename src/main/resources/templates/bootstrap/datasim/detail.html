@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="bootstrap/header.html :: scripted_head ('Simulation Details')"></head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2><span th:text="${simulation.getRemark().orElse('Untitled Simulation')}"></span><a th:href="'/ui/datasim/new' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a></h2>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <i class="bi-magic"></i>
+                &nbsp;&nbsp;&nbsp;
+                <span th:text="${simulation.getProfile().getName()}"></span>&nbsp;Profile
+                <a th:href="'/ui/datasim/new/profile' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+            </li>
+            <li class="list-group-item">
+                <i class="bi-files"></i>
+                &nbsp;&nbsp;&nbsp;
+                <span th:text="${simulation.getParameters().getMax()}"></span>&nbsp;Entries
+                <a th:href="'/ui/datasim/new/parameters' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+            </li>
+            <li class="list-group-item">
+                <i class="bi-flower3"></i>
+                &nbsp;&nbsp;&nbsp;
+                Seed&nbsp;<span th:text="${simulation.getParameters().getSeed()}"></span>
+                <a th:href="'/ui/datasim/new/parameters' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+            </li>
+            <li class="list-group-item">
+                <i class="bi-people-fill"></i>
+                &nbsp;&nbsp;&nbsp;
+                <span th:text="${numPersonae}"></span>&nbsp;Personae
+                <a th:href="'/ui/datasim/new/persona' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+            </li>
+            <li class="list-group-item">
+                <i class="bi-align-center"></i>
+                &nbsp;&nbsp;&nbsp;
+                <span th:text="${simulation.getAlignments().entrySet().size()}"></span>&nbsp;Alignments
+                <a th:href="'/ui/datasim/new/alignment' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+            </li>
+            <li class="list-group-item">
+                <i class="bi-clock"></i><i class="bi-arrow-bar-right"></i>
+                &nbsp;&nbsp;&nbsp;
+                <span th:text="${#temporals.format(simulation.getParameters().getStart(), 'yyyy-MM-dd HH:mm:ss')}"></span>
+                <a th:href="'/ui/datasim/new/parameters' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+            </li>
+            <li class="list-group-item">
+                <i class="bi-clock"></i><i class="bi-arrow-bar-left"></i>
+                &nbsp;&nbsp;&nbsp;
+                <span th:text="${#temporals.format(simulation.getParameters().getEnd(), 'yyyy-MM-dd HH:mm:ss')}"></span>
+                <a th:href="'/ui/datasim/new/parameters' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+            </li>
+            <li class="list-group-item">
+                <i class="bi-clock"></i><i class="bi-globe"></i>
+                &nbsp;&nbsp;&nbsp;
+                <span th:text="${simulation.getParameters().getTimezone()}"></span>
+            </li>
+        </ul>
+        <div class="card-footer">
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

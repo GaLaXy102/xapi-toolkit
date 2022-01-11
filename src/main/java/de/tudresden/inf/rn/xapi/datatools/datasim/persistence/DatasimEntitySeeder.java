@@ -29,7 +29,7 @@ public class DatasimEntitySeeder {
         DatasimSimulationParams sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
         DatasimSimulation simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
         this.simulationRepository.save(simulation);
-        this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/new?flow=" + simulation.getId());
+        this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
     }
 
     private Set<DatasimPersona> createSamplePersonae() {

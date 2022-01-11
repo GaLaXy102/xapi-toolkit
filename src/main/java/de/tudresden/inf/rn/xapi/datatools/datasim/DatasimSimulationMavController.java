@@ -168,4 +168,13 @@ public class DatasimSimulationMavController {
         attributes.addAttribute("flow", simulationId.toString());
         return new RedirectView("./parameters");
     }
+
+    @GetMapping("/show")
+    public ModelAndView showDetail(@RequestParam(name = "flow") UUID simulationId) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        ModelAndView mav = new ModelAndView("bootstrap/datasim/detail");
+        mav.addObject("simulation", DatasimSimulationTO.of(simulation));
+        mav.addObject("numPersonae", simulation.getPersonaGroups().stream().map(DatasimPersonaGroup::getMember).flatMap(Collection::stream).distinct().count());
+        return mav;
+    }
 }
