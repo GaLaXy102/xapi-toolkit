@@ -3,7 +3,7 @@
 <head th:include="bootstrap/header.html :: scripted_head ('Create Alignments')"></head>
 <body>
 <div class="container">
-    <form method="POST" th:action="@{/ui/datasim/new/alignment/add}">
+    <form method="POST" th:action="@{/ui/datasim/new/alignment/add}" th:unless="${mode == mode.DISPLAYING}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <input type="hidden" name="flow" th:value="${flow}">
         <input type="hidden" name="mode" th:value="${mode}">
@@ -44,7 +44,8 @@
                                    th:for="'range' + ${personaAlign.getFirst().getId()}"></label>
                             <div class="col-6">
                                 <input type="range" class="form-range" min="-1" max="1" step="0.1" th:id="'range' + ${personaAlign.getFirst().getId()}"
-                                       th:value="${personaAlign.getSecond()}" th:name="${personaAlign.getFirst().getId()} + '@' + ${alignment.getKey()}">
+                                       th:value="${personaAlign.getSecond()}" th:name="${personaAlign.getFirst().getId()} + '@' + ${alignment.getKey()}"
+                                       th:disabled="${mode == mode.DISPLAYING}">
                             </div>
                         </div>
                     </div>
@@ -56,12 +57,12 @@
                 <a th:href="'/ui/datasim/new/persona?flow=' + ${flow}" th:if="${mode == mode.CREATING}">
                     <button class="col btn btn-outline-danger" type="button">Back</button>
                 </a>
-                <a th:href="'/ui/datasim/show?flow=' + ${flow}" th:if="${mode == mode.EDITING}">
+                <a th:href="'/ui/datasim/show?flow=' + ${flow}" th:unless="${mode == mode.CREATING}">
                     <button class="col btn btn-outline-danger" type="button">Back</button>
                 </a>
             </div>
             <div class="col">
-                <button class="col btn btn-success float-end" type="submit">Continue</button>
+                <button class="col btn btn-success float-end" type="submit" th:unless="${mode == mode.DISPLAYING}">Continue</button>
             </div>
         </div>
     </form>

@@ -31,7 +31,8 @@ public class DatasimSimulationMavController {
 
     enum Mode {
         CREATING,
-        EDITING
+        EDITING,
+        DISPLAYING
     }
 
     private final DatasimSimulationService datasimSimulationService;
@@ -151,6 +152,16 @@ public class DatasimSimulationMavController {
     public ModelAndView showEditAlignments(@RequestParam(name = "flow") UUID simulationId) {
         ModelAndView mav = this.showCreateAlignments(simulationId);
         mav.addObject("mode", Mode.EDITING);
+        return mav;
+    }
+
+    @GetMapping("/show/alignment")
+    public ModelAndView showDisplayAlignments(@RequestParam(name = "flow") UUID simulationId) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        ModelAndView mav = new ModelAndView("bootstrap/datasim/alignment");
+        mav.addObject("flow", simulationId.toString());
+        mav.addObject("alignments", DatasimSimulationService.getComponentAlignsByUrl(simulation.getAlignments()));
+        mav.addObject("mode", Mode.DISPLAYING);
         return mav;
     }
 

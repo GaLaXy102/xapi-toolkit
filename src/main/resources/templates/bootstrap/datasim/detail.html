@@ -42,6 +42,7 @@
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${numAligns.get(simulation)}"></span>&nbsp;Alignments
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/alignment' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+                        <a th:if="${simulation.getFinalized().get()}" th:href="'/ui/datasim/show/alignment' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-search"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-clock"></i><i class="bi-arrow-bar-right"></i>
