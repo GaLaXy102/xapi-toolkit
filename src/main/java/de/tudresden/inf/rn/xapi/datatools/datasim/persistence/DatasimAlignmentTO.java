@@ -12,6 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimAlignmentTO {
     @Getter
+    @Setter
     private Optional<UUID> id;
 
     @Getter

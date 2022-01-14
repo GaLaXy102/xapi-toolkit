@@ -16,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimSimulationParamsTO {
     @Getter
+    @Setter
     public Optional<UUID> id;
 
     @Getter

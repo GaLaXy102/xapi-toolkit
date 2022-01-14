@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimPersonaGroupTO implements DatasimActor {
     @Getter
+    @Setter
     private Optional<UUID> id;
 
     @Getter

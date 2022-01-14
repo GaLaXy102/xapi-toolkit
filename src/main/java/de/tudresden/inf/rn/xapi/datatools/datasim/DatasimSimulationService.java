@@ -196,4 +196,36 @@ public class DatasimSimulationService {
     public void deleteSimulation(DatasimSimulation simulation) {
         this.simulationRepository.delete(simulation);
     }
+
+    @Transactional
+    public DatasimSimulation copySimulation(DatasimSimulation simulation) {
+        DatasimSimulationParamsTO copiedParams = DatasimSimulationParamsTO.of(simulation.getParameters());
+        copiedParams.setId(Optional.empty());
+        Set<DatasimPersonaGroup> copiedPersonaGroups = simulation
+                .getPersonaGroups()
+                .stream()
+                .map(DatasimPersonaGroupTO::of)
+                .peek((group) -> group.setId(Optional.empty()))
+                .map(DatasimPersonaGroupTO::toNewPersonaGroup)
+                .collect(Collectors.toSet());
+        Map<DatasimAlignment, DatasimPersona> copiedAlignments = new HashMap<>(
+                simulation
+                        .getAlignments()
+                        .entrySet()
+                        .stream()
+                        .map((entry) -> Pair.of(DatasimAlignmentTO.of(entry.getKey()), entry.getValue()))
+                        .peek((pair) -> pair.getFirst().setId(Optional.empty()))
+                        .map((pair) -> Pair.of(pair.getFirst().toNewDatasimAlignment(), pair.getSecond()))
+                        .peek((pair) -> this.alignmentRepository.save(pair.getFirst()))
+                        .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond))
+        );
+        DatasimSimulation copy = new DatasimSimulation(
+                "Copy of " + simulation.getRemark(),
+                copiedPersonaGroups,
+                copiedAlignments,
+                copiedParams.toNewSimulationParams(),
+                simulation.getProfile());
+        this.simulationRepository.save(copy);
+        return copy;
+    }
 }

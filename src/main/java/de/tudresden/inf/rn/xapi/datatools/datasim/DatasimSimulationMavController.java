@@ -278,4 +278,12 @@ public class DatasimSimulationMavController {
         this.datasimSimulationService.deleteSimulation(simulation);
         return new RedirectView("./show");
     }
+
+    @PostMapping("/copy")
+    public RedirectView copySimulation(@RequestParam(name = "flow") UUID simulationId, RedirectAttributes attributes) {
+        DatasimSimulation existing = this.datasimSimulationService.getSimulation(simulationId);
+        DatasimSimulation copy = this.datasimSimulationService.copySimulation(existing);
+        attributes.addAttribute("flow", copy.getId().toString());
+        return new RedirectView("./show");
+    }
 }
