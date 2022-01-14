@@ -118,7 +118,7 @@ public class DatasimSimulationMavController {
     public RedirectView addPersonaToSimulation(@RequestParam(name = "flow") UUID simulationId, DatasimPersonaTO persona,
                                                Mode mode, RedirectAttributes attributes) {
         DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
-        DatasimPersona created = this.datasimSimulationService.createPersona(persona);
+        DatasimPersona created = this.datasimSimulationService.createPersona(persona.toNewDatasimPersona());
         this.datasimSimulationService.addPersonaToSimulation(simulation, created);
         attributes.addAttribute("flow", simulationId.toString());
         return new RedirectView(Mode.CREATING.equals(mode) ? "../persona" : "../../edit/persona");
