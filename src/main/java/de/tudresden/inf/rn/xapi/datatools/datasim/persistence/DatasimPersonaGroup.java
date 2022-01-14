@@ -31,7 +31,6 @@ public class DatasimPersonaGroup {
     @ManyToMany
     @Getter
     @Setter
-    @Cascade(CascadeType.ALL)
     // Members are reusable, thus no Cascade
     private Set<DatasimPersona> member;
 
