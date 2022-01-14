@@ -39,6 +39,16 @@
                             <i class="bi-trash"></i></button>
                     </div>
                     <div class="accordion-body collapsed collapse" th:id="'body' + ${loop.index}">
+                        <div class="row mb-2">
+                            <div class="col-6"></div>
+                            <div class="col-6 align-content-center d-flex">
+                                <i class="bi-arrow-left"></i>&nbsp;
+                                less&nbsp;
+                                <span class="flex-fill text-center">Interaction Probability</span>&nbsp;
+                                more&nbsp;
+                                <i class="bi-arrow-right"></i>
+                            </div>
+                        </div>
                         <div class="row mb-3" th:each="personaAlign : ${alignment.getValue()}">
                             <label class="col-6 col-form-label" th:text="${personaAlign.getFirst().getName()}"
                                    th:for="'range' + ${personaAlign.getFirst().getId()}"></label>
