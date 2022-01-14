@@ -232,6 +232,7 @@ public class DatasimSimulationMavController {
     public ModelAndView showDetail(@RequestParam(name = "flow") Optional<UUID> simulationId) {
         ModelAndView mav = new ModelAndView("bootstrap/datasim/detail");
         Map<DatasimSimulationTO, Long> numPersonae = new HashMap<>();
+        Map<DatasimSimulationTO, Long> numAligns = new HashMap<>();
         List<DatasimSimulationTO> simulations = simulationId
                 .map(this.datasimSimulationService::getSimulation)
                 .map(DatasimSimulationTO::of)
@@ -247,13 +248,20 @@ public class DatasimSimulationMavController {
                                 .toList()
                 );
         simulations.forEach(
-                (simulation) -> numPersonae.put(
-                        simulation,
-                        simulation.getPersonaGroups().stream().map(DatasimPersonaGroupTO::getMember).flatMap(Collection::stream).distinct().count()
-                )
+                (simulation) -> {
+                    numPersonae.put(
+                            simulation,
+                            simulation.getPersonaGroups().stream().map(DatasimPersonaGroupTO::getMember).flatMap(Collection::stream).distinct().count()
+                    );
+                    numAligns.put(
+                            simulation,
+                            simulation.getAlignments().values().stream().map(Set::size).map(Long::valueOf).reduce(Long::sum).orElse(0L)
+                    );
+                }
         );
         mav.addObject("simulations", simulations);
         mav.addObject("numPersonae", numPersonae);
+        mav.addObject("numAligns", numAligns);
         return mav;
     }
 

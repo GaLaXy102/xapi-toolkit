@@ -40,7 +40,7 @@
                     <li class="list-group-item">
                         <i class="bi-align-center"></i>
                         &nbsp;&nbsp;&nbsp;
-                        <span th:text="${simulation.getAlignments().entrySet().size()}"></span>&nbsp;Alignments
+                        <span th:text="${numAligns.get(simulation)}"></span>&nbsp;Alignments
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/alignment' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
                     <li class="list-group-item">
