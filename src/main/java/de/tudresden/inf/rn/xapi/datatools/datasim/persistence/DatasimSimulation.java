@@ -39,7 +39,6 @@ public class DatasimSimulation {
     @Getter
     @Setter
     @ManyToMany
-    @Cascade(CascadeType.ALL)
     // each alignment has one Persona associated
     private Map<DatasimAlignment, DatasimPersona> alignments;
 

@@ -191,4 +191,9 @@ public class DatasimSimulationService {
         simulation.setFinalized(true);
         this.simulationRepository.save(simulation);
     }
+
+    @Transactional
+    public void deleteSimulation(DatasimSimulation simulation) {
+        this.simulationRepository.delete(simulation);
+    }
 }

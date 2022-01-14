@@ -258,9 +258,16 @@ public class DatasimSimulationMavController {
     }
 
     @PostMapping("/finalize")
-    public RedirectView finalizeSimulation(@RequestParam(name = "flow") UUID simulationId, HttpServletRequest request, RedirectAttributes attributes) {
+    public RedirectView finalizeSimulation(@RequestParam(name = "flow") UUID simulationId, HttpServletRequest request) {
         DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
         this.datasimSimulationService.finalizeSimulation(simulation);
         return new RedirectView(request.getHeader("Referer"));
+    }
+
+    @PostMapping("/delete")
+    public RedirectView deleteSimulation(@RequestParam(name = "flow") UUID simulationId) {
+        DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        this.datasimSimulationService.deleteSimulation(simulation);
+        return new RedirectView("./show");
     }
 }
