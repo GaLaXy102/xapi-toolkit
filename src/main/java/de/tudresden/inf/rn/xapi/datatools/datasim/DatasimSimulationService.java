@@ -1,10 +1,13 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim;
 
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.*;
+import de.tudresden.inf.rn.xapi.datatools.datasim.validators.AlignmentWeight;
+import de.tudresden.inf.rn.xapi.datatools.datasim.validators.NonFinalized;
 import org.springframework.data.util.Pair;
 import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.net.URL;
 import java.util.*;
@@ -15,6 +18,7 @@ import java.util.stream.Stream;
  * This service handles all Entity-related concerns to parameterize a Datasim Simulation
  */
 @Service
+@Validated  // Enable Validation on all methods
 public class DatasimSimulationService {
     private final DatasimSimulationRepository simulationRepository;
     private final DatasimProfileRepository profileRepository;
@@ -68,6 +72,7 @@ public class DatasimSimulationService {
      * @throws IllegalArgumentException when the ID is not known to the system.
      * @throws IllegalStateException when the Simulation description exists, but it is marked as finalized.
      */
+    @NonFinalized
     public DatasimSimulation getUnfinalizedSimulation(UUID simulationId) {
         DatasimSimulation found = this.getSimulation(simulationId);
         if (found.isFinalized()) {
@@ -137,6 +142,7 @@ public class DatasimSimulationService {
      * The created entity has nothing attached to it and its parameters are chosen to have somewhat reasonable values.
      */
     @Transactional
+    @NonFinalized
     public DatasimSimulation createEmptySimulation() {
         DatasimPersonaGroup personaGroup = DatasimPersonaGroupTO.empty("Default Group").toNewPersonaGroup();
         DatasimSimulation created = new DatasimSimulation("", new HashSet<>(Set.of(personaGroup)), new HashMap<>(), DatasimSimulationParamsTO.empty().toNewSimulationParams(), null);
@@ -148,7 +154,7 @@ public class DatasimSimulationService {
      * Set and persist the remark of the Simulation description.
      */
     @Transactional
-    public void setSimulationRemark(DatasimSimulation simulation, String remark) {
+    public void setSimulationRemark(@NonFinalized DatasimSimulation simulation, String remark) {
         simulation.setRemark(remark);
         this.simulationRepository.save(simulation);
     }
@@ -157,7 +163,7 @@ public class DatasimSimulationService {
      * Set and persist the xAPI profile of the Simulation description.
      */
     @Transactional
-    public void updateSimulationProfile(DatasimSimulation simulation, DatasimProfile profile) {
+    public void updateSimulationProfile(@NonFinalized DatasimSimulation simulation, DatasimProfile profile) {
         simulation.setProfile(profile);
         this.simulationRepository.save(simulation);
     }
@@ -175,7 +181,7 @@ public class DatasimSimulationService {
      * You need to persist the Persona object first using {@link #createPersona(DatasimPersona)}.
      */
     @Transactional
-    public void addPersonaToSimulation(DatasimSimulation simulation, DatasimPersona persona) {
+    public void addPersonaToSimulation(@NonFinalized DatasimSimulation simulation, DatasimPersona persona) {
         // For now, it is enough to have one Group of Personae
         DatasimPersonaGroup group = simulation.getPersonaGroups().stream().findFirst().orElseThrow(RuntimeException::new);
         group.getMember().add(persona);
@@ -195,7 +201,7 @@ public class DatasimSimulationService {
      * You need to persist the Persona object first using {@link #createPersona(DatasimPersona)} if this has not happened before.
      */
     @Transactional
-    public void setPersonaeOfSimulation(DatasimSimulation simulation, Set<DatasimPersona> personae) {
+    public void setPersonaeOfSimulation(@NonFinalized DatasimSimulation simulation, Set<DatasimPersona> personae) {
         DatasimPersonaGroup group = simulation.getPersonaGroups().stream().findFirst().orElseThrow(RuntimeException::new);
         group.setMember(personae);
         // Delete for deselected personae
@@ -226,7 +232,7 @@ public class DatasimSimulationService {
      * Add a component to this Simulation description, creating Alignments for all assigned Personae
      */
     @Transactional
-    public void addComponentToSimulationWithNeutralWeight(DatasimSimulation simulation, URL componentUrl) {
+    public void addComponentToSimulationWithNeutralWeight(@NonFinalized DatasimSimulation simulation, URL componentUrl) {
         simulation.getPersonaGroups().stream()
                 .map(DatasimPersonaGroup::getMember)
                 .flatMap(Collection::stream)
@@ -243,7 +249,7 @@ public class DatasimSimulationService {
      * Remove a component from this Simulation description, deleting Alignments for this component
      */
     @Transactional
-    public void removeComponentFromSimulation(DatasimSimulation simulation, URL componentUrl) {
+    public void removeComponentFromSimulation(@NonFinalized DatasimSimulation simulation, URL componentUrl) {
         Set<DatasimAlignment> toDelete = simulation.getAlignments().keySet().stream().filter((align) -> align.getComponent().equals(componentUrl)).collect(Collectors.toSet());
         simulation.getAlignments().entrySet().removeIf((entry) -> toDelete.contains(entry.getKey()));
         // Remove orphans
@@ -255,7 +261,7 @@ public class DatasimSimulationService {
      * Set and persist the weight of an alignment
      */
     @Transactional
-    public void setAlignmentWeight(DatasimAlignment alignment, Float weight) {
+    public void setAlignmentWeight(DatasimAlignment alignment, @AlignmentWeight Float weight) {
         alignment.setWeight(weight);
         this.alignmentRepository.save(alignment);
     }
@@ -265,7 +271,7 @@ public class DatasimSimulationService {
      * You probably want to create the parameters object using {@link DatasimSimulationParamsTO#toExistingSimulationParams()}.
      */
     @Transactional
-    public void setSimulationParams(DatasimSimulation simulation, DatasimSimulationParams params) {
+    public void setSimulationParams(@NonFinalized DatasimSimulation simulation, DatasimSimulationParams params) {
         if (!simulation.getParameters().getId().equals(params.getId())) throw new IllegalArgumentException("Params do not match Simulation.");
         simulation.setParameters(params);
         this.simulationRepository.save(simulation);
@@ -275,7 +281,7 @@ public class DatasimSimulationService {
      * Mark a simulation description as finalized.
      */
     @Transactional
-    public void finalizeSimulation(DatasimSimulation simulation) {
+    public void finalizeSimulation(@NonFinalized DatasimSimulation simulation) {
         simulation.setFinalized(true);
         this.simulationRepository.save(simulation);
     }
@@ -294,6 +300,7 @@ public class DatasimSimulationService {
      * The only coupling points are xAPI profiles (mutable only in File System for now) and Personae (immutable by missing implementation /haha).
      */
     @Transactional
+    @NonFinalized
     public DatasimSimulation copySimulation(DatasimSimulation simulation) {
         DatasimSimulationParamsTO copiedParams = DatasimSimulationParamsTO.of(simulation.getParameters());
         copiedParams.setId(Optional.empty());

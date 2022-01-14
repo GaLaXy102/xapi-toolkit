@@ -5,13 +5,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
 @Entity
+@Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class DatasimPersona {
@@ -22,10 +25,12 @@ public class DatasimPersona {
 
     @Getter
     @Setter(AccessLevel.PACKAGE)
+    @NotBlank
     private String name;
 
     @Getter
     @Setter(AccessLevel.PACKAGE)
+    @NotBlank
     private String mbox;
 
     DatasimPersona(String name, String mbox) {

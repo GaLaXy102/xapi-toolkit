@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
+@Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DatasimSimulation {
     @GeneratedValue

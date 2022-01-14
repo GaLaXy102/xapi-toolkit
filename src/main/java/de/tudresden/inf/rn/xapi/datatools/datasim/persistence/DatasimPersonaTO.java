@@ -4,10 +4,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 import java.util.UUID;
 
+@Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimPersonaTO implements DatasimActor {
     @Getter
@@ -15,10 +18,12 @@ public class DatasimPersonaTO implements DatasimActor {
 
     @Getter
     @Setter
+    @NotBlank
     private String name;
 
     @Getter
     @Setter
+    @NotBlank
     private String mbox;
 
     public static DatasimPersonaTO of(DatasimPersona persona) {

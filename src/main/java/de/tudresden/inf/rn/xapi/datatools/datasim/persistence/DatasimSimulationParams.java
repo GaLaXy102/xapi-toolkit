@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
+@Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class DatasimSimulationParams {
@@ -24,6 +26,7 @@ public class DatasimSimulationParams {
 
     @Getter
     @Setter(AccessLevel.PACKAGE)
+    @Positive
     private Long max;
 
     @Getter

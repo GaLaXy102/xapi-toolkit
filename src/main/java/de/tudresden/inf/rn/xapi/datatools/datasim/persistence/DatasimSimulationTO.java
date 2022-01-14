@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.util.Pair;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimSimulationTO {
     @Getter

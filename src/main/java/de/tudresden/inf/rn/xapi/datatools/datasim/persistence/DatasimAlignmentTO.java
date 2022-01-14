@@ -1,14 +1,17 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
+import de.tudresden.inf.rn.xapi.datatools.datasim.validators.AlignmentWeight;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
 import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
 
+@Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimAlignmentTO {
     @Getter
@@ -21,6 +24,7 @@ public class DatasimAlignmentTO {
 
     @Getter
     @Setter
+    @AlignmentWeight
     private Float weight;
 
     public static DatasimAlignmentTO of(DatasimAlignment alignment) {

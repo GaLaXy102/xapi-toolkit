@@ -3,22 +3,29 @@ package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 import java.util.UUID;
 
+@Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimProfileTO {
     @Getter
+    @NonNull
     private Optional<UUID> id;
 
     @Getter
     @Setter
+    @NotBlank
     private String name;
 
     @Getter
     @Setter
+    @NotBlank
     private String filename;
 
     public static DatasimProfileTO of(DatasimProfile profile) {

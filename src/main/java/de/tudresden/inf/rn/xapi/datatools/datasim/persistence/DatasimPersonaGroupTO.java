@@ -4,12 +4,16 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimPersonaGroupTO implements DatasimActor {
     @Getter
@@ -18,10 +22,12 @@ public class DatasimPersonaGroupTO implements DatasimActor {
 
     @Getter
     @Setter
+    @NotBlank
     private String name;
 
     @Getter
     @Setter
+    @NotNull
     private Set<DatasimPersonaTO> member;
 
     public static DatasimPersonaGroupTO of(DatasimPersonaGroup personaGroup) {

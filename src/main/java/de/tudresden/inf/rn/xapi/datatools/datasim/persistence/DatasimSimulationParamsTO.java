@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
+@Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimSimulationParamsTO {
     @Getter
@@ -21,6 +23,7 @@ public class DatasimSimulationParamsTO {
 
     @Getter
     @Setter
+    @Positive
     private Long max;
 
     @Getter
