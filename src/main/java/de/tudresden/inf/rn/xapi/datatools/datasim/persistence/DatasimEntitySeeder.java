@@ -31,34 +31,34 @@ public class DatasimEntitySeeder {
     }
 
     private void seed() {
-        DatasimProfile sampleProfile = new DatasimProfile("ya-cmi5", "ya-cmi5.json");
-        this.profileRepository.save(sampleProfile);
+        List<DatasimProfile> sampleProfiles = List.of(new DatasimProfile("ya-cmi5", "ya-cmi5.json"));
+        this.profileRepository.saveAll(sampleProfiles);
         Set<DatasimPersona> samplePersonae = this.createSamplePersonae();
         this.personaRepository.saveAll(samplePersonae);
         DatasimPersonaGroup sampleGroup = new DatasimPersonaGroup("Default Group", samplePersonae);
         Random random = new Random();
         DatasimSimulationParams sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
-        DatasimSimulation simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
+        DatasimSimulation simulation = this.createSampleSimulation(sampleGroup, sampleProfiles, sampleParams);
         this.simulationRepository.save(simulation);
         this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
         sampleGroup = new DatasimPersonaGroup("Default Group", samplePersonae);
         sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
-        simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
+        simulation = this.createSampleSimulation(sampleGroup, sampleProfiles, sampleParams);
         this.simulationRepository.save(simulation);
         this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
         sampleGroup = new DatasimPersonaGroup("Default Group", samplePersonae);
         sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
-        simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
+        simulation = this.createSampleSimulation(sampleGroup, sampleProfiles, sampleParams);
         this.simulationRepository.save(simulation);
         this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
         sampleGroup = new DatasimPersonaGroup("Default Group", samplePersonae);
         sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
-        simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
+        simulation = this.createSampleSimulation(sampleGroup, sampleProfiles, sampleParams);
         this.simulationRepository.save(simulation);
         this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
         sampleGroup = new DatasimPersonaGroup("Default Group", samplePersonae);
         sampleParams = new DatasimSimulationParams(1000L, random.nextLong(5000L), LocalDateTime.now().atZone(ZoneId.systemDefault()), LocalDateTime.now().plusWeeks(1).atZone(ZoneId.systemDefault()));
-        simulation = this.createSampleSimulation(sampleGroup, sampleProfile, sampleParams);
+        simulation = this.createSampleSimulation(sampleGroup, sampleProfiles, sampleParams);
         this.simulationRepository.save(simulation);
         this.logger.info("Sample simulation: http://localhost:8080/ui/datasim/show?flow=" + simulation.getId());
     }
@@ -72,7 +72,7 @@ public class DatasimEntitySeeder {
         );
     }
 
-    private DatasimSimulation createSampleSimulation(DatasimPersonaGroup group, DatasimProfile profile, DatasimSimulationParams params) {
+    private DatasimSimulation createSampleSimulation(DatasimPersonaGroup group, List<DatasimProfile> profile, DatasimSimulationParams params) {
         URL component;
         try {
             component = new URL("http://example.org/123");

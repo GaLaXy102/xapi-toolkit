@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class DatasimSimulationTO {
 
     @Getter
     @Setter
-    private DatasimProfileTO profile;
+    private List<DatasimProfileTO> profiles;
 
     @Getter
     @Setter
@@ -90,7 +91,7 @@ public class DatasimSimulationTO {
                 personae,
                 aligns.entrySet().stream().map((entry) -> ActorWithAlignmentsTO.with(entry.getKey(), entry.getValue())).collect(Collectors.toSet()),
                 DatasimSimulationParamsTO.of(simulation.getParameters()),
-                DatasimProfileTO.of(simulation.getProfile()),
+                simulation.getProfiles().stream().map(DatasimProfileTO::of).toList(),
                 Optional.of(simulation.isFinalized())
         );
     }
@@ -102,7 +103,7 @@ public class DatasimSimulationTO {
                 this.personaGroups.stream().map(DatasimPersonaGroupTO::forExport).collect(Collectors.toSet()),
                 this.alignments.stream().map(ActorWithAlignmentsTO::forExport).collect(Collectors.toSet()),
                 this.parameters.forExport(),
-                this.profile,
+                this.profiles,
                 Optional.empty()
         );
     }

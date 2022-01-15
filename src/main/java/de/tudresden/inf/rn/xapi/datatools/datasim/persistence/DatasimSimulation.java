@@ -12,8 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -52,21 +52,21 @@ public class DatasimSimulation {
 
     @Getter
     @Setter
-    @ManyToOne
+    @ManyToMany
     // Profiles are reusable, thus no cascade
-    private DatasimProfile profile;
+    private List<DatasimProfile> profiles;
 
     @Getter
     @Setter
     private boolean finalized;
 
     public DatasimSimulation(String remark, Set<DatasimPersonaGroup> personaGroups, Map<DatasimAlignment, DatasimPersona> alignments,
-                      DatasimSimulationParams parameters, DatasimProfile profile) {
+                             DatasimSimulationParams parameters, List<DatasimProfile> profiles) {
         this.remark = remark;
         this.personaGroups = personaGroups;
         this.alignments = alignments;
         this.parameters = parameters;
-        this.profile = profile;
+        this.profiles = profiles;
         this.finalized = false;
     }
 }

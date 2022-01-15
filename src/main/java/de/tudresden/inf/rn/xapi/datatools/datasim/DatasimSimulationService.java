@@ -164,7 +164,7 @@ public class DatasimSimulationService {
      */
     @Transactional
     public void updateSimulationProfile(@NonFinalized DatasimSimulation simulation, DatasimProfile profile) {
-        simulation.setProfile(profile);
+        simulation.setProfiles(List.of(profile));
         this.simulationRepository.save(simulation);
     }
 
@@ -328,7 +328,7 @@ public class DatasimSimulationService {
                 copiedPersonaGroups,
                 copiedAlignments,
                 copiedParams.toNewSimulationParams(),
-                simulation.getProfile());
+                simulation.getProfiles());
         this.simulationRepository.save(copy);
         return copy;
     }
