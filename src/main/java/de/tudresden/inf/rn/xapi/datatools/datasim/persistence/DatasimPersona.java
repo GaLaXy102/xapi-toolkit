@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
 
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-public class DatasimPersona {
+public class DatasimPersona implements Comparable<DatasimPersona> {
     @GeneratedValue
     @Id
     @Getter
@@ -36,5 +37,19 @@ public class DatasimPersona {
     DatasimPersona(String name, String mbox) {
         this.name = name;
         this.mbox = mbox;
+    }
+
+    /**
+     * Compares this object with the specified object for order.  Returns a
+     * negative integer, zero, or a positive integer as this object is less
+     * than, equal to, or greater than the specified object.
+     */
+    @Override
+    public int compareTo(@NonNull DatasimPersona o) {
+        int result = this.name.compareTo(o.getName());
+        if (result == 0) {
+            result = this.mbox.compareTo(o.getMbox());
+        }
+        return result;
     }
 }

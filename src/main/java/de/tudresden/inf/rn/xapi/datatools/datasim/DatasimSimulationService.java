@@ -92,13 +92,13 @@ public class DatasimSimulationService {
     /**
      * Get all Personae known to the system with a flag stating whether they are participating in the given Simulation description.
      */
-    public Map<DatasimPersonaTO, Boolean> getPersonasWithSelected(DatasimSimulation simulation) {
-        Map<DatasimPersonaTO, Boolean> personaSelects = new HashMap<>();
+    public Map<DatasimPersona, Boolean> getPersonasWithSelected(DatasimSimulation simulation) {
+        Map<DatasimPersona, Boolean> personaSelects = new TreeMap<>();
         this.personaRepository.findAll()
                 .forEach(
                         (persona) ->
                                 personaSelects.put(
-                                        DatasimPersonaTO.of(persona),
+                                        persona,
                                         simulation.getPersonaGroups().stream().anyMatch((group) -> group.getMember().contains(persona)))
                 );
         return personaSelects;
@@ -108,12 +108,12 @@ public class DatasimSimulationService {
      * Extract and Group alignment data by the component URL.
      * You will receive a Set of Tuples mapping Personae to their selected weights, which is again mapped to the referenced component.
      */
-    public static Map<URL, Set<Pair<DatasimPersona, Float>>> getComponentAlignsByUrl(Map<DatasimAlignment, DatasimPersona> alignments) {
-        Map<URL, Set<Pair<DatasimPersona, Float>>> out = new HashMap<>();
+    public static Map<URL, Map<DatasimPersona, Float>> getComponentAlignsByUrl(Map<DatasimAlignment, DatasimPersona> alignments) {
+        Map<URL, Map<DatasimPersona, Float>> out = new TreeMap<>(Comparator.comparing(URL::toString));
         alignments.forEach(
                 (align, value) -> {
-                    Set<Pair<DatasimPersona, Float>> pairs = out.getOrDefault(align.getComponent(), new HashSet<>());
-                    pairs.add(Pair.of(value, align.getWeight()));
+                    Map<DatasimPersona, Float> pairs = out.getOrDefault(align.getComponent(), new TreeMap<>());
+                    pairs.put(value, align.getWeight());
                     out.put(
                             align.getComponent(),
                             pairs
@@ -207,12 +207,13 @@ public class DatasimSimulationService {
         // Delete for deselected personae
         simulation.getAlignments().entrySet().removeIf((entry) -> !personae.contains(entry.getValue()));
         // Create neutral alignments for all components for all selected personae if there is no alignment
-        Map<URL, Set<Pair<DatasimPersona, Float>>> componentAligns = DatasimSimulationService.getComponentAlignsByUrl(simulation.getAlignments());
+        Map<URL, Map<DatasimPersona, Float>> componentAligns = DatasimSimulationService.getComponentAlignsByUrl(simulation.getAlignments());
         Map<URL, Set<DatasimPersona>> componentPersonae = componentAligns.entrySet().stream()
                 .map((entry) ->
                         Pair.of(
                                 entry.getKey(),
-                                entry.getValue().stream().map(Pair::getFirst).collect(Collectors.toSet()))
+                                entry.getValue().keySet()
+                        )
                 ).collect(Pair.toMap());
         componentPersonae.forEach((key, value) -> {
                     // Create for newly selected personae

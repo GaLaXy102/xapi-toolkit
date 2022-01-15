@@ -103,9 +103,7 @@ public class DatasimSimulationMavController {
         DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
         ModelAndView mav = new ModelAndView("bootstrap/datasim/persona");
         mav.addObject("flow", simulation.getId().toString());
-        List<Map.Entry<DatasimPersonaTO, Boolean>> payload = new ArrayList<>(this.datasimSimulationService.getPersonasWithSelected(simulation).entrySet());
-        payload.sort(Comparator.comparing(entry -> entry.getKey().getId().toString()));
-        mav.addObject("personas", payload);
+        mav.addObject("personas", this.datasimSimulationService.getPersonasWithSelected(simulation));
         mav.addObject("mode", Mode.CREATING);
         return mav;
     }
