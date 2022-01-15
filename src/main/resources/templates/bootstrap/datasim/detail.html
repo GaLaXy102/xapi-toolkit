@@ -20,7 +20,7 @@
                     <li class="list-group-item">
                         <i class="bi-magic"></i>
                         &nbsp;&nbsp;&nbsp;
-                        <span th:text="${simulation.getProfile().getName()}"></span>&nbsp;Profile
+                        <span th:text="${simulation.getProfiles().get(0).getName()}"></span>&nbsp;Profile
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/profile' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
                     <li class="list-group-item">

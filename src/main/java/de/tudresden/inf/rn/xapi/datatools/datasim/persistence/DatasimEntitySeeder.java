@@ -31,7 +31,7 @@ public class DatasimEntitySeeder {
     }
 
     private void seed() {
-        List<DatasimProfile> sampleProfiles = List.of(new DatasimProfile("ya-cmi5", "ya-cmi5.json"));
+        List<DatasimProfile> sampleProfiles = new LinkedList<>(List.of(new DatasimProfile("ya-cmi5", "ya-cmi5.json")));
         this.profileRepository.saveAll(sampleProfiles);
         Set<DatasimPersona> samplePersonae = this.createSamplePersonae();
         this.personaRepository.saveAll(samplePersonae);

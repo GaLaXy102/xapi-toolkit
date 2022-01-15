@@ -164,7 +164,7 @@ public class DatasimSimulationService {
      */
     @Transactional
     public void updateSimulationProfile(@NonFinalized DatasimSimulation simulation, DatasimProfile profile) {
-        simulation.setProfiles(List.of(profile));
+        simulation.setProfiles(new LinkedList<>(List.of(profile)));
         this.simulationRepository.save(simulation);
     }
 
