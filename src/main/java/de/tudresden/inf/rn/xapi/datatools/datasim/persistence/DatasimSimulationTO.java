@@ -1,5 +1,6 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -20,10 +21,12 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimSimulationTO {
     @Getter
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
     private Optional<UUID> id;
 
     @Getter
     @Setter
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
     private Optional<String> remark;
 
     @Getter
@@ -33,7 +36,7 @@ public class DatasimSimulationTO {
 
     @Getter
     @Setter
-    private Map<DatasimActor, Set<DatasimAlignmentTO>> alignments;
+    private Set<ActorWithAlignmentsTO> alignments;
 
     @Getter
     @Setter
@@ -45,6 +48,7 @@ public class DatasimSimulationTO {
 
     @Getter
     @Setter
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
     private Optional<Boolean> finalized;
 
     private static Map<DatasimActor, Set<DatasimAlignmentTO>> mapAlignsFromEntity(Map<DatasimAlignment, DatasimPersona> entityAligns) {
@@ -84,22 +88,22 @@ public class DatasimSimulationTO {
                 Optional.of(simulation.getId()),
                 Optional.of(simulation.getRemark()),
                 personae,
-                aligns,
+                aligns.entrySet().stream().map((entry) -> ActorWithAlignmentsTO.with(entry.getKey(), entry.getValue())).collect(Collectors.toSet()),
                 DatasimSimulationParamsTO.of(simulation.getParameters()),
                 DatasimProfileTO.of(simulation.getProfile()),
                 Optional.of(simulation.isFinalized())
         );
     }
 
-    public DatasimSimulation toNewDatasimSimulation() {
-        Set<DatasimPersonaGroup> personae = this.personaGroups.stream().map(DatasimPersonaGroupTO::toExistingPersonaGroup).collect(Collectors.toSet());
-        Map<DatasimAlignment, DatasimPersona> aligns = DatasimSimulationTO.mapAlignsFromTO(this.alignments);
-        return new DatasimSimulation(
-                this.remark.orElse(""),
-                personae,
-                aligns,
-                this.parameters.toExistingSimulationParams(),
-                this.profile.toExistingDatasimProfile()
+    public DatasimSimulationTO forExport() {
+        return new DatasimSimulationTO(
+                Optional.empty(),
+                Optional.empty(),
+                this.personaGroups.stream().map(DatasimPersonaGroupTO::forExport).collect(Collectors.toSet()),
+                this.alignments.stream().map(ActorWithAlignmentsTO::forExport).collect(Collectors.toSet()),
+                this.parameters.forExport(),
+                this.profile,
+                Optional.empty()
         );
     }
 }

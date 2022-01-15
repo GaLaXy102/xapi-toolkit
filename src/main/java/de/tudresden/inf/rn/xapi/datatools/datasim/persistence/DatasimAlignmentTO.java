@@ -1,5 +1,6 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import de.tudresden.inf.rn.xapi.datatools.datasim.validators.AlignmentWeight;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class DatasimAlignmentTO {
     @Getter
     @Setter
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
     private Optional<UUID> id;
 
     @Getter
@@ -48,5 +50,13 @@ public class DatasimAlignmentTO {
             throw new IllegalArgumentException("Alignment weight must be in [-1, 1]");
         }
         return new DatasimAlignment(this.id.orElseThrow(() -> new IllegalStateException("UUID must not be empty when updating.")), this.component, this.weight);
+    }
+
+    public DatasimAlignmentTO forExport() {
+        return new DatasimAlignmentTO(
+                Optional.empty(),
+                this.component,
+                this.weight
+        );
     }
 }

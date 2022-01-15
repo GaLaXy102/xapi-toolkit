@@ -1,5 +1,6 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim;
 
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.ActorWithAlignmentsTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersona;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaGroupTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaTO;
@@ -266,7 +267,7 @@ public class DatasimSimulationMavController {
                     );
                     numAligns.put(
                             simulation,
-                            simulation.getAlignments().values().stream().map(Set::size).map(Long::valueOf).reduce(Long::sum).orElse(0L)
+                            simulation.getAlignments().stream().map(ActorWithAlignmentsTO::getAlignments).map(Set::size).map(Long::valueOf).reduce(Long::sum).orElse(0L)
                     );
                 }
         );

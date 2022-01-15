@@ -1,5 +1,8 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 public class DatasimPersonaGroupTO implements DatasimActor {
     @Getter
     @Setter
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
     private Optional<UUID> id;
 
     @Getter
@@ -51,13 +55,23 @@ public class DatasimPersonaGroupTO implements DatasimActor {
     }
 
     @Override
+    @JsonIgnore
     public String getIri() {
         // There is no documentation on this yet.
-        return "group::" + this.name;
+        return "group::" + this.name.toLowerCase().replace(" ", "_");
     }
 
     @Override
+    @JsonProperty("objectType")
     public DatasimActorType getType() {
         return DatasimActorType.GROUP;
+    }
+
+    public DatasimPersonaGroupTO forExport() {
+        return new DatasimPersonaGroupTO(
+                Optional.empty(),
+                this.name,
+                this.member.stream().map(DatasimPersonaTO::forExport).collect(Collectors.toSet())
+        );
     }
 }

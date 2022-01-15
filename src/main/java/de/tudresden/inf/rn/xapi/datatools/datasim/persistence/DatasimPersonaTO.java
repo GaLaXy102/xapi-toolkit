@@ -1,5 +1,7 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimPersonaTO implements DatasimActor {
     @Getter
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
     private Optional<UUID> id;
 
     @Getter
@@ -32,16 +35,25 @@ public class DatasimPersonaTO implements DatasimActor {
 
     public DatasimPersona toNewDatasimPersona() {
         this.id.ifPresent((id) -> {throw new IllegalStateException("UUID must be empty when creating new.");});
-        return new DatasimPersona(this.name, this.mbox);
+        return new DatasimPersona(this.name, "mailto:" + this.mbox);
     }
 
     DatasimPersona toExistingDatasimPersona() {
         return new DatasimPersona(this.id.orElseThrow(() -> new IllegalStateException("UUID must not be empty when updating.")), this.name, this.mbox);
     }
 
+    public DatasimPersonaTO forExport() {
+        return new DatasimPersonaTO(
+                Optional.empty(),
+                this.name,
+                this.mbox
+        );
+    }
+
     @Override
+    @JsonIgnore
     public String getIri() {
-        return this.mbox.replace(":", "::");
+        return "mbox::" + this.mbox;
     }
 
     @Override

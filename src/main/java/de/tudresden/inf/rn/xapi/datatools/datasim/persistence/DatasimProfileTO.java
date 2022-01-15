@@ -1,13 +1,20 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,6 +23,7 @@ import java.util.UUID;
 public class DatasimProfileTO {
     @Getter
     @NonNull
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
     private Optional<UUID> id;
 
     @Getter
@@ -39,5 +47,16 @@ public class DatasimProfileTO {
 
     public DatasimProfile toExistingDatasimProfile() {
         return new DatasimProfile(this.id.orElseThrow(() -> new IllegalStateException("UUID must not be empty when updating.")), this.name, this.filename);
+    }
+
+    @JsonValue
+    public JsonNode getProfileContent() {
+        JsonMapper objectMapper = new JsonMapper();
+        try {
+            return objectMapper.readTree(new ClassPathResource("xapi/profiles/" + this.filename).getFile());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
     }
 }

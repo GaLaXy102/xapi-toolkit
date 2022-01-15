@@ -1,5 +1,7 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +21,7 @@ import java.util.UUID;
 public class DatasimSimulationParamsTO {
     @Getter
     @Setter
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
     public Optional<UUID> id;
 
     @Getter
@@ -34,11 +37,13 @@ public class DatasimSimulationParamsTO {
     @Getter
     @Setter
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime start;
 
     @Getter
     @Setter
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime end;
 
     @Getter
@@ -78,6 +83,17 @@ public class DatasimSimulationParamsTO {
                 this.seed,
                 this.start.atZone(this.timezone),
                 this.end.atZone(this.timezone)
+        );
+    }
+
+    public DatasimSimulationParamsTO forExport() {
+        return new DatasimSimulationParamsTO(
+                Optional.empty(),
+                this.max,
+                this.seed,
+                this.start,
+                this.end,
+                this.timezone
         );
     }
 }
