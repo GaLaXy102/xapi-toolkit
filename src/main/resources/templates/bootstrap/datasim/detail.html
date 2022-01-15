@@ -10,7 +10,11 @@
         <div class="col" th:each="simulation: ${simulations}">
             <div class="card">
                 <div class="card-header">
-                    <h2><span th:text="${simulation.getRemark().orElse('Untitled Simulation')}"></span><a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a></h2>
+                    <h2>
+                        <span th:text="${simulation.getRemark().orElse('Untitled Simulation')}"></span>
+                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+                        <a th:href="'/api/v1/datasim/simulation_description' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark me-3" target="_blank"><i class="bi-download"></i></a>
+                    </h2>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
