@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulationTO;
+import de.tudresden.inf.rn.xapi.datatools.datasim.validators.Finalized;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -27,11 +28,14 @@ public class DatasimSimulationRestController {
     private final DatasimSimulationService datasimSimulationService;
     private final ObjectMapper objectMapper;
     private final DatasimConnector connector;
+    private final DatasimResultService resultService;
 
-    public DatasimSimulationRestController(DatasimSimulationService datasimSimulationService, ObjectMapper objectMapper, DatasimConnector connector) {
+    public DatasimSimulationRestController(DatasimSimulationService datasimSimulationService, ObjectMapper objectMapper,
+                                           DatasimConnector connector, DatasimResultService resultService) {
         this.datasimSimulationService = datasimSimulationService;
         this.objectMapper = objectMapper;
         this.connector = connector;
+        this.resultService = resultService;
     }
 
     @GetMapping("/simulation_description")
@@ -96,14 +100,23 @@ public class DatasimSimulationRestController {
     }
 
     @GetMapping("/perform")
-    public ResponseEntity<List<JsonNode>> getSimulationResult(@RequestParam(name = "flow") UUID simulationId) {
+    public ResponseEntity<List<JsonNode>> performSimulationWithoutPersist(@RequestParam(name = "flow") UUID simulationId) {
         DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
-        if (!simulation.isFinalized()) {
-            this.datasimSimulationService.finalizeSimulation(simulation);
-        }
         DatasimSimulationTO sendable = DatasimSimulationTO.of(simulation).forExport();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return ResponseEntity.ok().headers(headers).body(this.connector.sendSimulation(sendable));
+    }
+
+    @GetMapping("/retrieve")
+    public ResponseEntity<List<JsonNode>> getSimulationResult(@RequestParam(name = "flow") UUID simulationId) {
+        @Finalized DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        ContentDisposition cd = ContentDisposition.attachment()
+                .filename(simulation.getRemark() + ".json")
+                .build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDisposition(cd);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return ResponseEntity.ok().headers(headers).body(this.resultService.getSimulationResult(simulation));
     }
 }

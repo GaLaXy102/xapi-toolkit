@@ -19,6 +19,11 @@
       "name": "xapi.datasim.backend-password",
       "type": "java.lang.String",
       "description": "Password for DATASIM backend."
+    },
+    {
+      "name": "xapi.datasim.sim-storage",
+      "type": "java.lang.String",
+      "description": "Storage directory for Simulation results."
     }
   ]
 }

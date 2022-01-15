@@ -1,5 +1,6 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.ActorWithAlignmentsTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersona;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaGroupTO;
@@ -8,6 +9,7 @@ import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimProfileTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulationParamsTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulationTO;
+import de.tudresden.inf.rn.xapi.datatools.datasim.validators.Finalized;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
@@ -37,9 +39,14 @@ public class DatasimSimulationMavController {
     }
 
     private final DatasimSimulationService datasimSimulationService;
+    private final DatasimResultService datasimResultService;
+    private final DatasimConnector datasimConnector;
 
-    public DatasimSimulationMavController(DatasimSimulationService datasimSimulationService) {
+    public DatasimSimulationMavController(DatasimSimulationService datasimSimulationService,
+                                          DatasimResultService datasimResultService, DatasimConnector datasimConnector) {
         this.datasimSimulationService = datasimSimulationService;
+        this.datasimResultService = datasimResultService;
+        this.datasimConnector = datasimConnector;
     }
 
     @GetMapping("/new")
@@ -274,6 +281,7 @@ public class DatasimSimulationMavController {
         mav.addObject("simulations", simulations);
         mav.addObject("numPersonae", numPersonae);
         mav.addObject("numAligns", numAligns);
+        mav.addObject("resultsList", this.datasimResultService.getSimulationsWithResultAvailable());
         return mav;
     }
 
@@ -281,7 +289,7 @@ public class DatasimSimulationMavController {
     public RedirectView finalizeSimulation(@RequestParam(name = "flow") UUID simulationId, HttpServletRequest request) {
         DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
         this.datasimSimulationService.finalizeSimulation(simulation);
-        return new RedirectView(request.getHeader("Referer"));
+        return new RedirectView(Objects.requireNonNullElse(request.getHeader("Referer"), "./show"));
     }
 
     @PostMapping("/delete")
@@ -297,5 +305,13 @@ public class DatasimSimulationMavController {
         DatasimSimulation copy = this.datasimSimulationService.copySimulation(existing);
         attributes.addAttribute("flow", copy.getId().toString());
         return new RedirectView("./show");
+    }
+
+    @PostMapping("/perform")
+    public RedirectView performSimulation(@RequestParam(name = "flow") UUID simulationId, HttpServletRequest request) {
+        @Finalized DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        List<JsonNode> result = this.datasimConnector.sendSimulation(DatasimSimulationTO.of(simulation).forExport());
+        this.datasimResultService.saveSimulationResult(simulation, result);
+        return new RedirectView(Objects.requireNonNullElse(request.getHeader("Referer"), "./show"));
     }
 }

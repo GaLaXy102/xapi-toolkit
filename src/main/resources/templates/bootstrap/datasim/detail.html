@@ -87,11 +87,11 @@
                                 <input type="hidden" name="flow" th:value="${simulation.getId().get()}">
                                 <button type="submit" class="btn btn-warning flex-fill">Finalize</button>
                             </form>
-                            <form method="POST" th:action="@{/ui/datasim/perform}" th:if="${simulation.getFinalized().get()}" class="flex-fill d-flex">
+                            <form method="POST" th:action="@{/ui/datasim/perform}" th:if="${simulation.getFinalized().get()}" th:unless="${resultsList.contains(simulation.getId().get())}" class="flex-fill d-flex">
                                 <input type="hidden" name="flow" th:value="${simulation.getId().get()}">
                                 <button type="submit" class="btn btn-outline-success flex-fill">Perform</button>
                             </form>
-                            <a th:href="'/ui/datasim/retrieve?flow=' + ${simulation.getId().get()}" th:if="false" target="_blank">
+                            <a th:href="'/api/v1/datasim/retrieve?flow=' + ${simulation.getId().get()}" th:if="${resultsList.contains(simulation.getId().get())}" target="_blank" class="flex-fill d-flex">
                                 <button type="button" class="btn btn-success flex-fill">Retrieve</button>
                             </a>
                         </div>
