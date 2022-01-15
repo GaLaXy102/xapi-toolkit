@@ -18,8 +18,9 @@ services:
     environment:
       DATATOOLS_SEC_USERNAME: foo
       DATATOOLS_SEC_PASSWORD: bar
-      # TODO: Implement consumer for variable below in #1
       DATATOOLS_SIM_BACKEND_BASE_URL: http://datasim_service:9090   # This is the Docker-relative base path.
+      DATATOOLS_SIM_BACKEND_USERNAME: foo
+      DATATOOLS_SIM_BACKEND_PASSWORD: bar
       # TODO: Implement consumer for variable below in #10
       DATATOOLS_SIM_STORAGE_DIR: /data                              # This path also is Docker-relative. See volumes section.
   datasim:
@@ -30,5 +31,7 @@ services:
       datatools0:
         aliases:
           - datasim_service
+    environment:
+      credentials: foo:bar  # sic!
     ports:
       - "9090:9090"

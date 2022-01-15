@@ -25,6 +25,12 @@ public class DatasimConnector {
     @Value("${xapi.datasim.backend-base-url}")
     private URL datasimEndpoint;
 
+    @Value("${xapi.datasim.backend-username}")
+    private String datasimUser;
+
+    @Value("${xapi.datasim.backend-password}")
+    private String datasimPassword;
+
     @Getter
     private Boolean health = null;
 

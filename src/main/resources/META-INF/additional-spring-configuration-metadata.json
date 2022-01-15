@@ -9,6 +9,16 @@
       "name": "xapi.datasim.backend-base-url",
       "type": "java.lang.String",
       "description": "Base URL for DATASIM backend."
+    },
+    {
+      "name": "xapi.datasim.backend-username",
+      "type": "java.lang.String",
+      "description": "Username for DATASIM backend."
+    },
+    {
+      "name": "xapi.datasim.backend-password",
+      "type": "java.lang.String",
+      "description": "Password for DATASIM backend."
     }
   ]
 }
