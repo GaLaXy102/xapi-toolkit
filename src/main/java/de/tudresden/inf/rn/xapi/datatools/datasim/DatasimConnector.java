@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulationTO;
+import de.tudresden.inf.rn.xapi.datatools.ui.IExternalService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,7 +32,8 @@ import java.util.logging.Logger;
  */
 @EnableScheduling
 @Service
-public class DatasimConnector {
+@Order(1)
+public class DatasimConnector implements IExternalService {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Getter
@@ -53,6 +56,16 @@ public class DatasimConnector {
 
     public DatasimConnector(ObjectMapper mapper) {
         this.mapper = mapper;
+    }
+
+    @Override
+    public String getName() {
+        return "DATASIM";
+    }
+
+    @Override
+    public String getCheckEndpoint() {
+        return DatasimHealthRestController.HEALTH_ENDPOINT;
     }
 
     /**
