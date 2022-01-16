@@ -9,8 +9,11 @@ import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaGrou
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulationTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.validators.Finalized;
+import de.tudresden.inf.rn.xapi.datatools.ui.BootstrapUIIcon;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIFlow;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIStep;
+import de.tudresden.inf.rn.xapi.datatools.ui.UIIcon;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Controller
+@Order(1)
 @Validated
 public class DatasimSimulationMavController implements IUIFlow {
 
@@ -62,6 +66,11 @@ public class DatasimSimulationMavController implements IUIFlow {
     @Override
     public List<IUIStep> getSteps() {
         return this.children;
+    }
+
+    @Override
+    public UIIcon getIcon() {
+        return BootstrapUIIcon.SHUFFLE;
     }
 
     @GetMapping(BASE_URL + "/show")

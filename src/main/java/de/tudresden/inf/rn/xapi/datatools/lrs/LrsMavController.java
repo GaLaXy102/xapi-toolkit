@@ -1,8 +1,11 @@
 package de.tudresden.inf.rn.xapi.datatools.lrs;
 
-import de.tudresden.inf.rn.xapi.datatools.ui.IUIFlow;
+import de.tudresden.inf.rn.xapi.datatools.ui.BootstrapUIIcon;
+import de.tudresden.inf.rn.xapi.datatools.ui.IUIManagementFlow;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIStep;
+import de.tudresden.inf.rn.xapi.datatools.ui.UIIcon;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +18,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Controller
+@Order(1)
 @RequiredArgsConstructor
-public class LrsMavController implements IUIFlow {
+public class LrsMavController implements IUIManagementFlow {
     private final LrsService lrsService;
 
     static final String BASE_URL = "/ui/manage/lrs";
@@ -34,6 +38,11 @@ public class LrsMavController implements IUIFlow {
     @Override
     public List<IUIStep> getSteps() {
         return List.of();
+    }
+
+    @Override
+    public UIIcon getIcon() {
+        return BootstrapUIIcon.CLOUD;
     }
 
     @GetMapping(LrsMavController.BASE_URL + "/")
