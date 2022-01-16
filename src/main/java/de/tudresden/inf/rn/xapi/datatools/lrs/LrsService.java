@@ -1,6 +1,7 @@
 package de.tudresden.inf.rn.xapi.datatools.lrs;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,10 +9,17 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
+@DependsOn("lrsConnectionSeeder")
 public class LrsService {
 
     private final LrsConnectionRepository lrsConnectionRepository;
+    private final LrsConnectorLifecycleManager connectorLifecycleManager;
+
+    public LrsService(LrsConnectionRepository lrsConnectionRepository, LrsConnectorLifecycleManager connectorLifecycleManager) {
+        this.lrsConnectionRepository = lrsConnectionRepository;
+        this.connectorLifecycleManager = connectorLifecycleManager;
+        this.lrsConnectionRepository.findAll().stream().filter(LrsConnection::isEnabled).forEach(this.connectorLifecycleManager::createConnector);
+    }
 
     /**
      * Create an LRS connection from a Transfer Object and save it
@@ -20,6 +28,7 @@ public class LrsService {
     LrsConnection createConnection(LrsConnectionTO lrsData) {
         LrsConnection created = lrsData.toNewLrsConnection();
         this.lrsConnectionRepository.save(created);
+        this.connectorLifecycleManager.createConnector(created);
         return created;
     }
 
@@ -33,6 +42,7 @@ public class LrsService {
         LrsConnection connection = this.getConnection(connectionId);
         connection.setEnabled(false);
         this.lrsConnectionRepository.save(connection);
+        this.connectorLifecycleManager.deleteConnector(connection);
         return connection;
     }
 
@@ -46,6 +56,7 @@ public class LrsService {
         LrsConnection connection = this.getConnection(connectionId);
         connection.setEnabled(true);
         this.lrsConnectionRepository.save(connection);
+        this.connectorLifecycleManager.createConnector(connection);
         return connection;
     }
 
@@ -85,6 +96,8 @@ public class LrsService {
         found.setXApiClientSecret(lrsData.getClientSecret());
         found.setEnabled(lrsData.getEnabled().orElse(found.isEnabled()));
         this.lrsConnectionRepository.save(found);
+        this.connectorLifecycleManager.deleteConnector(found);
+        this.connectorLifecycleManager.createConnector(found);
         return found;
     }
 }
