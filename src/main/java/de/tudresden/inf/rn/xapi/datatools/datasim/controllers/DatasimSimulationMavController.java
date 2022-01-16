@@ -9,6 +9,9 @@ import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaGrou
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulationTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.validators.Finalized;
+import de.tudresden.inf.rn.xapi.datatools.lrs.LrsConnection;
+import de.tudresden.inf.rn.xapi.datatools.lrs.LrsConnectionTO;
+import de.tudresden.inf.rn.xapi.datatools.lrs.LrsService;
 import de.tudresden.inf.rn.xapi.datatools.ui.BootstrapUIIcon;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIFlow;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIStep;
@@ -40,15 +43,17 @@ public class DatasimSimulationMavController implements IUIFlow {
     private final DatasimSimulationService datasimSimulationService;
     private final DatasimResultService datasimResultService;
     private final DatasimConnector datasimConnector;
+    private final LrsService lrsService;
     static final String BASE_URL = "/ui/datasim";
     private final List<IUIStep> children;
 
     public DatasimSimulationMavController(DatasimSimulationService datasimSimulationService,
                                           DatasimResultService datasimResultService, DatasimConnector datasimConnector,
-                                          List<SimulationStep> childControllers) {
+                                          LrsService lrsService, List<SimulationStep> childControllers) {
         this.datasimSimulationService = datasimSimulationService;
         this.datasimResultService = datasimResultService;
         this.datasimConnector = datasimConnector;
+        this.lrsService = lrsService;
         // This Type Conversion is safe as SimulationStep extends IUIStep
         this.children = childControllers.stream().map((step) -> (IUIStep) step).toList();
     }
@@ -104,10 +109,16 @@ public class DatasimSimulationMavController implements IUIFlow {
                     );
                 }
         );
+        List<LrsConnectionTO> availableLrs = this.lrsService.getConnections(true)
+                .stream()
+                .sorted(Comparator.comparing(LrsConnection::getFriendlyName))
+                .map(LrsConnectionTO::of)
+                .toList();
         mav.addObject("simulations", simulations);
         mav.addObject("numPersonae", numPersonae);
         mav.addObject("numAligns", numAligns);
         mav.addObject("resultsList", this.datasimResultService.getSimulationsWithResultAvailable());
+        mav.addObject("availableLrs", availableLrs);
         return mav;
     }
 

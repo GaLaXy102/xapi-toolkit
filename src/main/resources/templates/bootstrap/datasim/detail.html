@@ -119,10 +119,34 @@
                                 <button type="button" class="btn btn-success flex-fill">Retrieve</button>
                             </a>
                         </div>
+                        <div class="col" th:if="${resultsList.contains(simulation.getId().get())}">
+                            <div class="dropdown flex-fill d-flex dropup">
+                                <button class="btn btn-secondary dropdown-toggle flex-fill" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Push
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li th:each="lrs: ${availableLrs}">
+                                        <button type="button" class="dropdown-item" th:text="${lrs.getName()}" th:data-lrs="${lrs.getUuid().get()}" th:data-flow="${simulation.getId().get()}"
+                                                onclick="
+                                                    document.getElementById('pushFlowId').value = this.getAttribute('data-flow');
+                                                    document.getElementById('pushLrsId').value = this.getAttribute('data-lrs');
+                                                    document.getElementById('pushSimulationForm').submit()
+                                                        "></button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Form to send a simulation to an LRS, filled and sent by JS -->
+    <div class="hidden">
+        <form method="POST" th:action="@{/ui/datasim/push}" id="pushSimulationForm">
+            <input type="hidden" name="flow" id="pushFlowId" required>
+            <input type="hidden" name="lrs_id" id="pushLrsId" required>
+        </form>
     </div>
 </div>
 </body>

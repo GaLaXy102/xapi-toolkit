@@ -54,7 +54,7 @@ public class LrsService {
      *
      * @param activeOnly When true, only enabled connections will be returned
      */
-    List<LrsConnection> getConnections(boolean activeOnly) {
+    public List<LrsConnection> getConnections(boolean activeOnly) {
         if (activeOnly) {
             return this.lrsConnectionRepository.findByEnabledIsTrue().toList();
         } else {

@@ -17,7 +17,7 @@ import java.util.UUID;
  */
 @AllArgsConstructor
 @EqualsAndHashCode
-final class LrsConnectionTO {
+public class LrsConnectionTO {
     @NonNull @Getter private final Optional<UUID> uuid;
     @NonNull @NotBlank @Getter private final String name;
     @NonNull @Getter private final URL endpoint;
@@ -42,7 +42,7 @@ final class LrsConnectionTO {
     /**
      * Create a Transfer Object from a given LRS connection entity for safe exchange.
      */
-    static LrsConnectionTO of(LrsConnection connection) {
+    public static LrsConnectionTO of(LrsConnection connection) {
         return new LrsConnectionTO(
                 Optional.of(connection.getConnectionId()),
                 connection.getFriendlyName(),
