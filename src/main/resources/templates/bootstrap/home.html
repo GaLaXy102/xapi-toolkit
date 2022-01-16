@@ -14,7 +14,7 @@
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item g-2" th:each="flow: ${uiFlows}">
                 <a th:href="${flow.getEntrypoint()}" class="nav-link text-white" aria-current="page" target="contentFrame">
-                    <i th:class="'me-2 bi-' + ${flow.getIcon().getIconName()}"></i>
+                    <i th:class="'me-2 ' + ${flow.getIcon().getIconName()}"></i>
                     <span th:text="${flow.getName()}"></span>
                 </a>
             </li>
@@ -24,7 +24,7 @@
         <ul class="nav nav-pills flex-column">
             <li class="nav-item g-2" th:each="flow: ${uiManagementFlows}">
                 <a th:href="${flow.getEntrypoint()}" class="nav-link text-white" aria-current="page" target="contentFrame">
-                    <i th:class="'me-2 bi-' + ${flow.getIcon().getIconName()}"></i>
+                    <i th:class="'me-2 ' + ${flow.getIcon().getIconName()}"></i>
                     <span th:text="${flow.getName()}"></span>
                 </a>
             </li>
