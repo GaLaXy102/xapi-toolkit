@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:include="bootstrap/header.html :: scripted_head ('Simulation Details')"></head>
-<body>
+<body class="bg-light">
 <div class="container">
     <div class="mb-3">
         <a th:href="@{/ui/datasim/show}" th:if="${#request.getParameter('flow')}">&lt;&lt; Show all</a>

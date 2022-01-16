@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:include="bootstrap/header.html :: scripted_head ('Create Alignments')"></head>
-<body>
+<body class="bg-light">
 <div class="container">
     <form method="POST" th:action="@{/ui/datasim/new/alignment/add}" th:unless="${mode == mode.DISPLAYING}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->

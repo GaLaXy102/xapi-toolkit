@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:include="bootstrap/header.html :: scripted_head ('LRS Connection')"></head>
-<body>
+<body class="bg-light">
 <div class="container">
     <div class="row">
         <div th:unless="${#strings.equals(param.get('active_only'), 'false')}" class="col">
