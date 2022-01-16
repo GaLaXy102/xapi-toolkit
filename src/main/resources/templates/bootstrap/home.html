@@ -12,11 +12,16 @@
         <hr>
         <!-- Flow Parts -->
         <ul class="nav nav-pills flex-column mb-auto">
-            <li class="nav-item g-2" th:each="flow: ${uiFlows}">
-                <a th:href="${flow.getEntrypoint()}" class="nav-link text-white" aria-current="page" target="contentFrame">
+            <li class="nav-item g-2 xapi-flow" th:each="flow: ${uiFlows}">
+                <a th:href="${flow.getEntrypoint()}" class="nav-link text-white mb-2" aria-current="page" target="contentFrame">
                     <i th:class="'me-2 ' + ${flow.getIcon().getIconName()}"></i>
                     <span th:text="${flow.getName()}"></span>
                 </a>
+                <ol class="list-group list-group-numbered d-none">
+                    <li class="mb-1 ps-5 text-white-50" th:each="step: ${flow.getSteps()}" th:data-pathregex="${step.getPathRegex()}">
+                        <span th:text="${step.getName()}"></span>
+                    </li>
+                </ol>
             </li>
         </ul>
         <hr>
@@ -41,7 +46,7 @@
         </ul>
     </div>
     <div class="d-flex flex-column flex-fill p-3 bg-dark">
-        <iframe th:src="@{/html/empty.html}" name="contentFrame" class="flex-fill"></iframe>
+        <iframe th:src="@{/html/empty.html}" name="contentFrame" class="flex-fill" id="contentFrame"></iframe>
     </div>
 </main>
 </body>
