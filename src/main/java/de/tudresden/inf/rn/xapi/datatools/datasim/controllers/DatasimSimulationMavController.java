@@ -5,19 +5,12 @@ import de.tudresden.inf.rn.xapi.datatools.datasim.DatasimConnector;
 import de.tudresden.inf.rn.xapi.datatools.datasim.DatasimResultService;
 import de.tudresden.inf.rn.xapi.datatools.datasim.DatasimSimulationService;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.ActorWithAlignmentsTO;
-import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersona;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaGroupTO;
-import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaTO;
-import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimProfileTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
-import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulationParamsTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulationTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.validators.Finalized;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIFlow;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIStep;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Controller
 @Validated
@@ -52,21 +41,12 @@ public class DatasimSimulationMavController implements IUIFlow {
 
     public DatasimSimulationMavController(DatasimSimulationService datasimSimulationService,
                                           DatasimResultService datasimResultService, DatasimConnector datasimConnector,
-                                          RemarkSettingFlowController remarkSettingFlowController,
-                                          ProfileSettingFlowController profileSettingFlowController,
-                                          PersonaSettingFlowController personaSettingFlowController,
-                                          AlignmentSettingFlowController alignmentSettingFlowController,
-                                          ParameterSettingFlowController parameterSettingFlowController) {
+                                          List<SimulationStep> childControllers) {
         this.datasimSimulationService = datasimSimulationService;
         this.datasimResultService = datasimResultService;
         this.datasimConnector = datasimConnector;
-        this.children = List.of(
-                remarkSettingFlowController,
-                profileSettingFlowController,
-                personaSettingFlowController,
-                alignmentSettingFlowController,
-                parameterSettingFlowController
-        );
+        // This Type Conversion is safe as SimulationStep extends IUIStep
+        this.children = childControllers.stream().map((step) -> (IUIStep) step).toList();
     }
 
     @Override

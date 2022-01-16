@@ -5,6 +5,7 @@ import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIStep;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +22,9 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Controller
+@Order(4)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class AlignmentSettingFlowController implements IUIStep {
+public class AlignmentSettingFlowController implements SimulationStep {
     
     private final DatasimSimulationService datasimSimulationService;
 

@@ -4,9 +4,9 @@ import de.tudresden.inf.rn.xapi.datatools.datasim.DatasimSimulationService;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersona;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimPersonaTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
-import de.tudresden.inf.rn.xapi.datatools.ui.IUIStep;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +21,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Controller
+@Order(3)
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class PersonaSettingFlowController implements IUIStep {
+public class PersonaSettingFlowController implements SimulationStep {
 
     private final DatasimSimulationService datasimSimulationService;
 
