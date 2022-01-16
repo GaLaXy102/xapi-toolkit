@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:include="bootstrap/header.html :: scripted_head ('Set Title')"></head>
-<body class="bg-light">
+<body class="bg-dark">
 <div class="container">
     <form method="POST" th:action="@{/ui/datasim/new}">
         <input type="hidden" name="flow" th:value="${flow}" th:if="${flow}">
