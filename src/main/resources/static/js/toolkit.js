@@ -12,7 +12,8 @@ function setActive(el) {
 
 function queryExternalService(targetEl, endpoint) {
     fetch(endpoint)
-        .then(response => response.json())
+        .then(response => response.ok ? response : new Response(""))
+        .then(response => response.json()) // This throws an error when response contains the empty string
         .then(health => {
             targetEl.classList.remove('text-success', 'text-warning', 'text-danger')
             targetEl.classList.add(health ? 'text-success' : 'text-danger');
