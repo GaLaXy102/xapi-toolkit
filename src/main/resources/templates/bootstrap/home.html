@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="bootstrap/header.html :: scripted_head ('xAPI Toolkit')"></head>
+<body class="min-vh-100">
+<main class="d-flex flex-nowrap vh-100">
+    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;" id="sidebar">
+        <!-- This is heavily inspired by https://getbootstrap.com/docs/5.0/examples/sidebars/ -->
+        <a th:href="@{/ui}" class="d-flex align-items-center mb-3 mb-md-0 text-white text-decoration-none">
+            <img class="bi ms-2 me-2" width="40" height="32" th:src="@{/img/logo.png}" alt="Opening up the Tin Can API!" title="Opening up the Tin Can API!">
+            <span class="fs-4 flex-fill text-center">xAPI Toolkit</span>
+        </a>
+        <hr>
+        <!-- Flow Parts -->
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item g-2" th:each="flow: ${uiFlows}">
+                <a th:href="${flow.getEntrypoint()}" class="nav-link text-white" aria-current="page" target="contentFrame">
+                    <i th:class="'me-2 bi-' + ${flow.getIcon().getIconName()}"></i>
+                    <span th:text="${flow.getName()}"></span>
+                </a>
+            </li>
+        </ul>
+        <hr>
+        <!-- Management Parts -->
+        <ul class="nav nav-pills flex-column">
+            <li class="nav-item g-2" th:each="flow: ${uiManagementFlows}">
+                <a th:href="${flow.getEntrypoint()}" class="nav-link text-white" aria-current="page" target="contentFrame">
+                    <i th:class="'me-2 bi-' + ${flow.getIcon().getIconName()}"></i>
+                    <span th:text="${flow.getName()}"></span>
+                </a>
+            </li>
+        </ul>
+        <hr>
+        <!-- Status indicators -->
+        <ul class="nav flex-column">
+            <li class="nav-item g-2" th:each="srv: ${uiExternalServices}">
+                <div class="nav-link text-white pb-0 pt-0">
+                    <i class="me-2 bi-circle-fill text-warning service-status" th:data-checkendpoint="${srv.getCheckEndpoint()}"></i>
+                    <span th:text="${srv.getName()}"></span>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="d-flex flex-column flex-fill p-3 bg-dark">
+        <iframe th:src="@{/html/empty.html}" name="contentFrame" class="flex-fill"></iframe>
+    </div>
+</main>
+</body>
+</html>

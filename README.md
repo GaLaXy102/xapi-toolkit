@@ -28,3 +28,8 @@ Remember to make `dev` your default application profile while developing. Like t
 In the Docker Image, the `prod` profile is active by default.
 
 Tests can activate the `test` profile as they wish.
+
+## External Credits
+
+This Application uses third party content:
+* [Tin icons created by Smashicons - Flaticon](https://www.flaticon.com/free-icons/tin)
