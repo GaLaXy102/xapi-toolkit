@@ -67,7 +67,7 @@ public class LrsConnector implements IExternalService {
         if (this.health) {
             this.logger.info(this.lrsConnection.getFriendlyName() + " connection is alive.");
         } else {
-            this.logger.warning(this.lrsConnection.getFriendlyName() + " is not responding correctly. Tried URL " + this.lrsConnection.getFriendlyName() + HEALTH_ENDPOINT);
+            this.logger.warning(this.lrsConnection.getFriendlyName() + " is not responding correctly. Tried URL " + this.lrsConnection.getXApiEndpoint() + HEALTH_ENDPOINT);
         }
     }
 }
