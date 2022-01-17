@@ -1,5 +1,6 @@
-package de.tudresden.inf.rn.xapi.datatools.lrs;
+package de.tudresden.inf.rn.xapi.datatools.lrs.connector;
 
+import de.tudresden.inf.rn.xapi.datatools.lrs.LrsConnection;
 import de.tudresden.inf.rn.xapi.datatools.ui.IExternalService;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;

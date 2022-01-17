@@ -1,5 +1,6 @@
-package de.tudresden.inf.rn.xapi.datatools.lrs;
+package de.tudresden.inf.rn.xapi.datatools.lrs.connector;
 
+import de.tudresden.inf.rn.xapi.datatools.lrs.LrsConnection;
 import lombok.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -28,6 +29,11 @@ public class LrsConnectorLifecycleManager implements BeanFactoryAware {
         this.beanFactory.registerSingleton(targetBeanName, new LrsConnector(connection));
         // Enable Scheduling. This is what @EnableScheduling would normally do.
         this.schedulingRegistrar.postProcessAfterInitialization(this.beanFactory.getBean("lrsConnector-" + connection.getConnectionId()), targetBeanName);
+    }
+
+    public LrsConnector getConnector(LrsConnection connection) {
+        String targetBeanName = "lrsConnector-" + connection.getConnectionId();
+        return this.beanFactory.getBean(targetBeanName, LrsConnector.class);
     }
 
     public void deleteConnector(LrsConnection connection) {
