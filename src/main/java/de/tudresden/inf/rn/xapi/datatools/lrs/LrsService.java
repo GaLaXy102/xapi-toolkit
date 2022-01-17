@@ -80,8 +80,8 @@ public class LrsService {
      *
      * @throws IllegalArgumentException When there is no connection with such ID
      */
-    LrsConnection getConnection(UUID connectionId) {
-        return this.lrsConnectionRepository.findById(connectionId).orElseThrow(IllegalArgumentException::new);
+    public LrsConnection getConnection(UUID connectionId) {
+        return this.lrsConnectionRepository.findById(connectionId).orElseThrow(() -> new IllegalArgumentException("No such LRS connection."));
     }
 
     /**
@@ -101,5 +101,10 @@ public class LrsService {
         this.connectorLifecycleManager.deleteConnector(found);
         this.connectorLifecycleManager.createConnector(found);
         return found;
+    }
+
+    public List<UUID> sendStatements(List<JsonNode> statements, LrsConnection connection) {
+        LrsConnector connector = this.connectorLifecycleManager.getConnector(connection);
+        return connector.sendStatements(statements);
     }
 }

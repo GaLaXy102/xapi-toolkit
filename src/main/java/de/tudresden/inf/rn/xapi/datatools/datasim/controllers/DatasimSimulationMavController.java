@@ -12,6 +12,7 @@ import de.tudresden.inf.rn.xapi.datatools.datasim.validators.Finalized;
 import de.tudresden.inf.rn.xapi.datatools.lrs.LrsConnection;
 import de.tudresden.inf.rn.xapi.datatools.lrs.LrsConnectionTO;
 import de.tudresden.inf.rn.xapi.datatools.lrs.LrsService;
+import de.tudresden.inf.rn.xapi.datatools.lrs.connector.LrsConnector;
 import de.tudresden.inf.rn.xapi.datatools.ui.BootstrapUIIcon;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIFlow;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIStep;
@@ -149,6 +150,15 @@ public class DatasimSimulationMavController implements IUIFlow {
         @Finalized DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
         List<JsonNode> result = this.datasimConnector.sendSimulation(DatasimSimulationTO.of(simulation).forExport());
         this.datasimResultService.saveSimulationResult(simulation, result);
+        return new RedirectView(Objects.requireNonNullElse(request.getHeader("Referer"), "./show"));
+    }
+
+    @PostMapping(BASE_URL + "/push")
+    public RedirectView sendSimulation(@RequestParam(name = "flow") UUID simulationId, @RequestParam(name = "lrs_id") UUID lrsId, HttpServletRequest request) {
+        @Finalized DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
+        LrsConnection lrsConnection = this.lrsService.getConnection(lrsId);
+        List<JsonNode> simulationResult = this.datasimResultService.getSimulationResult(simulation);
+        this.lrsService.sendStatements(simulationResult, lrsConnection);
         return new RedirectView(Objects.requireNonNullElse(request.getHeader("Referer"), "./show"));
     }
 }
