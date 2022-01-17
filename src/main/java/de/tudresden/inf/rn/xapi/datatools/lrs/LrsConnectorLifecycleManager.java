@@ -4,34 +4,38 @@ import lombok.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
+import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-
-@Configuration
+@Component
 public class LrsConnectorLifecycleManager implements BeanFactoryAware {
+    private DefaultListableBeanFactory beanFactory;
+    private final ScheduledAnnotationBeanPostProcessor schedulingRegistrar;
 
-    private ConfigurableBeanFactory beanFactory;
-    private final Map<LrsConnection, LrsConnector> connectorForConnection = new HashMap<>();
+    public LrsConnectorLifecycleManager(ScheduledAnnotationBeanPostProcessor schedulingRegistrar) {
+        this.schedulingRegistrar = schedulingRegistrar;
+    }
 
     @Override
     public void setBeanFactory(@NonNull BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = (ConfigurableBeanFactory) beanFactory;
+        this.beanFactory = (DefaultListableBeanFactory) beanFactory;
     }
 
     public void createConnector(LrsConnection connection) {
-        LrsConnector connector = new LrsConnector(connection);
-        this.beanFactory.registerSingleton("lrsConnector-" + connection.getConnectionId(), connector);
-        this.connectorForConnection.put(connection, connector);
+        String targetBeanName = "lrsConnector-" + connection.getConnectionId();
+        // Add to Application Context
+        this.beanFactory.registerSingleton(targetBeanName, new LrsConnector(connection));
+        // Enable Scheduling. This is what @EnableScheduling would normally do.
+        this.schedulingRegistrar.postProcessAfterInitialization(this.beanFactory.getBean("lrsConnector-" + connection.getConnectionId()), targetBeanName);
     }
 
     public void deleteConnector(LrsConnection connection) {
-        this.beanFactory.destroyBean("lrsConnector-" + connection.getConnectionId(), this.connectorForConnection.remove(connection));
-    }
-
-    public LrsConnector getConnector(LrsConnection connection) {
-        return this.connectorForConnection.get(connection);
+        String targetBeanName = "lrsConnector-" + connection.getConnectionId();
+        // Disable Scheduling
+        LrsConnector targetBean = this.beanFactory.getBean(targetBeanName, LrsConnector.class);
+        this.schedulingRegistrar.postProcessBeforeDestruction(targetBean, targetBeanName);
+        // Remove from Application Context
+        this.beanFactory.destroySingleton(targetBeanName);
     }
 }

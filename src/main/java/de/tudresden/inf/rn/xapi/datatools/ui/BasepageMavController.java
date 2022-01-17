@@ -1,5 +1,6 @@
 package de.tudresden.inf.rn.xapi.datatools.ui;
 
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,20 +13,22 @@ import java.util.List;
 public class BasepageMavController {
     private final List<IUIFlow> flows;
     private final List<IUIManagementFlow> managementFlows;
-    private final List<IExternalService> externalServices;
+    private final ApplicationContext context;
 
-    public BasepageMavController(List<IUIFlow> flows, List<IUIManagementFlow> managementFlows, List<IExternalService> externalServices) {
+    public BasepageMavController(List<IUIFlow> flows, List<IUIManagementFlow> managementFlows, ApplicationContext context) {
         this.flows = flows;
         this.managementFlows = managementFlows;
-        this.externalServices = externalServices;
+        this.context = context;
     }
 
     @GetMapping("")
     public ModelAndView showHome() {
+        // These can be runtime-specific because of the LrsConnector Lifecycle
+        List<IExternalService> externalServices = this.context.getBeansOfType(IExternalService.class).values().stream().toList();
         ModelAndView mav = new ModelAndView("bootstrap/home");
-        mav.addObject("uiFlows", this.flows);
-        mav.addObject("uiManagementFlows", this.managementFlows);
-        mav.addObject("uiExternalServices", this.externalServices);
+        mav.addObject("uiFlows", flows);
+        mav.addObject("uiManagementFlows", managementFlows);
+        mav.addObject("uiExternalServices", externalServices);
         return mav;
     }
 }
