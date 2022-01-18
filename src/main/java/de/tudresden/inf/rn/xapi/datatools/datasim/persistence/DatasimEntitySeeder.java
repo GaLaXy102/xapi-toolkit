@@ -73,9 +73,12 @@ public class DatasimEntitySeeder {
     }
 
     private DatasimSimulation createSampleSimulation(DatasimPersonaGroup group, List<DatasimProfile> profile, DatasimSimulationParams params) {
-        URL component;
+        URL componentFail;
+        URL componentPass;
         try {
-            component = new URL("http://example.org/123");
+            // This is taken directly from the Profile
+            componentFail = new URL("https://w3id.org/xapi/cmi5#failed");
+            componentPass = new URL("https://w3id.org/xapi/cmi5#passed");
         } catch (MalformedURLException e) {
             throw new RuntimeException("Could not seed.");
         }
@@ -86,7 +89,14 @@ public class DatasimEntitySeeder {
                         group
                                 .getMember()
                                 .stream()
-                                .map((persona) -> Pair.of(new DatasimAlignment(component, 0.0f), persona))
+                                .map((persona) ->
+                                        Set.of(
+                                                // Insert evil smile here.
+                                                Pair.of(new DatasimAlignment(componentFail, 1.0f), persona),
+                                                Pair.of(new DatasimAlignment(componentPass, -1.0f), persona)
+                                                )
+                                )
+                                .flatMap(Set::stream)
                                 .peek((pair) -> this.alignmentRepository.save(pair.getFirst()))
                                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond))
                 ),
