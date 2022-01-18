@@ -1,6 +1,7 @@
 package de.tudresden.inf.rn.xapi.datatools.datasim.controllers;
 
 import de.tudresden.inf.rn.xapi.datatools.datasim.DatasimSimulationService;
+import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimProfileTO;
 import de.tudresden.inf.rn.xapi.datatools.datasim.persistence.DatasimSimulation;
 import de.tudresden.inf.rn.xapi.datatools.ui.IUIStep;
 import lombok.AccessLevel;
@@ -44,6 +45,7 @@ public class AlignmentSettingFlowController implements SimulationStep {
         ModelAndView mav = new ModelAndView("bootstrap/datasim/alignment");
         mav.addObject("flow", simulationId.toString());
         mav.addObject("alignments", DatasimSimulationService.getComponentAlignsByUrl(simulation.getAlignments()));
+        mav.addObject("possibleAlignments", DatasimProfileTO.of(simulation.getProfiles().get(0)).getPossibleAlignmentsByType());
         mav.addObject("mode", DatasimSimulationMavController.Mode.CREATING);
         return mav;
     }

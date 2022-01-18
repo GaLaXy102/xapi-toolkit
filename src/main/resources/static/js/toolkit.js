@@ -49,6 +49,38 @@ function addSpinner(el) {
     $(el).prepend(spinner);
 }
 
+function setVisible(el) {
+    el.classList.remove('d-none');
+}
+
+function setNonReqiured(el) {
+    el.removeAttribute('required');
+}
+
+function setName(el, name) {
+    el.setAttribute('name', name);
+}
+
+function unsetName(el) {
+    el.removeAttribute('name');
+}
+
+function setReqiured(el) {
+    el.setAttribute('required', true);
+}
+
+function setInvisible(el) {
+    console.log(el);
+    el.classList.add('d-none');
+}
+
+function triggerComponentSelect(element) {
+    console.log(element);
+    $('#componentSelectBase').children(':not(#componentSelectType)').each(function () {setInvisible(this);setNonReqiured(this);unsetName(this)});
+    const targetElementIdQuery = '#componentSelect-' + (element.value === '' ? 'NONE' : element.value);
+    $(targetElementIdQuery).each(function () {setVisible(this);setReqiured(this);setName(this, 'component')});
+}
+
 $(document).ready(function () {
     $('.nav-link').each(function () {
         $(this).click(function () {
@@ -65,7 +97,7 @@ $(document).ready(function () {
     $("#contentFrame").bind('load', highlightFlowStep);
     $('button').click(function () {
         if (this.classList.contains('dropdown-item')) addSpinner($(this).parent().parent().parent().children().first());
-        else if (!this.classList.contains('dropdown-toggle') && !this.classList.contains('accordion-button') && !this.parent('a')) addSpinner(this);
+        else if (!this.classList.contains('dropdown-toggle') && !this.classList.contains('accordion-button') && !$(this).parent('a')) addSpinner(this);
     });
     $('.toast').each(function () {
         (new bootstrap.Toast(this, {})).show();

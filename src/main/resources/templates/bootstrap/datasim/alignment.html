@@ -11,9 +11,21 @@
             <div class="row">
                 <label>Add new Component</label>
                 <div class="col-10">
-                    <div class="mb-3 mt-3 form-floating">
-                        <input type="url" class="form-control" minlength="3" name="component" id="newComponent" placeholder="pseudo">
-                        <label for="newComponent">Component URL</label>
+                    <div class="mb-3 mt-3 input-group" id="componentSelectBase">
+                        <select class="form-select" onchange="triggerComponentSelect(this);" id="componentSelectType" required>
+                            <option selected value="">Select Alignment Type</option>
+                            <option th:each="alignmentType: ${#lists.sort(#lists.toList(possibleAlignments.keySet()))}"
+                                    th:text="${alignmentType.getValue()}"
+                                    th:value="${alignmentType}"></option>
+                        </select>
+                        <select class="form-select" id="componentSelect-NONE" disabled></select>
+                        <select class="form-select d-none"
+                                name="component"
+                                th:each="alignmentType: ${#lists.sort(#lists.toList(possibleAlignments.keySet()))}"
+                                th:id="'componentSelect-' + ${alignmentType}">
+                            <option selected value="">Select Component</option>
+                            <option th:each="component: ${possibleAlignments.get(alignmentType)}" th:text="${component}"></option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-1"></div>
