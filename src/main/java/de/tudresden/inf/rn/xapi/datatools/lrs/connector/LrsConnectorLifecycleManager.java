@@ -1,6 +1,7 @@
 package de.tudresden.inf.rn.xapi.datatools.lrs.connector;
 
 import de.tudresden.inf.rn.xapi.datatools.lrs.LrsConnection;
+import de.tudresden.inf.rn.xapi.datatools.lrs.validators.Active;
 import lombok.NonNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -8,8 +9,10 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 @Component
+@Validated
 public class LrsConnectorLifecycleManager implements BeanFactoryAware {
     private DefaultListableBeanFactory beanFactory;
     private final ScheduledAnnotationBeanPostProcessor schedulingRegistrar;
@@ -31,7 +34,7 @@ public class LrsConnectorLifecycleManager implements BeanFactoryAware {
         this.schedulingRegistrar.postProcessAfterInitialization(this.beanFactory.getBean("lrsConnector-" + connection.getConnectionId()), targetBeanName);
     }
 
-    public LrsConnector getConnector(LrsConnection connection) {
+    public LrsConnector getConnector(@Active LrsConnection connection) {
         String targetBeanName = "lrsConnector-" + connection.getConnectionId();
         return this.beanFactory.getBean(targetBeanName, LrsConnector.class);
     }

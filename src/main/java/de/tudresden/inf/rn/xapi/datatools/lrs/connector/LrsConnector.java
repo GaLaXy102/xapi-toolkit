@@ -2,6 +2,7 @@ package de.tudresden.inf.rn.xapi.datatools.lrs.connector;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.tudresden.inf.rn.xapi.datatools.lrs.LrsConnection;
+import de.tudresden.inf.rn.xapi.datatools.lrs.LrsHealthRestController;
 import de.tudresden.inf.rn.xapi.datatools.ui.IExternalService;
 import lombok.Getter;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -45,7 +46,7 @@ public class LrsConnector implements IExternalService {
 
     @Override
     public String getCheckEndpoint() {
-        return this.lrsConnection.getXApiEndpoint() + HEALTH_ENDPOINT;
+        return LrsHealthRestController.HEALTH_ENDPOINT + "?lrs=" + this.lrsConnection.getConnectionId();
     }
 
     /**

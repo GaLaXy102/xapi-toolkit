@@ -107,4 +107,8 @@ public class LrsService {
         LrsConnector connector = this.connectorLifecycleManager.getConnector(connection);
         return connector.sendStatements(statements);
     }
+
+    LrsConnector getConnector(LrsConnection connection) {
+        return this.connectorLifecycleManager.getConnector(connection);
+    }
 }
