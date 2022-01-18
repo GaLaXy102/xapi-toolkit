@@ -81,6 +81,18 @@ function triggerComponentSelect(element) {
     $(targetElementIdQuery).each(function () {setVisible(this);setReqiured(this);setName(this, 'component')});
 }
 
+// Inspired by https://thecoderain.blogspot.com/2020/11/generate-valid-random-email-js-jquery.html
+const emailChars = '1234567890';
+function generateEmailAddress(btnEl) {
+    const target = $(btnEl).parent().children().first();
+    var mail = 'mail';
+    for (let i = 0; i < 10; i++) {
+        mail += emailChars[Math.floor(Math.random() * emailChars.length)];
+    }
+    mail += '@example.org';
+    target.val(mail);
+}
+
 $(document).ready(function () {
     $('.nav-link').each(function () {
         $(this).click(function () {
