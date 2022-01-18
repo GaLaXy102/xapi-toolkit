@@ -15,6 +15,9 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,8 +39,16 @@ public class DatasimProfileTO {
     @NotBlank
     private String filename;
 
+    @Getter
+    private Map<DatasimProfileAlignableElementType, List<URL>> possibleAlignmentsByType;
+
     public static DatasimProfileTO of(DatasimProfile profile) {
-        return new DatasimProfileTO(Optional.of(profile.getId()), profile.getName(), profile.getFilename());
+        return new DatasimProfileTO(
+                Optional.of(profile.getId()),
+                profile.getName(),
+                profile.getFilename(),
+                DatasimProfileAlignableElementHelper.calculatePossibleAlignments(profile)
+        );
     }
 
     public DatasimProfile toNewDatasimProfile() {
