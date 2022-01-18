@@ -154,11 +154,13 @@ public class DatasimSimulationMavController implements IUIFlow {
     }
 
     @PostMapping(BASE_URL + "/push")
-    public RedirectView sendSimulation(@RequestParam(name = "flow") UUID simulationId, @RequestParam(name = "lrs_id") UUID lrsId, HttpServletRequest request) {
+    public RedirectView sendSimulation(@RequestParam(name = "flow") UUID simulationId, @RequestParam(name = "lrs_id") UUID lrsId,
+                                       HttpServletRequest request, RedirectAttributes attributes) {
         @Finalized DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
         LrsConnection lrsConnection = this.lrsService.getConnection(lrsId);
         List<JsonNode> simulationResult = this.datasimResultService.getSimulationResult(simulation);
         this.lrsService.sendStatements(simulationResult, lrsConnection);
+        attributes.addAttribute("pushSuccess", true);
         return new RedirectView(Objects.requireNonNullElse(request.getHeader("Referer"), "./show"));
     }
 }

@@ -40,6 +40,15 @@ function highlightFlowStep(event) {
     $('.nav-link').first().parent().children('ol').children().each((_, el) => setHighlightOfStep(el, targetPath));
 }
 
+function addSpinner(el) {
+    console.log(el);
+    const spinner = document.createElement('span');
+    spinner.classList.add('spinner-border', 'spinner-border-sm', 'me-1');
+    spinner.ariaHidden = 'true';
+    spinner.ariaRoleDescription = 'status';
+    $(el).prepend(spinner);
+}
+
 $(document).ready(function () {
     $('.nav-link').each(function () {
         $(this).click(function () {
@@ -54,5 +63,12 @@ $(document).ready(function () {
         setInterval(queryExternalService, 60000, this, $(this).get(0).dataset.checkendpoint);
     })
     $("#contentFrame").bind('load', highlightFlowStep);
+    $('button').click(function () {
+        if (this.classList.contains('dropdown-item')) addSpinner($(this).parent().parent().parent().children().first());
+        else if (!this.classList.contains('dropdown-toggle')) addSpinner(this);
+    });
+    $('.toast').each(function () {
+        (new bootstrap.Toast(this, {})).show();
+    })
 });
 
