@@ -39,15 +39,11 @@ public class DatasimProfileTO {
     @NotBlank
     private String filename;
 
-    @Getter
-    private Map<DatasimProfileAlignableElementType, List<URL>> possibleAlignmentsByType;
-
     public static DatasimProfileTO of(DatasimProfile profile) {
         return new DatasimProfileTO(
                 Optional.of(profile.getId()),
                 profile.getName(),
-                profile.getFilename(),
-                DatasimProfileAlignableElementHelper.calculatePossibleAlignments(profile)
+                profile.getFilename()
         );
     }
 
@@ -58,6 +54,10 @@ public class DatasimProfileTO {
 
     public DatasimProfile toExistingDatasimProfile() {
         return new DatasimProfile(this.id.orElseThrow(() -> new IllegalStateException("UUID must not be empty when updating.")), this.name, this.filename);
+    }
+
+    public Map<DatasimProfileAlignableElementType, List<URL>> getPossibleAlignmentsByType() {
+        return DatasimProfileAlignableElementHelper.calculatePossibleAlignments(this);
     }
 
     @JsonValue

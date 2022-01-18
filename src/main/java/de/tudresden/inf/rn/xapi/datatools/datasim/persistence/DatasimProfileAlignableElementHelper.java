@@ -2,14 +2,12 @@ package de.tudresden.inf.rn.xapi.datatools.datasim.persistence;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +26,7 @@ public class DatasimProfileAlignableElementHelper {
     private static final String TYPE_NODE_ID = "type";
     private static final String ID_NODE_ID = "id";
 
-    public static Map<DatasimProfileAlignableElementType, List<URL>> calculatePossibleAlignments(DatasimProfile profile) {
+    public static Map<DatasimProfileAlignableElementType, List<URL>> calculatePossibleAlignments(DatasimProfileTO profile) {
         Map<DatasimProfileAlignableElementType, List<URL>> out = new TreeMap<>();
         JsonMapper objectMapper = new JsonMapper();
         JsonNode root;
