@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
@@ -61,10 +62,11 @@ public class LrsConnector implements IExternalService {
         try {
             ResponseEntity<String> health = restTemplate.getForEntity(this.lrsConnection.getXApiEndpoint() + HEALTH_ENDPOINT, String.class);
             calculatedHealth = health.getStatusCode().is2xxSuccessful();
-        } catch (ResourceAccessException e) {
-            // This happens when connection is refused
+        } catch (ResourceAccessException | HttpClientErrorException e) {
+            // This happens when connection is refused or on 404 error for example
             calculatedHealth = false;
         }
+
         // Only log changes
         if (this.health == null || calculatedHealth != this.health) {
             this.healthChangedCallback(calculatedHealth);

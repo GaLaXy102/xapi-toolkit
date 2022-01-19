@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -24,7 +25,10 @@ public class BasepageMavController {
     @GetMapping("")
     public ModelAndView showHome() {
         // These can be runtime-specific because of the LrsConnector Lifecycle
-        List<IExternalService> externalServices = this.context.getBeansOfType(IExternalService.class).values().stream().toList();
+        List<IExternalService> externalServices = this.context.getBeansOfType(IExternalService.class).values()
+                .stream()
+                .sorted(Comparator.comparing(IExternalService::getName))
+                .toList();
         ModelAndView mav = new ModelAndView("bootstrap/home");
         mav.addObject("uiFlows", flows);
         mav.addObject("uiManagementFlows", managementFlows);
