@@ -11,7 +11,7 @@
 	<groupId>de.tudresden.inf.verdatas</groupId>
 	<artifactId>xapitools</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>datatools</name>
+	<name>xapitools</name>
 	<description>Data Generation and Evaluation</description>
 	<properties>
 		<java.version>17</java.version>
