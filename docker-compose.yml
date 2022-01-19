@@ -8,7 +8,7 @@ volumes:
 services:
   datatools:
     # Image is built by CI of this project.
-    image: nexus.galaxion.de:5050/de.tudresden.inf.rn.xapi/datatools:latest
+    image: nexus.galaxion.de:5050/de.tudresden.inf.verdatas/xapitools:latest
     networks:
       - datatools0
     volumes:
