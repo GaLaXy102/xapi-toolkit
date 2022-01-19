@@ -328,7 +328,7 @@ public class DatasimSimulationService {
                 copiedPersonaGroups,
                 copiedAlignments,
                 copiedParams.toNewSimulationParams(),
-                simulation.getProfiles());
+                new LinkedList<>(simulation.getProfiles())); // Decouple
         this.simulationRepository.save(copy);
         return copy;
     }
