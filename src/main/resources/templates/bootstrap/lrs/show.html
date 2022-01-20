@@ -50,7 +50,7 @@
             <td class="text-center">
                 <form th:if="${connection.getEnabled().get()}" method="POST" th:action="@{/ui/manage/lrs/delete}">
                     <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
-                    <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
+                    <button type="submit" class="btn btn-outline-warning"><i class="bi bi-eject-fill"></i></button>
                 </form>
                 <form th:unless="${connection.getEnabled().get()}" method="POST" th:action="@{/ui/manage/lrs/reactivate}">
                     <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
