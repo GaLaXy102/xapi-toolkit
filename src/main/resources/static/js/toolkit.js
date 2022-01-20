@@ -41,7 +41,7 @@ function highlightFlowStep(event) {
 }
 
 function addSpinner(el) {
-    console.log(el);
+    if ($(el).children('.spinner-border').length !== 0) return;
     const spinner = document.createElement('span');
     spinner.classList.add('spinner-border', 'spinner-border-sm', 'me-1');
     spinner.ariaHidden = 'true';
@@ -109,7 +109,7 @@ $(document).ready(function () {
     $("#contentFrame").bind('load', highlightFlowStep);
     $('button').click(function () {
         if (this.classList.contains('dropdown-item')) addSpinner($(this).parent().parent().parent().children().first());
-        else if (!this.classList.contains('dropdown-toggle') && !this.classList.contains('accordion-button') && !$(this).parent('a')) addSpinner(this);
+        else if (!this.classList.contains('dropdown-toggle') && !this.classList.contains('accordion-button') && $(this).parent('a').length === 0) addSpinner(this);
     });
     $('.toast').each(function () {
         (new bootstrap.Toast(this, {})).show();
