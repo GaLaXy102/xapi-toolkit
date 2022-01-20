@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum BootstrapUIIcon implements UIIcon {
-    SHUFFLE("shuffle"),
-    CLOUD("cloud-arrow-up");
+    ARROW_LR("arrow-left-right"),
+    CLOUD("cloud-arrow-up"),
+    SHUFFLE("shuffle");
 
     private final String iconName;
     private static final String PREFIX = "bi-";

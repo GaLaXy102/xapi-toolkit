@@ -3,6 +3,7 @@ package de.tudresden.inf.verdatas.xapitools.lrs;
 import com.fasterxml.jackson.databind.JsonNode;
 import de.tudresden.inf.verdatas.xapitools.lrs.connector.LrsConnector;
 import de.tudresden.inf.verdatas.xapitools.lrs.connector.LrsConnectorLifecycleManager;
+import de.tudresden.inf.verdatas.xapitools.lrs.validators.Active;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,9 +104,14 @@ public class LrsService {
         return found;
     }
 
-    public List<UUID> sendStatements(List<JsonNode> statements, LrsConnection connection) {
+    public List<UUID> sendStatements(List<JsonNode> statements, @Active LrsConnection connection) {
         LrsConnector connector = this.connectorLifecycleManager.getConnector(connection);
         return connector.sendStatements(statements);
+    }
+
+    public List<JsonNode> getStatements(@Active LrsConnection connection) {
+        LrsConnector connector = this.connectorLifecycleManager.getConnector(connection);
+        return connector.getStatements();
     }
 
     LrsConnector getConnector(LrsConnection connection) {

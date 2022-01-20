@@ -109,7 +109,7 @@ $(document).ready(function () {
     $("#contentFrame").bind('load', highlightFlowStep);
     $('button').click(function () {
         if (this.classList.contains('dropdown-item')) addSpinner($(this).parent().parent().parent().children().first());
-        else if (!this.classList.contains('dropdown-toggle') && !this.classList.contains('accordion-button') && $(this).parent('a').length === 0) addSpinner(this);
+        else if (!this.classList.contains('dropdown-toggle') && !this.classList.contains('accordion-button') && $(this).parent('a').length === 0 && !this.classList.contains('no-spinner')) addSpinner(this);
     });
     $('.toast').each(function () {
         (new bootstrap.Toast(this, {})).show();
