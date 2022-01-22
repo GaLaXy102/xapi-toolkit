@@ -7,12 +7,15 @@ import de.tudresden.inf.verdatas.xapitools.lrs.validators.Active;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Service
 @DependsOn("lrsConnectionSeeder")
+@Validated
 public class LrsService {
 
     private final LrsConnectionRepository lrsConnectionRepository;
@@ -82,7 +85,7 @@ public class LrsService {
      * @throws IllegalArgumentException When there is no connection with such ID
      */
     public LrsConnection getConnection(UUID connectionId) {
-        return this.lrsConnectionRepository.findById(connectionId).orElseThrow(() -> new IllegalArgumentException("No such LRS connection."));
+        return this.lrsConnectionRepository.findById(connectionId).orElseThrow(() -> new NoSuchElementException("No such LRS connection."));
     }
 
     /**
@@ -92,7 +95,7 @@ public class LrsService {
      */
     @Transactional
     LrsConnection updateConnection(LrsConnectionTO lrsData) {
-        LrsConnection found = this.getConnection(lrsData.getUuid().orElseThrow(IllegalArgumentException::new));
+        LrsConnection found = this.getConnection(lrsData.getUuid().orElseThrow(NoSuchElementException::new));
         found.setFriendlyName(lrsData.getName());
         found.setXApiEndpoint(lrsData.getEndpoint());
         found.setXApiClientKey(lrsData.getClientKey());

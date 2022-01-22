@@ -49,7 +49,7 @@ public class DatasimSimulationService {
      * @throws IllegalArgumentException when the ID is not known to the system.
      */
     public DatasimProfile getProfile(UUID profileId) {
-        return this.profileRepository.findById(profileId).orElseThrow(() -> new IllegalArgumentException("No such profile."));
+        return this.profileRepository.findById(profileId).orElseThrow(() -> new NoSuchElementException("No such profile."));
     }
 
     /**
@@ -64,21 +64,17 @@ public class DatasimSimulationService {
      * @throws IllegalArgumentException when the ID is not known to the system.
      */
     public DatasimSimulation getSimulation(UUID simulationId) {
-        return this.simulationRepository.findById(simulationId).orElseThrow(() -> new IllegalArgumentException("No such simulation."));
+        return this.simulationRepository.findById(simulationId).orElseThrow(() -> new NoSuchElementException("No such simulation."));
     }
 
     /**
      * Get a Simulation description by its ID ensuring it hasn't been marked as finalized.
      * @throws IllegalArgumentException when the ID is not known to the system.
-     * @throws IllegalStateException when the Simulation description exists, but it is marked as finalized.
      */
     @NonFinalized
     public DatasimSimulation getUnfinalizedSimulation(UUID simulationId) {
-        DatasimSimulation found = this.getSimulation(simulationId);
-        if (found.isFinalized()) {
-            throw new IllegalStateException("The given Simulation has been finalized.");
-        }
-        return found;
+        // Validation is done by annotation
+        return this.getSimulation(simulationId);
     }
 
     /**
@@ -86,7 +82,7 @@ public class DatasimSimulationService {
      * @throws IllegalArgumentException when the ID is not known to the system.
      */
     public DatasimPersona getPersona(UUID personaId) {
-        return this.personaRepository.findById(personaId).orElseThrow(() -> new IllegalArgumentException("No such persona."));
+        return this.personaRepository.findById(personaId).orElseThrow(() -> new NoSuchElementException("No such persona."));
     }
 
     /**
@@ -125,7 +121,7 @@ public class DatasimSimulationService {
 
     /**
      * Retrieve an alignment from a Simulation description using its component and Persona as keys
-     * @throws IllegalStateException when there is no such alignment
+     * @throws NoSuchElementException when there is no such alignment
      */
     public static DatasimAlignment getAlignment(DatasimSimulation simulation, URL componentUrl, DatasimPersona persona) {
         return simulation.getAlignments().entrySet().stream()
@@ -133,7 +129,7 @@ public class DatasimSimulationService {
                 .filter((entry) -> entry.getValue().equals(persona))
                 .map(Map.Entry::getKey)
                 .findFirst()
-                .orElseThrow(IllegalStateException::new);
+                .orElseThrow(() -> new NoSuchElementException("No such alignment."));
     }
 
 
@@ -182,8 +178,8 @@ public class DatasimSimulationService {
      */
     @Transactional
     public void addPersonaToSimulation(@NonFinalized DatasimSimulation simulation, DatasimPersona persona) {
-        // For now, it is enough to have one Group of Personae
-        DatasimPersonaGroup group = simulation.getPersonaGroups().stream().findFirst().orElseThrow(RuntimeException::new);
+        // For now, it is enough to have one Group of Personae. The Group must exist.
+        DatasimPersonaGroup group = simulation.getPersonaGroups().stream().findFirst().orElseThrow(IllegalStateException::new);
         group.getMember().add(persona);
         // Create default alignments
         DatasimSimulationService.getComponentAlignsByUrl(simulation.getAlignments()).keySet().forEach(
@@ -202,7 +198,8 @@ public class DatasimSimulationService {
      */
     @Transactional
     public void setPersonaeOfSimulation(@NonFinalized DatasimSimulation simulation, Set<DatasimPersona> personae) {
-        DatasimPersonaGroup group = simulation.getPersonaGroups().stream().findFirst().orElseThrow(RuntimeException::new);
+        // For now, it is enough to have one Group of Personae. The Group must exist.
+        DatasimPersonaGroup group = simulation.getPersonaGroups().stream().findFirst().orElseThrow(IllegalStateException::new);
         group.setMember(personae);
         // Delete for deselected personae
         simulation.getAlignments().entrySet().removeIf((entry) -> !personae.contains(entry.getValue()));

@@ -3,6 +3,7 @@ package de.tudresden.inf.verdatas.xapitools.lrs.statements;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
+import de.tudresden.inf.verdatas.xapitools.lrs.LrsExceptions;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsService;
 import de.tudresden.inf.verdatas.xapitools.lrs.validators.Active;
 import de.tudresden.inf.verdatas.xapitools.ui.BootstrapUIIcon;
@@ -75,14 +76,14 @@ public class LrsStatementExchangeMavController implements IUIFlow {
                     try {
                         return multipartFile.getInputStream();
                     } catch (IOException e) {
-                        throw new UncheckedIOException(e);
+                        throw new LrsExceptions.BadInputData("Could not read file.");
                     }
                 })
                 .map((input) -> {
                     try {
                         return mapper.<List<JsonNode>>readValue(input, mapper.getTypeFactory().constructCollectionType(List.class, JsonNode.class));
                     } catch (IOException e) {
-                        throw new IllegalArgumentException("Could not read file. Expected List of statements.");
+                        throw new LrsExceptions.BadInputData("Could not read file. Expected List of statements.");
                     }
                 })
                 .flatMap(List::stream)

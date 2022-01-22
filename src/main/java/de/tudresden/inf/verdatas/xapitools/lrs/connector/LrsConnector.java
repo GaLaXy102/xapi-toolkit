@@ -2,6 +2,7 @@ package de.tudresden.inf.verdatas.xapitools.lrs.connector;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
+import de.tudresden.inf.verdatas.xapitools.lrs.LrsExceptions;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsHealthRestController;
 import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
 import lombok.Getter;
@@ -106,9 +107,9 @@ public class LrsConnector implements IExternalService {
             return Arrays.asList(result.getBody());
         } catch (ResourceAccessException e) {
             // This happens when connection is refused
-            throw new IllegalStateException("No connection to " + this.lrsConnection.getFriendlyName() + ".");
+            throw new LrsExceptions.NoLrsConnection("No connection to " + this.lrsConnection.getFriendlyName() + ".");
         } catch (HttpServerErrorException e) {
-            throw new IllegalStateException(this.lrsConnection.getFriendlyName() + " has some issues.");
+            throw new LrsExceptions.NoLrsConnection(this.lrsConnection.getFriendlyName() + " has some issues.");
         }
     }
 
@@ -148,9 +149,9 @@ public class LrsConnector implements IExternalService {
             return result;
         } catch (ResourceAccessException e) {
             // This happens when connection is refused
-            throw new IllegalStateException("No connection to " + this.lrsConnection.getFriendlyName() + ".");
+            throw new LrsExceptions.NoLrsConnection("No connection to " + this.lrsConnection.getFriendlyName() + ".");
         } catch (HttpServerErrorException e) {
-            throw new IllegalStateException(this.lrsConnection.getFriendlyName() + " has some issues.");
+            throw new LrsExceptions.NoLrsConnection(this.lrsConnection.getFriendlyName() + " has some issues.");
         }
     }
 }

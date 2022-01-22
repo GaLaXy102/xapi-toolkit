@@ -133,7 +133,7 @@ public class DatasimConnector implements IExternalService {
             }).toList();
         } catch (ResourceAccessException e) {
             // This happens when connection is refused
-            throw new IllegalStateException("No connection to Datasim.");
+            throw new DatasimExceptions.NoDatasimConnection("No connection to Datasim.");
         }
     }
 }

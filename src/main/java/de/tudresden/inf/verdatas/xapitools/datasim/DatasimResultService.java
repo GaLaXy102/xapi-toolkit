@@ -49,7 +49,7 @@ public class DatasimResultService {
                     this.mapper.getTypeFactory().constructCollectionType(List.class, JsonNode.class)
             );
         } catch (IOException e) {
-            throw new UncheckedIOException(e);
+            throw new DatasimExceptions.NoSuchSimulationResult("No result available for Simulation " + simulation.getId());
         }
     }
 
