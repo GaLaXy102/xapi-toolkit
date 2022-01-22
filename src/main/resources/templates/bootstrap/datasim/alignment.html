@@ -44,7 +44,7 @@
             <div class="accordion">
                 <div class="accordion-item" th:each="alignment, loop: ${alignments}">
                     <div class="accordion-header btn-group d-flex">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" th:data-bs-target="'#body' + ${loop.index}"
+                        <button class="accordion-button collapsed no-spinner" type="button" data-bs-toggle="collapse" th:data-bs-target="'#body' + ${loop.index}"
                                 th:text="${alignment.getKey()}" aria-expanded="false"></button>
                         <button class="btn float-end" type="button" th:data-component="${alignment.getKey()}" th:unless="${mode == mode.DISPLAYING}"
                                 onclick="document.getElementById('deleteComponentUrl').value = this.getAttribute('data-component');document.getElementById('deleteComponentForm').submit()">
