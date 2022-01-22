@@ -70,12 +70,10 @@ function setReqiured(el) {
 }
 
 function setInvisible(el) {
-    console.log(el);
     el.classList.add('d-none');
 }
 
 function triggerComponentSelect(element) {
-    console.log(element);
     $('#componentSelectBase').children(':not(#componentSelectType)').each(function () {setInvisible(this);setNonReqiured(this);unsetName(this)});
     const targetElementIdQuery = '#componentSelect-' + (element.value === '' ? 'NONE' : element.value);
     $(targetElementIdQuery).each(function () {setVisible(this);setReqiured(this);setName(this, 'component')});
@@ -93,7 +91,10 @@ function generateEmailAddress(btnEl) {
     target.val(mail);
 }
 
+let hasChanges = false;
+
 $(document).ready(function () {
+    // Sidebar
     $('.nav-link').each(function () {
         $(this).click(function () {
             removeAllActive();
@@ -105,8 +106,15 @@ $(document).ready(function () {
         setTimeout(queryExternalService, 0, this, $(this).get(0).dataset.checkendpoint);
         // Periodic query
         setInterval(queryExternalService, 60000, this, $(this).get(0).dataset.checkendpoint);
-    })
+    });
     $("#contentFrame").bind('load', highlightFlowStep);
+    // Alert on pending changes
+    $('input').change(() => {hasChanges = true;});
+    $('form').submit(() => {hasChanges = false;});
+    window.onbeforeunload = (ev) => {
+        if (hasChanges) ev.returnValue = "Changes you made may not be saved.";
+    }
+    // Spinners
     $('button').click(function () {
         if (this.classList.contains('dropdown-item')) addSpinner($(this).parent().parent().parent().children().first());
         else if ($(this).parent('a').length === 0 && !this.classList.contains('no-spinner')) addSpinner(this);
