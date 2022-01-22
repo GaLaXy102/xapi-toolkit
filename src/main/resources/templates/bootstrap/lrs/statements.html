@@ -51,24 +51,6 @@
                 </div>
             </form>
         </div>
-        <div class="col d-flex">
-            <form method="POST" class="card flex-fill">
-                <h2 class="card-header">
-                    Clear LRS
-                </h2>
-                <div class="card-body">
-                    <h5 class="card-title mb-3">Select LRS to clear</h5>
-                    <div class="flex-fill">
-                        <div class="mb-2">
-                            <select class="form-select" name="targetLrs" required>
-                                <option value="">Select LRS</option>
-                                <option th:each="lrs: ${lrsConnections}" th:value="${lrs.getConnectionId()}" th:text="${lrs.getFriendlyName()}"></option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
     </div>
     <!-- Success Toast -->
     <div class="position-absolute top-0 start-0 w-100" th:if="${param.get('success')}">
