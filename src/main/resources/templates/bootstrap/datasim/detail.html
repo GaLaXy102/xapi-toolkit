@@ -36,53 +36,64 @@
                 <div class="card-header">
                     <h2>
                         <span th:text="${simulation.getRemark().orElse('Untitled Simulation')}"></span>
-                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
-                        <a th:href="'/api/v1/datasim/simulation_description' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark me-3" target="_blank"><i class="bi-download"></i></a>
+                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit' + '?flow=' + ${simulation.getId().get()}"
+                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                        <a th:href="'/api/v1/datasim/simulation_description' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark me-3"
+                           target="_blank"><i class="bi-download"></i></a>
                     </h2>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                         <i class="bi-magic"></i>
                         &nbsp;&nbsp;&nbsp;
-                        <span th:text="${simulation.getProfiles().get(0).getName()}"></span>&nbsp;Profile
-                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/profile' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+                        <span th:unless="${simulation.getProfiles().isEmpty()}" th:text="${simulation.getProfiles().get(0).getName()}"></span><span
+                            th:if="${simulation.getProfiles().isEmpty()}">No</span>&nbsp;Profile
+                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/profile' + '?flow=' + ${simulation.getId().get()}"
+                           class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-files"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${simulation.getParameters().getMax()}"></span>&nbsp;Entries
-                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}"
+                           class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-flower3"></i>
                         &nbsp;&nbsp;&nbsp;
                         Seed&nbsp;<span th:text="${simulation.getParameters().getSeed()}"></span>
-                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}"
+                           class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-people-fill"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${numPersonae.get(simulation)}"></span>&nbsp;Personae
-                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/persona' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/persona' + '?flow=' + ${simulation.getId().get()}"
+                           class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-align-center"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${numAligns.get(simulation)}"></span>&nbsp;Alignments
-                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/alignment' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
-                        <a th:if="${simulation.getFinalized().get()}" th:href="'/ui/datasim/show/alignment' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-search"></i></a>
+                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/alignment' + '?flow=' + ${simulation.getId().get()}"
+                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                        <a th:if="${simulation.getFinalized().get()}" th:href="'/ui/datasim/show/alignment' + '?flow=' + ${simulation.getId().get()}"
+                           class="float-end text-dark"><i class="bi-search"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-clock"></i><i class="bi-arrow-bar-right"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${#temporals.format(simulation.getParameters().getStart(), 'yyyy-MM-dd HH:mm:ss')}"></span>
-                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}"
+                           class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-clock"></i><i class="bi-arrow-bar-left"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${#temporals.format(simulation.getParameters().getEnd(), 'yyyy-MM-dd HH:mm:ss')}"></span>
-                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark"><i class="bi-pencil"></i></a>
+                        <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}"
+                           class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-clock"></i><i class="bi-globe"></i>
@@ -111,11 +122,13 @@
                                 <input type="hidden" name="flow" th:value="${simulation.getId().get()}">
                                 <button type="submit" class="btn btn-warning flex-fill">Finalize</button>
                             </form>
-                            <form method="POST" th:action="@{/ui/datasim/perform}" th:if="${simulation.getFinalized().get()}" th:unless="${resultsList.contains(simulation.getId().get())}" class="flex-fill d-flex">
+                            <form method="POST" th:action="@{/ui/datasim/perform}" th:if="${simulation.getFinalized().get()}"
+                                  th:unless="${resultsList.contains(simulation.getId().get())}" class="flex-fill d-flex">
                                 <input type="hidden" name="flow" th:value="${simulation.getId().get()}">
                                 <button type="submit" class="btn btn-outline-success flex-fill">Perform</button>
                             </form>
-                            <a th:href="'/api/v1/datasim/retrieve?flow=' + ${simulation.getId().get()}" th:if="${resultsList.contains(simulation.getId().get())}" target="_blank" class="flex-fill d-flex text-decoration-none">
+                            <a th:href="'/api/v1/datasim/retrieve?flow=' + ${simulation.getId().get()}"
+                               th:if="${resultsList.contains(simulation.getId().get())}" target="_blank" class="flex-fill d-flex text-decoration-none">
                                 <button type="button" class="btn btn-success flex-fill">Retrieve</button>
                             </a>
                         </div>
@@ -126,7 +139,8 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li th:each="lrs: ${availableLrs}">
-                                        <button type="button" class="dropdown-item" th:text="${lrs.getName()}" th:data-lrs="${lrs.getUuid().get()}" th:data-flow="${simulation.getId().get()}"
+                                        <button type="button" class="dropdown-item" th:text="${lrs.getName()}" th:data-lrs="${lrs.getUuid().get()}"
+                                                th:data-flow="${simulation.getId().get()}"
                                                 onclick="
                                                     document.getElementById('pushFlowId').value = this.getAttribute('data-flow');
                                                     document.getElementById('pushLrsId').value = this.getAttribute('data-lrs');
