@@ -52,7 +52,7 @@ public class LrsMavController implements IUIManagementFlow {
         return mav;
     }
 
-    @PostMapping(LrsMavController.BASE_URL + "/delete")
+    @PostMapping(LrsMavController.BASE_URL + "/deactivate")
     public ModelAndView deleteLrsConnection(@RequestParam(name = "lrs_uuid") UUID lrsUuid) {
         this.lrsService.deactivateConnection(lrsUuid);
         return new ModelAndView("redirect:/ui/manage/lrs/");

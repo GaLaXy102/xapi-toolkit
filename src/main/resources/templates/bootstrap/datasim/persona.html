@@ -36,7 +36,7 @@
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <div class="mb-3 form-control">
             <label for="personaInput">Select Personae for Simulation</label>
-            <select class="form-select mt-3 mb-3" multiple id="personaInput" name="persona_id">
+            <select class="form-select mt-3 mb-3" multiple id="personaInput" name="persona_id" required>
                 <option th:each="persona: ${personas}" th:value="${persona.getKey().getId()}" th:text="${persona.getKey().getName()}"
                         th:selected="${persona.getValue()}">
                 </option>

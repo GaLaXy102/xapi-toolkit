@@ -3,63 +3,68 @@
 <head th:include="bootstrap/header.html :: scripted_head ('LRS Connection')"></head>
 <body class="bg-dark">
 <div class="container">
-    <div class="row">
-        <div th:unless="${#strings.equals(param.get('active_only'), 'false')}" class="col">
-            <form method="GET">
-                <input type="hidden" name="active_only" value="false">
-                <button type="submit" class="btn btn-primary">Also show inactive</button>
-            </form>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <!-- Create Card -->
+        <div class="col d-flex align-items-stretch" th:unless="${param.get('flow')}">
+            <div class="card flex-fill">
+                <div class="card-body bg-light d-flex">
+                    <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/manage/lrs/add}">
+                        <div class="flex-fill text-center align-self-center">
+                            <i class="bi-file-earmark-plus fs-3 text-success me-2"></i>
+                            <span class="fs-3">Create new Connection</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="card-footer bg-light d-flex">
+                    <form method="GET" class="flex-fill d-flex">
+                        <input type="hidden" name="active_only" th:value="${#strings.equals(param.get('active_only'), 'false')}">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <span th:unless="${#strings.equals(param.get('active_only'), 'false')}">Also</span>
+                            <span th:if="${#strings.equals(param.get('active_only'), 'false')}">Don't</span>
+                            show inactive Connections
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div th:if="${#strings.equals(param.get('active_only'), 'false')}" class="col">
-            <form method="GET">
-                <input type="hidden" name="active_only" value="true">
-                <button type="submit" class="btn btn-primary">Don't show inactive</button>
-            </form>
-        </div>
-        <div class="col">
-            <a th:href="@{/ui/manage/lrs/add}" class="float-end">
-                <button type="button" class="btn btn-success">
-                    <i class="bi bi-plus"></i>
-                </button>
-            </a>
+        <!-- Content Cards -->
+        <div class="col d-flex align-items-stretch" th:each="connection: ${connections}">
+            <div class="card flex-fill">
+                <div class="card-header">
+                    <h3 th:text="${connection.getName()}"></h3>
+                </div>
+                <ul class="list-group list-group-flush flex-fill">
+                    <li class="list-group-item">
+                        <i class="bi-globe"></i>
+                        &nbsp;&nbsp;&nbsp;
+                        <span th:text="${connection.getEndpoint()}"></span>
+                    </li>
+                </ul>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col">
+                            <form method="GET" th:action="@{/ui/manage/lrs/edit}" class="flex-fill d-flex">
+                                <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
+                                <button type="submit" class="btn btn-warning flex-fill"><i class="bi bi-pencil-fill"></i>&nbsp;Edit</button>
+                            </form>
+                        </div>
+                        <div class="col" th:unless="${connection.getEnabled().get()}">
+                            <form method="POST" th:action="@{/ui/manage/lrs/reactivate}" class="flex-fill d-flex">
+                                <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
+                                <button type="submit" class="btn btn-success flex-fill"><i class="bi bi-reply-fill"></i>&nbsp;Reactivate</button>
+                            </form>
+                        </div>
+                        <div class="col" th:if="${connection.getEnabled().get()}">
+                            <form method="POST" th:action="@{/ui/manage/lrs/deactivate}" class="flex-fill d-flex">
+                                <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
+                                <button type="submit" class="btn btn-outline-danger flex-fill"><i class="bi bi-eject-fill"></i>&nbsp;Deactivate</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <table class="table table-dark table-striped">
-        <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Endpoint</th>
-            <th scope="col">Key</th>
-            <th scope="col">Secret</th>
-            <th scope="col"></th> <!-- edit -->
-            <th scope="col"></th> <!-- delete -->
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="connection: ${connections}" th:id="${connection.getUuid().get()}">
-            <td th:text="${connection.getName()}"></td>
-            <td th:text="${connection.getEndpoint()}"></td>
-            <td th:text="${connection.getClientKey()}"></td>
-            <td th:text="${connection.getClientSecret()}"></td>
-            <td class="text-center">
-                <form method="GET" th:action="@{/ui/manage/lrs/edit}">
-                    <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
-                    <button type="submit" class="btn btn-outline-primary"><i class="bi bi-pencil-fill"></i></button>
-                </form>
-            </td>
-            <td class="text-center">
-                <form th:if="${connection.getEnabled().get()}" method="POST" th:action="@{/ui/manage/lrs/delete}">
-                    <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
-                    <button type="submit" class="btn btn-outline-warning"><i class="bi bi-eject-fill"></i></button>
-                </form>
-                <form th:unless="${connection.getEnabled().get()}" method="POST" th:action="@{/ui/manage/lrs/reactivate}">
-                    <input type="hidden" name="lrs_uuid" th:value="${connection.getUuid().get()}">
-                    <button type="submit" class="btn btn-outline-success"><i class="bi bi-reply-fill"></i></button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
 </div>
 </body>
 </html>
