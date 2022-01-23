@@ -1,5 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.datasim.persistence;
 
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
+@DependsOn("datasimProfileSeeder")
 @Profile("dev")
 public class DatasimEntitySeeder {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -31,7 +33,9 @@ public class DatasimEntitySeeder {
     }
 
     private void seed() {
-        List<DatasimProfile> sampleProfiles = new LinkedList<>(List.of(new DatasimProfile("ya-cmi5", "ya-cmi5.json")));
+        List<DatasimProfile> sampleProfiles = new LinkedList<>(
+                this.profileRepository.findAll().stream().min(Comparator.comparing(DatasimProfile::getName)).stream().toList()
+        );
         this.profileRepository.saveAll(sampleProfiles);
         Set<DatasimPersona> samplePersonae = this.createSamplePersonae();
         this.personaRepository.saveAll(samplePersonae);
