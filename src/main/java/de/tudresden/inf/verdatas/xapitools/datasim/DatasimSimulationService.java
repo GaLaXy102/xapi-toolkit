@@ -40,8 +40,8 @@ public class DatasimSimulationService {
      * Get all xAPI-Profiles known to the system.
      * They are seeded by {@link DatasimEntitySeeder} in dev-Mode or {@link DatasimProfileSeeder} in production.
      */
-    public Streamable<DatasimProfile> getProfiles() {
-        return this.profileRepository.findAll();
+    public Stream<DatasimProfile> getProfiles() {
+        return this.profileRepository.findAll().stream().sorted(Comparator.comparing(DatasimProfile::getName));
     }
 
     /**

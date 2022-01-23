@@ -37,7 +37,7 @@ class ProfileSettingFlowController implements SimulationStep {
     @GetMapping(DatasimSimulationMavController.BASE_URL + "/new/profile")
     public ModelAndView showSelectProfile(@RequestParam(name = "flow") UUID simulationId) {
         ModelAndView mav = new ModelAndView("bootstrap/datasim/profiles");
-        mav.addObject("profiles", this.datasimSimulationService.getProfiles().map(DatasimProfileTO::of));
+        mav.addObject("profiles", this.datasimSimulationService.getProfiles().map(DatasimProfileTO::of).toList());
         mav.addObject("flow", simulationId.toString());
         mav.addObject("mode", DatasimSimulationMavController.Mode.CREATING);
         return mav;
