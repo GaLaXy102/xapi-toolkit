@@ -13,6 +13,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+/**
+ * Service managing LRS Connections.
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Service
 @DependsOn("lrsConnectionSeeder")
 @Validated
@@ -21,14 +26,19 @@ public class LrsService {
     private final LrsConnectionRepository lrsConnectionRepository;
     private final LrsConnectorLifecycleManager connectorLifecycleManager;
 
-    public LrsService(LrsConnectionRepository lrsConnectionRepository, LrsConnectorLifecycleManager connectorLifecycleManager) {
+    /**
+     * This constructor is for Spring-internal use.
+     * It also bootstraps the connectors for the enabled connections.
+     */
+    LrsService(LrsConnectionRepository lrsConnectionRepository, LrsConnectorLifecycleManager connectorLifecycleManager) {
         this.lrsConnectionRepository = lrsConnectionRepository;
         this.connectorLifecycleManager = connectorLifecycleManager;
+        // Create Connectors for all active Connections at Boot time
         this.lrsConnectionRepository.findAll().stream().filter(LrsConnection::isEnabled).forEach(this.connectorLifecycleManager::createConnector);
     }
 
     /**
-     * Create an LRS connection from a Transfer Object and save it
+     * Create an LRS connection from a Transfer Object, save it and create an {@link LrsConnector} for it.
      */
     @Transactional
     LrsConnection createConnection(LrsConnectionTO lrsData) {
@@ -107,17 +117,36 @@ public class LrsService {
         return found;
     }
 
+    /**
+     * Send a list of xAPI Statements to an LRS via the specified {@link LrsConnection}
+     *
+     * @param statements List of xAPI Statements to send. No Validation is applied.
+     * @param connection Connection details to use. Must be Active.
+     * @return The responded list of Statement IDs in the LRS.
+     */
     public List<UUID> sendStatements(List<JsonNode> statements, @Active LrsConnection connection) {
         LrsConnector connector = this.connectorLifecycleManager.getConnector(connection);
         return connector.sendStatements(statements);
     }
 
+    /**
+     * Get all Statements from the specified LRS.
+     *
+     * @param connection Connection details to use. Must be Active.
+     * @return List of all xAPI Statements contained in the given LRS.
+     */
     public List<JsonNode> getStatements(@Active LrsConnection connection) {
         LrsConnector connector = this.connectorLifecycleManager.getConnector(connection);
         return connector.getStatements();
     }
 
-    LrsConnector getConnector(LrsConnection connection) {
+    /**
+     * Get the {@link LrsConnector} for a given {@link LrsConnection}.
+     *
+     * @param connection Connection details to use. Must be Active.
+     * @return {@link LrsConnector} for the connection.
+     */
+    LrsConnector getConnector(@Active LrsConnection connection) {
         return this.connectorLifecycleManager.getConnector(connection);
     }
 }

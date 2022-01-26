@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimSimulation;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimSimulationTO;
 import de.tudresden.inf.verdatas.xapitools.datasim.validators.Finalized;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,8 +23,14 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * Rest Controller to Read and Perform Datasim Simulations
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @RestController
 @RequestMapping("/api/v1/datasim")
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DatasimSimulationRestController {
 
     private final DatasimSimulationService datasimSimulationService;
@@ -30,14 +38,13 @@ public class DatasimSimulationRestController {
     private final DatasimConnector connector;
     private final DatasimResultService resultService;
 
-    public DatasimSimulationRestController(DatasimSimulationService datasimSimulationService, ObjectMapper objectMapper,
-                                           DatasimConnector connector, DatasimResultService resultService) {
-        this.datasimSimulationService = datasimSimulationService;
-        this.objectMapper = objectMapper;
-        this.connector = connector;
-        this.resultService = resultService;
-    }
-
+    /**
+     * Get the JSON document representing the DATASIM simulation
+     * This can be used as <a href="https://github.com/yetanalytics/datasim/tree/d55f24098aca78db69e2f03d4f202ce58b5fdb49#alternatively-simulation-specification">Simulation Specification</a>.
+     *
+     * @param simulationId UUID of the Simulation to get the description of
+     * @return JSON file containing the Simulation Representation
+     */
     @GetMapping("/simulation_description")
     public ResponseEntity<DatasimSimulationTO> getSimulationDescription(@RequestParam(name = "flow") UUID simulationId) {
         DatasimSimulationTO simulation = DatasimSimulationTO.of(this.datasimSimulationService.getSimulation(simulationId));
@@ -49,6 +56,13 @@ public class DatasimSimulationRestController {
         return ResponseEntity.ok().headers(headers).body(simulation.forExport());
     }
 
+    /**
+     * Get a ZIP archive containing the JSON documents representing the DATASIM simulation
+     * This file contains the <a href="https://github.com/yetanalytics/datasim/tree/d55f24098aca78db69e2f03d4f202ce58b5fdb49#simulation-inputs">Simulation Inputs</a>.
+     *
+     * @param simulationId UUID of the Simulation to get the description of
+     * @return ZIP file containing the Simulation Representation
+     */
     @GetMapping("/simulation_description_zip")
     public ResponseEntity<byte[]> getSimulationDescriptionZip(@RequestParam(name = "flow") UUID simulationId) throws IOException {
         DatasimSimulationTO simulation = DatasimSimulationTO.of(this.datasimSimulationService.getSimulation(simulationId));
@@ -99,6 +113,12 @@ public class DatasimSimulationRestController {
         return ResponseEntity.ok().headers(headers).body(baos.toByteArray());
     }
 
+    /**
+     * Send a Simulation to DATASIM and retrieve the result without persisting it.
+     *
+     * @param simulationId UUID of the Simulation to get the description of
+     * @return Resulting xAPI Statements
+     */
     @GetMapping("/perform")
     public ResponseEntity<List<JsonNode>> performSimulationWithoutPersist(@RequestParam(name = "flow") UUID simulationId) {
         DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
@@ -108,6 +128,12 @@ public class DatasimSimulationRestController {
         return ResponseEntity.ok().headers(headers).body(this.connector.sendSimulation(sendable));
     }
 
+    /**
+     * Retrieve Results of DATASIM Simulation saved with {@link DatasimResultService#saveSimulationResult(DatasimSimulation, List)}.
+     *
+     * @param simulationId UUID of the Simulation to get the description of
+     * @return Resulting xAPI Statements
+     */
     @GetMapping("/retrieve")
     public ResponseEntity<List<JsonNode>> getSimulationResult(@RequestParam(name = "flow") UUID simulationId) {
         @Finalized DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);

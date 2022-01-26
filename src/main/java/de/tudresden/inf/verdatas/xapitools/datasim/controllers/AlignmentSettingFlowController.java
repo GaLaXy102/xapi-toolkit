@@ -1,6 +1,7 @@
 package de.tudresden.inf.verdatas.xapitools.datasim.controllers;
 
 import de.tudresden.inf.verdatas.xapitools.datasim.DatasimSimulationService;
+import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimAlignment;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimProfileTO;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimSimulation;
 import lombok.AccessLevel;
@@ -21,23 +22,46 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+/**
+ * ModelAndView Controller for Management of {@link DatasimAlignment}s
+ * By implementing {@link SimulationStep}, it is automatically bound in {@link DatasimSimulationMavController}.
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Controller
 @Order(4)
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class AlignmentSettingFlowController implements SimulationStep {
-    
+
     private final DatasimSimulationService datasimSimulationService;
 
+    /**
+     * Get the Human readable name of this Step
+     *
+     * @return Name of Step
+     */
     @Override
     public String getName() {
         return "Create Alignments";
     }
 
+    /**
+     * Get the Paths which belong to this step.
+     * When this pattern is matched, the step will be highlighted in the UI.
+     * Be sure to match **any** subpath of your step.
+     *
+     * @return Regex-Pattern matching all Paths that belong to this step
+     */
     @Override
     public Pattern getPathRegex() {
         return Pattern.compile(DatasimSimulationMavController.BASE_URL + "/(new|edit|show)/alignment(/add|/delete)?$");
     }
 
+    /**
+     * Show page to create Alignments
+     *
+     * @param simulationId UUID of associated Simulation
+     */
     @GetMapping(DatasimSimulationMavController.BASE_URL + "/new/alignment")
     public ModelAndView showCreateAlignments(@RequestParam(name = "flow") UUID simulationId) {
         DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
@@ -49,6 +73,11 @@ public class AlignmentSettingFlowController implements SimulationStep {
         return mav;
     }
 
+    /**
+     * Show page to edit existing Alignments
+     *
+     * @param simulationId UUID of associated Simulation
+     */
     @GetMapping(DatasimSimulationMavController.BASE_URL + "/edit/alignment")
     public ModelAndView showEditAlignments(@RequestParam(name = "flow") UUID simulationId) {
         ModelAndView mav = this.showCreateAlignments(simulationId);
@@ -56,6 +85,11 @@ public class AlignmentSettingFlowController implements SimulationStep {
         return mav;
     }
 
+    /**
+     * Show page to show existing Alignments
+     *
+     * @param simulationId UUID of associated Simulation
+     */
     @GetMapping(DatasimSimulationMavController.BASE_URL + "/show/alignment")
     public ModelAndView showDisplayAlignments(@RequestParam(name = "flow") UUID simulationId) {
         DatasimSimulation simulation = this.datasimSimulationService.getSimulation(simulationId);
@@ -66,6 +100,14 @@ public class AlignmentSettingFlowController implements SimulationStep {
         return mav;
     }
 
+    /**
+     * Add a new neutral Alignment to the Simulation
+     *
+     * @param simulationId UUID of associated Simulation
+     * @param componentUrl Identifier of the Component to align to
+     * @param mode         -- Page mode, used for redirection
+     * @param attributes   -- Autowired by Spring, used for redirection
+     */
     @PostMapping(DatasimSimulationMavController.BASE_URL + "/new/alignment/add")
     public RedirectView addComponentToSimulation(@RequestParam(name = "flow") UUID simulationId,
                                                  @RequestParam(name = "component") URL componentUrl,
@@ -76,6 +118,14 @@ public class AlignmentSettingFlowController implements SimulationStep {
         return new RedirectView(DatasimSimulationMavController.Mode.CREATING.equals(mode) ? "../alignment" : "../../edit/alignment");
     }
 
+    /**
+     * Remove a Component with all Alignments from the Simulation
+     *
+     * @param simulationId UUID of associated Simulation
+     * @param componentUrl Identifier of the Component to align to
+     * @param mode         -- Page mode, used for redirection
+     * @param attributes   -- Autowired by Spring, used for redirection
+     */
     @PostMapping(DatasimSimulationMavController.BASE_URL + "/new/alignment/delete")
     public RedirectView removeComponentFromSimulation(@RequestParam(name = "flow") UUID simulationId,
                                                       @RequestParam(name = "component") URL componentUrl,
@@ -86,6 +136,14 @@ public class AlignmentSettingFlowController implements SimulationStep {
         return new RedirectView(DatasimSimulationMavController.Mode.CREATING.equals(mode) ? "../alignment" : "../../edit/alignment");
     }
 
+    /**
+     * Update Simulation from received alignments
+     *
+     * @param simulationId    UUID of associated Simulation
+     * @param componentAligns Mapping personaID@componentUrl -> weight
+     * @param mode            -- Page mode, used for redirection
+     * @param attributes      -- Autowired by Spring, used for redirection
+     */
     @PostMapping(DatasimSimulationMavController.BASE_URL + "/new/alignment")
     public RedirectView createAlignments(@RequestParam(name = "flow") UUID simulationId,
                                          @RequestParam Map<String, String> componentAligns,

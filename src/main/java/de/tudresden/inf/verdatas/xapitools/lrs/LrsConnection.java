@@ -1,6 +1,7 @@
 package de.tudresden.inf.verdatas.xapitools.lrs;
 
 import lombok.*;
+import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,12 +12,15 @@ import java.util.UUID;
 
 /**
  * Connection Entity for LRS
- *
+ * <p>
  * This class is used for persistence only.
  * Never send or accept this in a request.
  * Instead use {@link LrsConnectionTO}
+ *
+ * @author Konstantin Köhring (@Galaxy102)
  */
 @Entity
+@Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LrsConnection {
     @GeneratedValue
@@ -53,11 +57,11 @@ public class LrsConnection {
 
     /**
      * Create a new LRS Connection persistence unit
-     *
+     * <p>
      * The created entity will be enabled by default and receive a generated UUID.
      * To set properties, use the Setters instead.
      */
-    public LrsConnection(@NonNull String friendlyName, @NonNull URL xApiEndpoint, @NonNull String xApiClientKey, @NonNull String xApiClientSecret) {
+    LrsConnection(@NonNull String friendlyName, @NonNull URL xApiEndpoint, @NonNull String xApiClientKey, @NonNull String xApiClientSecret) {
         this.friendlyName = friendlyName;
         this.xApiEndpoint = xApiEndpoint;
         this.xApiClientKey = xApiClientKey;

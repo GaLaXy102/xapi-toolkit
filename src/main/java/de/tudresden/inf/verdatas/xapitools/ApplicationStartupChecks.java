@@ -6,9 +6,21 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Component which checks for possible misconfigurations at Boot Time
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Component
 public class ApplicationStartupChecks {
 
+    /**
+     * Checks shall be called on instantiation, so declare any checks in this constructor.
+     * You can bind any parameters using the {@link Value}-Annotation.
+     *
+     * @param storageDir automatically bound to the property "xapi.datasim.sim-storage", Storage Directory of the Datasim Simulations
+     * @throws IOException like any exception - marks that at least one check failed
+     */
     public ApplicationStartupChecks(@Value("${xapi.datasim.sim-storage}") String storageDir) throws IOException {
         this.checkStorageDirWritable(storageDir);
     }

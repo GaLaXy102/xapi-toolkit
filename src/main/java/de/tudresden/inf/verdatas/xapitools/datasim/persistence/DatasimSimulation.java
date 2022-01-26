@@ -8,16 +8,17 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.springframework.validation.annotation.Validated;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Hibernate Entity representing a DATASIM Simulation Description
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Entity
 @Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -60,6 +61,15 @@ public class DatasimSimulation {
     @Setter
     private boolean finalized;
 
+    /**
+     * Create a new Datasim Simulation
+     *
+     * @param remark        Title of the Simulation
+     * @param personaGroups Groups of Personae that participate in this Simulation
+     * @param alignments    Mapping Alignment -> Persona weighting the interaction with Simulation content
+     * @param parameters    Parameters of the Simulation
+     * @param profiles      Profile document in use
+     */
     public DatasimSimulation(String remark, Set<DatasimPersonaGroup> personaGroups, Map<DatasimAlignment, DatasimPersona> alignments,
                              DatasimSimulationParams parameters, List<DatasimProfile> profiles) {
         this.remark = remark;

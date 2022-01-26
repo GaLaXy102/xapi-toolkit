@@ -3,8 +3,9 @@ package de.tudresden.inf.verdatas.xapitools.datasim;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.*;
 import de.tudresden.inf.verdatas.xapitools.datasim.validators.AlignmentWeight;
 import de.tudresden.inf.verdatas.xapitools.datasim.validators.NonFinalized;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.util.Pair;
-import org.springframework.data.util.Streamable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -15,26 +16,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This service handles all Entity-related concerns to parameterize a Datasim Simulation
+ * This service handles all Entity-related concerns to parameterize a Datasim Simulation.
+ *
+ * @author Konstantin Köhring (@Galaxy102)
  */
 @Service
 @Validated  // Enable Validation on all methods
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DatasimSimulationService {
     private final DatasimSimulationRepository simulationRepository;
     private final DatasimProfileRepository profileRepository;
     private final DatasimPersonaRepository personaRepository;
     private final DatasimAlignmentRepository alignmentRepository;
-
-    /**
-     * Instantiate the Service. This is done automagically by Spring through the @Service annotation.
-     */
-    public DatasimSimulationService(DatasimSimulationRepository simulationRepository, DatasimProfileRepository profileRepository,
-                                    DatasimPersonaRepository personaRepository, DatasimAlignmentRepository alignmentRepository) {
-        this.simulationRepository = simulationRepository;
-        this.profileRepository = profileRepository;
-        this.personaRepository = personaRepository;
-        this.alignmentRepository = alignmentRepository;
-    }
 
     /**
      * Get all xAPI-Profiles known to the system.
@@ -46,6 +39,7 @@ public class DatasimSimulationService {
 
     /**
      * Get an xAPI-Profile by its ID.
+     *
      * @throws IllegalArgumentException when the ID is not known to the system.
      */
     public DatasimProfile getProfile(UUID profileId) {
@@ -61,6 +55,7 @@ public class DatasimSimulationService {
 
     /**
      * Get a Simulation description by its ID.
+     *
      * @throws IllegalArgumentException when the ID is not known to the system.
      */
     public DatasimSimulation getSimulation(UUID simulationId) {
@@ -69,6 +64,7 @@ public class DatasimSimulationService {
 
     /**
      * Get a Simulation description by its ID ensuring it hasn't been marked as finalized.
+     *
      * @throws IllegalArgumentException when the ID is not known to the system.
      */
     @NonFinalized
@@ -79,6 +75,7 @@ public class DatasimSimulationService {
 
     /**
      * Get a Persona by its ID.
+     *
      * @throws IllegalArgumentException when the ID is not known to the system.
      */
     public DatasimPersona getPersona(UUID personaId) {
@@ -121,6 +118,7 @@ public class DatasimSimulationService {
 
     /**
      * Retrieve an alignment from a Simulation description using its component and Persona as keys
+     *
      * @throws NoSuchElementException when there is no such alignment
      */
     public static DatasimAlignment getAlignment(DatasimSimulation simulation, URL componentUrl, DatasimPersona persona) {

@@ -13,6 +13,12 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Seed sample data
+ * Only run when in dev-Mode
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Component
 @DependsOn("datasimProfileSeeder")
 @Profile("dev")
@@ -23,8 +29,11 @@ public class DatasimEntitySeeder {
     private final DatasimAlignmentRepository alignmentRepository;
     private final DatasimSimulationRepository simulationRepository;
 
-    public DatasimEntitySeeder(DatasimSimulationRepository simulationRepository, DatasimProfileRepository profileRepository,
-                               DatasimPersonaRepository personaRepository, DatasimAlignmentRepository alignmentRepository) {
+    /**
+     * This class is instantiated by Spring Boot and not intended for manual creation.
+     */
+    DatasimEntitySeeder(DatasimSimulationRepository simulationRepository, DatasimProfileRepository profileRepository,
+                        DatasimPersonaRepository personaRepository, DatasimAlignmentRepository alignmentRepository) {
         this.simulationRepository = simulationRepository;
         this.profileRepository = profileRepository;
         this.personaRepository = personaRepository;
@@ -98,7 +107,7 @@ public class DatasimEntitySeeder {
                                                 // Insert evil smile here.
                                                 Pair.of(new DatasimAlignment(componentFail, 1.0f), persona),
                                                 Pair.of(new DatasimAlignment(componentPass, -1.0f), persona)
-                                                )
+                                        )
                                 )
                                 .flatMap(Set::stream)
                                 .peek((pair) -> this.alignmentRepository.save(pair.getFirst()))

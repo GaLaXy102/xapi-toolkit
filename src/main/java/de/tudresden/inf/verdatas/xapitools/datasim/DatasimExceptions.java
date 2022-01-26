@@ -2,6 +2,11 @@ package de.tudresden.inf.verdatas.xapitools.datasim;
 
 import java.util.NoSuchElementException;
 
+/**
+ * Customized Exceptions for DATASIM handling
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 public class DatasimExceptions {
 
     /**
@@ -15,7 +20,7 @@ public class DatasimExceptions {
 
     /**
      * Simulation result is unavailable
-     *
+     * <p>
      * We want to subclass that as they are stored in a volume and may become inaccessible, even though the database still knows about them.
      */
     public static class NoSuchSimulationResult extends NoSuchElementException {

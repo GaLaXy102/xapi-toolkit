@@ -9,15 +9,14 @@ import lombok.Setter;
 import org.springframework.data.util.Pair;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Transfer Object for Communication with DATASIM, representing a Simulation Description
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimSimulationTO {
@@ -82,6 +81,12 @@ public class DatasimSimulationTO {
         return out;
     }
 
+    /**
+     * Create a TO from an Entity
+     *
+     * @param simulation Base Entity to get a representation of
+     * @return Decoupled Transfer Object
+     */
     public static DatasimSimulationTO of(DatasimSimulation simulation) {
         Set<DatasimPersonaGroupTO> personae = simulation.getPersonaGroups().stream().map(DatasimPersonaGroupTO::of).collect(Collectors.toSet());
         Map<DatasimActor, Set<DatasimAlignmentTO>> aligns = DatasimSimulationTO.mapAlignsFromEntity(simulation.getAlignments());
@@ -96,6 +101,9 @@ public class DatasimSimulationTO {
         );
     }
 
+    /**
+     * Recursive adaptions for sending to DATASIM or export
+     */
     public DatasimSimulationTO forExport() {
         return new DatasimSimulationTO(
                 Optional.empty(),

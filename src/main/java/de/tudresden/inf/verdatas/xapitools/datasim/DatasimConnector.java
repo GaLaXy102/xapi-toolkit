@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimSimulationTO;
 import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.annotation.Order;
@@ -29,10 +31,13 @@ import java.util.logging.Logger;
 
 /**
  * This Service provides a connection to a DATASIM instance.
+ *
+ * @author Konstantin Köhring (@Galaxy102)
  */
 @EnableScheduling
 @Service
 @Order(1)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DatasimConnector implements IExternalService {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -54,15 +59,21 @@ public class DatasimConnector implements IExternalService {
 
     private final ObjectMapper mapper;
 
-    public DatasimConnector(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
-
+    /**
+     * Get the Human readable name of this Service.
+     *
+     * @return Name of service
+     */
     @Override
     public String getName() {
         return "DATASIM";
     }
 
+    /**
+     * Get the Path to the Health Check Endpoint for this Service.
+     *
+     * @return Path to Health Endpoint
+     */
     @Override
     public String getCheckEndpoint() {
         return DatasimHealthRestController.HEALTH_ENDPOINT;
@@ -70,8 +81,8 @@ public class DatasimConnector implements IExternalService {
 
     /**
      * Check whether the connected instance is alive
-     *
-     * To run manually, call this method and afterwards get the result from {@link #getHealth()}
+     * <p>
+     * To run manually, call this method and afterwards get the result from getHealth()
      */
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
     public void healthCheck() {
@@ -92,7 +103,7 @@ public class DatasimConnector implements IExternalService {
 
     /**
      * Callback for timed health check
-     *
+     * <p>
      * Sets the health-Property and logs the result.
      */
     private void healthChangedCallback(boolean newHealth) {
@@ -104,6 +115,12 @@ public class DatasimConnector implements IExternalService {
         }
     }
 
+    /**
+     * Send the prepared {@link DatasimSimulationTO} (i.e. {@link DatasimSimulationTO#forExport()} has been called) to DATASIM
+     *
+     * @param simulation Simulation description
+     * @return Resulting xAPI Statements
+     */
     public List<JsonNode> sendSimulation(DatasimSimulationTO simulation) {
         RestTemplate restTemplate = new RestTemplateBuilder().basicAuthentication(this.datasimUser, this.datasimPassword).build();
         HttpHeaders headers = new HttpHeaders();
@@ -121,7 +138,7 @@ public class DatasimConnector implements IExternalService {
             // but the contained statements have no delimiting ",", but rather "\n".
             // As none of these are safely replaceable, we have to remove the first two and the last two bytes of the result.
             assert result != null;
-            result = result.substring(2, result.length()-2);
+            result = result.substring(2, result.length() - 2);
             // Now we have the statements remaining, one by line
             String[] statements = result.split("\n");
             return Arrays.stream(statements).map(content -> {

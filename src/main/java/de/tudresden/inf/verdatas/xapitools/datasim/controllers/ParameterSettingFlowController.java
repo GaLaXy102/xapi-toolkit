@@ -2,6 +2,7 @@ package de.tudresden.inf.verdatas.xapitools.datasim.controllers;
 
 import de.tudresden.inf.verdatas.xapitools.datasim.DatasimSimulationService;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimSimulation;
+import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimSimulationParams;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimSimulationParamsTO;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +19,46 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+/**
+ * ModelAndView Controller for Management of {@link DatasimSimulationParams}
+ * By implementing {@link SimulationStep}, it is automatically bound in {@link DatasimSimulationMavController}.
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Controller
 @Order(5)
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class ParameterSettingFlowController implements SimulationStep {
 
     private final DatasimSimulationService datasimSimulationService;
 
+    /**
+     * Get the Human readable name of this Step
+     *
+     * @return Name of Step
+     */
     @Override
     public String getName() {
         return "Set Parameters";
     }
 
+    /**
+     * Get the Paths which belong to this step.
+     * When this pattern is matched, the step will be highlighted in the UI.
+     * Be sure to match **any** subpath of your step.
+     *
+     * @return Regex-Pattern matching all Paths that belong to this step
+     */
     @Override
     public Pattern getPathRegex() {
         return Pattern.compile(DatasimSimulationMavController.BASE_URL + "/(new|edit)/parameters$");
     }
 
+    /**
+     * Show page to set Parameters in CREATE mode.
+     *
+     * @param simulationId UUID of associated Simulation
+     */
     @GetMapping(DatasimSimulationMavController.BASE_URL + "/new/parameters")
     public ModelAndView showSetSimulationParameters(@RequestParam(name = "flow") UUID simulationId) {
         DatasimSimulation simulation = this.datasimSimulationService.getUnfinalizedSimulation(simulationId);
@@ -45,6 +69,11 @@ public class ParameterSettingFlowController implements SimulationStep {
         return mav;
     }
 
+    /**
+     * Show page to set Parameters in EDITING mode.
+     *
+     * @param simulationId UUID of associated Simulation
+     */
     @GetMapping(DatasimSimulationMavController.BASE_URL + "/edit/parameters")
     public ModelAndView showEditSimulationParameters(@RequestParam(name = "flow") UUID simulationId) {
         ModelAndView mav = this.showSetSimulationParameters(simulationId);
@@ -52,6 +81,15 @@ public class ParameterSettingFlowController implements SimulationStep {
         return mav;
     }
 
+    /**
+     * Update Simulation Parameters
+     *
+     * @param simulationId     UUID of associated Simulation
+     * @param simulationParams Parameters to set
+     * @param userTimezone     Timezone of the user, will be used as reference
+     * @param mode             -- Page mode, used for redirection
+     * @param attributes       -- Autowired by Spring, used for redirection
+     */
     @PostMapping(DatasimSimulationMavController.BASE_URL + "/new/parameters")
     public RedirectView setSimulationParameters(@RequestParam(name = "flow") UUID simulationId,
                                                 DatasimSimulationParamsTO simulationParams,

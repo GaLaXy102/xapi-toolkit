@@ -9,8 +9,10 @@ import java.util.Optional;
 
 /**
  * Seeder for LRS connections
- *
+ * <p>
  * Is run only in dev mode.
+ *
+ * @author Konstantin Köhring (@Galaxy102)
  */
 @Component
 @Profile("dev")
@@ -20,7 +22,7 @@ public class LrsConnectionSeeder {
     /**
      * This class is instantiated by Spring Boot and not intended for manual creation.
      */
-    private LrsConnectionSeeder(LrsConnectionRepository lrsConnectionRepository) {
+    LrsConnectionSeeder(LrsConnectionRepository lrsConnectionRepository) {
         this.lrsConnectionRepository = lrsConnectionRepository;
         this.seed();
     }
@@ -41,6 +43,7 @@ public class LrsConnectionSeeder {
                         new LrsConnectionTO(Optional.empty(), "Galaxion LRS", new URL("https://ba-lrs.galaxion.de/data/xAPI"), "28ec3f7855e5bd320f2b45483c5c3c10c5b45a4b", "af210bb4f29f3d9fb8b37c41f5e5ac2d4df90909", Optional.empty()).toNewLrsConnection()
                 );
             }
-        } catch (MalformedURLException ignored) {}
+        } catch (MalformedURLException ignored) {
+        }
     }
 }

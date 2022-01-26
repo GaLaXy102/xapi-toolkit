@@ -35,6 +35,8 @@ In the Docker Image, the `prod` profile is active by default.
 
 Tests can activate the `test` profile as they wish.
 
+You can build the Javadoc of this project by executing the Maven Goal `javadoc:javadoc`, for example by calling `./mvnw javadoc:javadoc`.
+
 ## External Credits
 
 This Application uses third party content:

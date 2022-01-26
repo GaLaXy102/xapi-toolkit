@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * This contains all alignable Element types for Datasim Components as described in https://github.com/yetanalytics/datasim/issues/41
+ *
+ * @author Konstantin Köhring (@Galaxy102)
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum DatasimProfileAlignableElementType {

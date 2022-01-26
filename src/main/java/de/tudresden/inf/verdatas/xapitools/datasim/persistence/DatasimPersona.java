@@ -1,19 +1,20 @@
 package de.tudresden.inf.verdatas.xapitools.datasim.persistence;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
+import java.util.Comparator;
 import java.util.UUID;
 
+/**
+ * Hibernate Entity representing a DATASIM Alignment
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Entity
 @Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -34,6 +35,12 @@ public class DatasimPersona implements Comparable<DatasimPersona> {
     @NotBlank
     private String mbox;
 
+    /**
+     * Create a new Persona
+     *
+     * @param name Friendly name of the Persona
+     * @param mbox Sample Mail Address used to identify a Persona
+     */
     DatasimPersona(String name, String mbox) {
         this.name = name;
         this.mbox = mbox;
@@ -46,10 +53,6 @@ public class DatasimPersona implements Comparable<DatasimPersona> {
      */
     @Override
     public int compareTo(@NonNull DatasimPersona o) {
-        int result = this.name.compareTo(o.getName());
-        if (result == 0) {
-            result = this.mbox.compareTo(o.getMbox());
-        }
-        return result;
+        return Comparator.comparing(DatasimPersona::getName).thenComparing(DatasimPersona::getMbox).thenComparing(DatasimPersona::getId).compare(this, o);
     }
 }

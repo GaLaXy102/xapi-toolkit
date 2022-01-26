@@ -1,10 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.datasim.persistence;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
@@ -14,6 +10,11 @@ import javax.validation.constraints.Positive;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+/**
+ * Hibernate Entity representing DATASIM Simulation Parameters
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Entity
 @Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -42,6 +43,14 @@ public class DatasimSimulationParams {
     @Setter(AccessLevel.PACKAGE)
     private ZonedDateTime end;
 
+    /**
+     * Create a new Parameter Set
+     *
+     * @param max   Number of Statements to generate at most
+     * @param seed  Seed of Simulation
+     * @param start Start Time of Statements to generate
+     * @param end   End Time of Statements to generate
+     */
     DatasimSimulationParams(Long max, Long seed, ZonedDateTime start, ZonedDateTime end) {
         this.max = max;
         this.seed = seed;

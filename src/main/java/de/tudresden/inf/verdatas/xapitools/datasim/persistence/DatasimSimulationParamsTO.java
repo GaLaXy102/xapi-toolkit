@@ -16,6 +16,11 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
+/**
+ * Transfer Object for Communication with DATASIM, representing Simulation Parameters
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimSimulationParamsTO {
@@ -50,6 +55,12 @@ public class DatasimSimulationParamsTO {
     @Setter
     private ZoneId timezone;
 
+    /**
+     * Create a TO from an Entity
+     *
+     * @param simulationParams Base Entity to get a representation of
+     * @return Decoupled Transfer Object
+     */
     public static DatasimSimulationParamsTO of(DatasimSimulationParams simulationParams) {
         return new DatasimSimulationParamsTO(
                 Optional.of(simulationParams.getId()),
@@ -61,8 +72,16 @@ public class DatasimSimulationParamsTO {
         );
     }
 
+    /**
+     * Create a new DatasimSimulationParams Entity for use in Services.
+     *
+     * @return persistable Entity
+     * @throws IllegalStateException when the TO has its UUID set
+     */
     public DatasimSimulationParams toNewSimulationParams() {
-        this.id.ifPresent((id) -> {throw new IllegalStateException("UUID must be empty when creating new.");});
+        this.id.ifPresent((id) -> {
+            throw new IllegalStateException("UUID must be empty when creating new.");
+        });
         return new DatasimSimulationParams(
                 this.max,
                 this.seed,
@@ -71,11 +90,22 @@ public class DatasimSimulationParamsTO {
         );
     }
 
+    /**
+     * Create Simulation Parameters TO with default values
+     *
+     * @return Default Parameters TO for further consuming
+     */
     public static DatasimSimulationParamsTO empty() {
         Random random = new Random();
         return new DatasimSimulationParamsTO(Optional.empty(), 1000L, random.nextLong(5000L), LocalDateTime.now(), LocalDateTime.now().plusWeeks(1), ZoneId.systemDefault());
     }
 
+    /**
+     * Create "existing" (i.e. there are Parameters with this ID) DatasimSimulationParameters Entity for use in Services.
+     *
+     * @return persistable Entity
+     * @throws IllegalStateException when the TO has no UUID set
+     */
     public DatasimSimulationParams toExistingSimulationParams() {
         return new DatasimSimulationParams(
                 this.id.orElseThrow(() -> new IllegalStateException("UUID must not be empty when updating.")),
@@ -86,6 +116,9 @@ public class DatasimSimulationParamsTO {
         );
     }
 
+    /**
+     * Adaptions for sending to DATASIM or export
+     */
     public DatasimSimulationParamsTO forExport() {
         return new DatasimSimulationParamsTO(
                 Optional.empty(),

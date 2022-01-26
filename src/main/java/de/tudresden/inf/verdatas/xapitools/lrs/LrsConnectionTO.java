@@ -12,22 +12,37 @@ import java.util.UUID;
 
 /**
  * Transfer Object for {@link LrsConnection}
- *
  * Always use this class to for transfer from or to client.
+ *
+ * @author Konstantin Köhring (@Galaxy102)
  */
 @AllArgsConstructor
 @EqualsAndHashCode
 public class LrsConnectionTO {
-    @NonNull @Getter private final Optional<UUID> uuid;
-    @NonNull @NotBlank @Getter private final String name;
-    @NonNull @Getter private final URL endpoint;
-    @NonNull @NotBlank @Getter private final String clientKey;
-    @NonNull @NotBlank @Getter private final String clientSecret;
-    @NonNull @Getter private final Optional<Boolean> enabled;
+    @NonNull
+    @Getter
+    private final Optional<UUID> uuid;
+    @NonNull
+    @NotBlank
+    @Getter
+    private final String name;
+    @NonNull
+    @Getter
+    private final URL endpoint;
+    @NonNull
+    @NotBlank
+    @Getter
+    private final String clientKey;
+    @NonNull
+    @NotBlank
+    @Getter
+    private final String clientSecret;
+    @NonNull
+    @Getter
+    private final Optional<Boolean> enabled;
 
     /**
      * Create a new LRS connection Entity from incoming data
-     *
      * The UUID will be generated and the entity will be in enabled state.
      */
     LrsConnection toNewLrsConnection() {
@@ -40,7 +55,7 @@ public class LrsConnectionTO {
     }
 
     /**
-     * Create a Transfer Object from a given LRS connection entity for safe exchange.
+     * Create a Transfer Object of a given LRS connection entity for safe exchange.
      */
     public static LrsConnectionTO of(LrsConnection connection) {
         return new LrsConnectionTO(
@@ -50,6 +65,6 @@ public class LrsConnectionTO {
                 connection.getXApiClientKey(),
                 connection.getXApiClientSecret(),
                 Optional.of(connection.isEnabled())
-                );
+        );
     }
 }

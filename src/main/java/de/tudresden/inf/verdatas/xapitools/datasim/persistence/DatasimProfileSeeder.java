@@ -12,18 +12,28 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Seed profiles from Classpath
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Component
 public class DatasimProfileSeeder {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final DatasimProfileRepository profileRepository;
 
-    public DatasimProfileSeeder(DatasimProfileRepository profileRepository) {
+    /**
+     * This class is instantiated by Spring Boot and not intended for manual creation.
+     */
+    DatasimProfileSeeder(DatasimProfileRepository profileRepository) {
         this.profileRepository = profileRepository;
         this.seed();
     }
 
     private void seed() {
-        this.profileRepository.saveAll(this.findProfiles());
+        this.profileRepository.saveAll(
+                this.findProfiles().stream().filter((profile) -> !this.profileRepository.existsByFilename(profile.getFilename())).collect(Collectors.toSet())
+        );
     }
 
     private Set<DatasimProfile> findProfiles() {
@@ -39,7 +49,7 @@ public class DatasimProfileSeeder {
                 ))
                 .map(File::getName)
                 .map(name -> new DatasimProfile(name.replace(".json", ""), name))
-                .peek(profile -> this.logger.info("Seeding profile "+ profile.getName()))
+                .peek(profile -> this.logger.info("Seeding profile " + profile.getName()))
                 .collect(Collectors.toSet());
     }
 }

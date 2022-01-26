@@ -8,13 +8,14 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.logging.Logger;
 
+/**
+ * Helper Class to compute the alignable Elements of a DATASIM Profile
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 public class DatasimProfileAlignableElementHelper {
 
     private static final String CONCEPTS_NODE_ID = "concepts";
@@ -26,6 +27,12 @@ public class DatasimProfileAlignableElementHelper {
     private static final String TYPE_NODE_ID = "type";
     private static final String ID_NODE_ID = "id";
 
+    /**
+     * Calculate all components of a Profile that can be aligned in Datasim (see the <a href="https://github.com/yetanalytics/datasim/issues/41">great documentation</a> *ahem*
+     *
+     * @param profile Profile to find the alignable Components of
+     * @return Components, mapped to their Type
+     */
     public static Map<DatasimProfileAlignableElementType, List<URL>> calculatePossibleAlignments(DatasimProfileTO profile) {
         Map<DatasimProfileAlignableElementType, List<URL>> out = new TreeMap<>();
         JsonMapper objectMapper = new JsonMapper();

@@ -15,11 +15,23 @@ import java.util.logging.Logger;
 
 // Heavily inspired by https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc
 
+/**
+ * Error Handlers in accordance with <a href="https://datatracker.ietf.org/doc/html/rfc7231#section-6">Section 6 of RFC7231</a>.
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @ControllerAdvice
 public class ErrorHandlingMavController {
+    // Path to Template
     private static final String DEFAULT_ERROR_VIEW = "bootstrap/error";
     private final Logger logger = Logger.getLogger(ErrorHandlingMavController.class.getName());
 
+    /**
+     * Print exception details to STDERR including markers
+     *
+     * @param e Exception to be handled
+     * @return Used marker code
+     */
     private UUID putFlowLog(Exception e) {
         UUID flowLogId = UUID.randomUUID();
         this.logger.severe("Exception has occured. Flow-ID: " + flowLogId);
@@ -29,6 +41,13 @@ public class ErrorHandlingMavController {
         return flowLogId;
     }
 
+    /**
+     * Base error view
+     *
+     * @param e      Exception be included
+     * @param status Status Code for this exception
+     * @return ModelAndView with the given details incorporated
+     */
     private ModelAndView baseModelAndView(Exception e, HttpStatus status) {
         ModelAndView mav = new ModelAndView(DEFAULT_ERROR_VIEW);
         mav.addObject("status", status);
@@ -37,24 +56,53 @@ public class ErrorHandlingMavController {
         return mav;
     }
 
+    /**
+     * Handler for {@link NoSuchElementException}.
+     * The {@link HttpStatus} raised for this Exception class is 404 (Not Found).
+     *
+     * @param e Exception to be handled
+     * @return ModelAndView for this Exception
+     */
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
     public ModelAndView convertNotFound(Exception e) {
         return this.baseModelAndView(e, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Handler for {@link IllegalArgumentException} (manually raised from code) and {@link ConstraintViolationException} (automatically raised from Validators).
+     * The {@link HttpStatus} raised for this Exception class is 400 (Bad Request).
+     *
+     * @param e Exception to be handled
+     * @return ModelAndView for this Exception
+     */
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler({IllegalArgumentException.class, ConstraintViolationException.class})
     public ModelAndView convertBadRequest(Exception e) {
         return this.baseModelAndView(e, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handler for manually created ConnectionErrors (i.e. {@link DatasimExceptions.NoDatasimConnection} and {@link LrsExceptions.NoLrsConnection}).
+     * The {@link HttpStatus} raised for this Exception class is 503 (Service Unavailable).
+     *
+     * @param e Exception to be handled
+     * @return ModelAndView for this Exception
+     */
     @ResponseStatus(code = HttpStatus.SERVICE_UNAVAILABLE)
     @ExceptionHandler({DatasimExceptions.NoDatasimConnection.class, LrsExceptions.NoLrsConnection.class})
     public ModelAndView convertExternalServiceNotConnected(Exception e) {
         return this.baseModelAndView(e, HttpStatus.SERVICE_UNAVAILABLE);
     }
 
+    /**
+     * Handler for all other Exceptions.
+     * The {@link HttpStatus} raised for this Exception class is 500 (Internal Server Error).
+     * Consider using any handled Exception class or creating your own ExceptionHandler when encountering this while developing.
+     *
+     * @param e Exception to be handled
+     * @return ModelAndView for this Exception
+     */
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({Exception.class})
     public ModelAndView genericError(Exception e) {

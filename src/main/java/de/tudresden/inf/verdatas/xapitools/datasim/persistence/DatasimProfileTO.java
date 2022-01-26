@@ -4,11 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,6 +17,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Transfer Object for Communication with DATASIM, representing a Profile
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatasimProfileTO {
@@ -39,6 +40,12 @@ public class DatasimProfileTO {
     @NotBlank
     private String filename;
 
+    /**
+     * Create a TO from an Entity
+     *
+     * @param profile Base Entity to get a representation of
+     * @return Decoupled Transfer Object
+     */
     public static DatasimProfileTO of(DatasimProfile profile) {
         return new DatasimProfileTO(
                 Optional.of(profile.getId()),
@@ -47,19 +54,18 @@ public class DatasimProfileTO {
         );
     }
 
-    public DatasimProfile toNewDatasimProfile() {
-        this.id.ifPresent((id) -> {throw new IllegalStateException("UUID must be empty when creating new.");});
-        return new DatasimProfile(this.name, this.filename);
-    }
-
-    public DatasimProfile toExistingDatasimProfile() {
-        return new DatasimProfile(this.id.orElseThrow(() -> new IllegalStateException("UUID must not be empty when updating.")), this.name, this.filename);
-    }
-
+    /**
+     * Get the possible Alignments in this Profile by Type
+     */
     public Map<DatasimProfileAlignableElementType, List<URL>> getPossibleAlignmentsByType() {
         return DatasimProfileAlignableElementHelper.calculatePossibleAlignments(this);
     }
 
+    /**
+     * The JSON representation of this document for export or communication with DATASIM.
+     *
+     * @return Content of the Profile document
+     */
     @JsonValue
     public JsonNode getProfileContent() {
         JsonMapper objectMapper = new JsonMapper();

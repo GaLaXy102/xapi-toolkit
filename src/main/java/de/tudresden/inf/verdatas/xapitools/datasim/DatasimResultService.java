@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimSimulation;
 import de.tudresden.inf.verdatas.xapitools.datasim.validators.Finalized;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
@@ -16,22 +18,30 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Handle Storage of Results of Datasim Simulations
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Component
 @Validated
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DatasimResultService {
     @Value("${xapi.datasim.sim-storage}")
     private String basepath;
 
     private final ObjectMapper mapper;
 
-    public DatasimResultService(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
-
     private void ensureBasepathExists() {
         new File(this.basepath).mkdirs();
     }
 
+    /**
+     * Save the result of a performed simulation
+     *
+     * @param simulation Simulation description
+     * @param result     Resulting xAPI Statements
+     */
     public void saveSimulationResult(@Finalized DatasimSimulation simulation, List<JsonNode> result) {
         this.ensureBasepathExists();
         try {
@@ -41,6 +51,13 @@ public class DatasimResultService {
         }
     }
 
+    /**
+     * Retrieve the result of a given Simulation
+     *
+     * @param simulation Simulation description to get the result of
+     * @return xAPI Statements that resulted from the given Simulation
+     * @throws DatasimExceptions.NoSuchSimulationResult when the result is unavailable.
+     */
     public List<JsonNode> getSimulationResult(@Finalized DatasimSimulation simulation) {
         this.ensureBasepathExists();
         try {
@@ -53,6 +70,11 @@ public class DatasimResultService {
         }
     }
 
+    /**
+     * Get all available Results
+     *
+     * @return Simulation IDs where the Result exists locally
+     */
     public List<UUID> getSimulationsWithResultAvailable() {
         this.ensureBasepathExists();
         return Arrays

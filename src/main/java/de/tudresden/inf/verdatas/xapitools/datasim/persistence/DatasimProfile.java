@@ -1,10 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.datasim.persistence;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
@@ -13,6 +9,11 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 
+/**
+ * Hibernate Entity representing a DATASIM Profile
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Entity
 @Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,6 +33,12 @@ public class DatasimProfile {
     @NotBlank
     private String filename;
 
+    /**
+     * Create a new Profile
+     *
+     * @param name     Friendly name of the Profile
+     * @param filename Filename (relative to classpath:/xapi/profiles; see {@link DatasimProfileTO}
+     */
     DatasimProfile(String name, String filename) {
         this.name = name;
         this.filename = filename;

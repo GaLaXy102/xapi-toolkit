@@ -1,10 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.datasim.persistence;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.Entity;
@@ -16,6 +12,11 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Hibernate Entity representing a Group of DATASIM Personae
+ *
+ * @author Konstantin Köhring (@Galaxy102)
+ */
 @Entity
 @Validated
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,10 +39,14 @@ public class DatasimPersonaGroup {
     // Members are reusable, thus no Cascade
     private Set<DatasimPersona> member;
 
+    /**
+     * Create a new Persona Group.
+     *
+     * @param name   Name of the Component
+     * @param member Members of the Group
+     */
     DatasimPersonaGroup(String name, Set<DatasimPersona> member) {
         this.name = name;
         this.member = member;
     }
-
-
 }

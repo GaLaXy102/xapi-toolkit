@@ -171,6 +171,15 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<show>private</show>
+					<source>17</source>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
