@@ -54,10 +54,10 @@ To learn about this in detail, you are advised to study the Javadoc (`./mvnw jav
 ### Maintaining the Application
 
 So you have found a Bug or want to do some routine maintenance.
-You probably can navigate to the required code by searching the Logs for details (mind the exception markers aka "Tracing Codes").
+You can probably navigate to the required code by searching the Logs for details (mind the exception markers aka "Tracing Codes").
 
 1. Isolate the erroneous Class  
-   Find exactly the Point in the Application where something goes wrong by examining logs and Data Flows (you would begin with the Controllers, then Services and Connectors and finally the Entities).
+   Find exactly the point in the Application where something goes wrong by examining logs and Data Flows (you would begin with the Controllers, then Services and Connectors and finally the Entities).
    By using semantic package and class names, you should be just fine to navigate as you think.
 2. Fix whatever needs fixing  
    Be as precise as possible when changing the Source Code and **comment your changes**, especially what did go wrong and -if you know- why.
@@ -79,8 +79,8 @@ You can create your new sub-application independently of existing code with the 
    To simplify the integration later, please also consider the following separation in your Controllers:
    * Separate RestControllers from UI Controllers
    * The Main UI ("Entrypoint") of your Application shall reside in one Standalone Controller.
-   * (only non-Settings) All Sub-UIs (Forms, Detail Pages) shall have their very own Controller.
-   Please also try to extract any external Logic (Application or Library Integrations) to standalone Connectors.
+   * (only non-Settings) All Sub-UIs (Forms, Detail Pages) shall have their very own Controller.  
+   Please also try to extract any external Logic (Application or Library Integrations) to standalone Connectors.  
    If you want to use Bootstrap and jQuery for your UI, you are all set by replacing your HTML's `title` tag with
    `<head th:include="bootstrap/header.html :: scripted_head ('<YOUR PAGE TITLE HERE>')"></head>`
 2. Make your Controllers implement the UI Magic-Binding Interfaces  
@@ -89,7 +89,7 @@ You can create your new sub-application independently of existing code with the 
    * All Subpage-Controllers of the Main UI should implement a Subinterface of `IUIStep`. Please abstract the base interface for your own dynamic binding to work.
      Perhaps examine `datasim.controllers` for a good example.
    * Any Connectors to Out-Of-Scope Services that will run alongside the Toolkit should implement `IExternalService` for a Health Check to be displayed.
-3. Bump the Version Number
+3. Bump the Version Number  
    For breaking changes or major new features, draft a new major Project Version in the POM.
 
 ## Deeper Dive: Design Patterns in use
@@ -98,7 +98,7 @@ You can create your new sub-application independently of existing code with the 
   This Pattern is sourced directly from Spring. It dictates the following:
   * Your UI is filled by Controllers
   * which source or perform actions on a Model of Entities by using Services (a Backend)
-  * and is finally rendered to a View (here: by a Templating Engine)
+  * and is finally rendered to a View (here: by a Templating Engine)  
   The MVC Pattern is great to implement a separation of concerns.
 * Transfer Objects  
   Using Transfer Objects in the Application yields a lot of Flexibility when communicating with external Services.
@@ -112,7 +112,7 @@ You can create your new sub-application independently of existing code with the 
 * Inversion of Control/Dependency Injection  
   This Pattern also originates in Spring.
   By annotating our Objects (i.e. Controllers, Services and other Components) correctly, Spring will automatically bind them when we need them.
-* Java Bean Lifecycle Management
+* Java Bean Lifecycle Management  
   This is not a Pattern per se, but an import design aspect for handling the possibility to have multiple external services using one kind of connector.
   The connector is templated depending on an Entity, and the Lifecycle manager (here: lrs.connector.LrsConnectorLifecycleManager) is responsible 
   for creating, destroying and delivering the instance of the connector when needed.
