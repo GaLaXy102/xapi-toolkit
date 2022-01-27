@@ -3,6 +3,7 @@ package de.tudresden.inf.verdatas.xapitools.lrs;
 import lombok.*;
 import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,6 +27,7 @@ public class LrsConnection {
     @GeneratedValue
     @Id
     @Getter
+    @Column(columnDefinition = "BINARY(16)")  // Setting this manually is necessary as Hibernate does not handle it properly
     private UUID connectionId;
 
     @Getter

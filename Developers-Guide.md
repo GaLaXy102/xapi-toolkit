@@ -92,6 +92,11 @@ You can create your new sub-application independently of existing code with the 
 3. Bump the Version Number  
    For breaking changes or major new features, draft a new major Project Version in the POM.
 
+## Painful bugs encountered earlier
+
+* The default HTML input `datetime-local` stepping is 60 seconds. Reduce it to 1 where needed.
+* Hibernate does not handle UUIDs properly as ID in MariaDB. Use the `@Column(columnDefinition = "BINARY(16)")` annotation to fix this!
+
 ## Deeper Dive: Design Patterns in use
 
 * Model-View-Controller  

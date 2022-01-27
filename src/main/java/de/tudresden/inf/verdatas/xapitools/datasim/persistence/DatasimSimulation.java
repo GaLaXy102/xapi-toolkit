@@ -26,6 +26,7 @@ public class DatasimSimulation {
     @GeneratedValue
     @Id
     @Getter
+    @Column(columnDefinition = "BINARY(16)")  // Setting this manually is necessary as Hibernate does not handle it properly
     private UUID id;
 
     @Getter
