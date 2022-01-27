@@ -19,11 +19,11 @@
             </div>
             <div class="row mb-3 me-2">
                 <label for="start" class="col-3">Simulation Start</label>
-                <input type="datetime-local" class="form-control col" id="start" name="start" th:value="${parameters.getStart()}">
+                <input type="datetime-local" class="form-control col" id="start" name="start" th:value="${parameters.getStart()}" step="1">
             </div>
             <div class="row mb-3 me-2">
                 <label for="end" class="col-3">Simulation End</label>
-                <input type="datetime-local" class="form-control col" id="end" name="end" th:value="${parameters.getEnd()}">
+                <input type="datetime-local" class="form-control col" id="end" name="end" th:value="${parameters.getEnd()}" step="1">
             </div>
         </div>
         <div class="row">
