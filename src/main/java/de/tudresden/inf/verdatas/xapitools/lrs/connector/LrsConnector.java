@@ -79,7 +79,7 @@ public class LrsConnector implements IExternalService {
      * To run manually, call this method and afterwards get the result from getHealth()
      */
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
-    public void healthCheck() {
+    protected void healthCheck() {
         RestTemplate restTemplate = new RestTemplate();
         boolean calculatedHealth;
         try {
@@ -116,7 +116,7 @@ public class LrsConnector implements IExternalService {
      * @param statements List of Statements
      * @return List with UUIDs of inserted Statements
      */
-    public List<UUID> sendStatements(List<JsonNode> statements) {
+    public List<UUID> pushStatements(List<JsonNode> statements) {
         // Build connection template
         RestTemplate restTemplate = new RestTemplateBuilder()
                 .basicAuthentication(this.lrsConnection.getXApiClientKey(), this.lrsConnection.getXApiClientSecret())
@@ -144,7 +144,7 @@ public class LrsConnector implements IExternalService {
      *
      * @return List of xAPI Statements
      */
-    public List<JsonNode> getStatements() {
+    public List<JsonNode> pullStatements() {
         // Build connection template
         RestTemplate restTemplate = new RestTemplateBuilder()
                 .basicAuthentication(this.lrsConnection.getXApiClientKey(), this.lrsConnection.getXApiClientSecret())

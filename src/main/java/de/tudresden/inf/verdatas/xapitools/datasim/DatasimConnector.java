@@ -41,7 +41,6 @@ import java.util.logging.Logger;
 public class DatasimConnector implements IExternalService {
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-    @Getter
     @Value("${xapi.datasim.backend-base-url}")
     private URL datasimEndpoint;
 
@@ -85,7 +84,7 @@ public class DatasimConnector implements IExternalService {
      * To run manually, call this method and afterwards get the result from getHealth()
      */
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
-    public void healthCheck() {
+    protected void healthCheck() {
         RestTemplate restTemplate = new RestTemplate();
         boolean calculatedHealth;
         try {

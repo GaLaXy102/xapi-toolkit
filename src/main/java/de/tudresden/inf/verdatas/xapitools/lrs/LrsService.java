@@ -126,7 +126,7 @@ public class LrsService {
      */
     public List<UUID> sendStatements(List<JsonNode> statements, @Active LrsConnection connection) {
         LrsConnector connector = this.connectorLifecycleManager.getConnector(connection);
-        return connector.sendStatements(statements);
+        return connector.pushStatements(statements);
     }
 
     /**
@@ -137,7 +137,7 @@ public class LrsService {
      */
     public List<JsonNode> getStatements(@Active LrsConnection connection) {
         LrsConnector connector = this.connectorLifecycleManager.getConnector(connection);
-        return connector.getStatements();
+        return connector.pullStatements();
     }
 
     /**
