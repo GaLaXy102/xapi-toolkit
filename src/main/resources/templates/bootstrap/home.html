@@ -17,8 +17,8 @@
                     <i th:class="'me-2 ' + ${flow.getIcon().getIconName()}"></i>
                     <span th:text="${flow.getName()}"></span>
                 </a>
-                <ol class="list-group list-group-numbered d-none">
-                    <li class="mb-1 ps-5 text-white-50" th:each="step: ${flow.getSteps()}" th:data-pathregex="${step.getPathRegex()}">
+                <ol class="list-group d-none">
+                    <li class="mb-1 text-white-50" style="list-style-type: none;padding-left: 2.75rem!important;" th:each="step: ${flow.getSteps()}" th:data-pathregex="${step.getPathRegex()}">
                         <span th:text="${step.getName()}"></span>
                     </li>
                 </ol>
