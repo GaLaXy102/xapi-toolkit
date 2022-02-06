@@ -118,6 +118,6 @@ You can create your new sub-application independently of existing code with the 
   This Pattern also originates in Spring.
   By annotating our Objects (i.e. Controllers, Services and other Components) correctly, Spring will automatically bind them when we need them.
 * Java Bean Lifecycle Management  
-  This is not a Pattern per se, but an import design aspect for handling the possibility to have multiple external services using one kind of connector.
+  This is not a Pattern per se, but an important design aspect for handling the possibility to have multiple external services using one kind of connector.
   The connector is templated depending on an Entity, and the Lifecycle manager (here: lrs.connector.LrsConnectorLifecycleManager) is responsible 
   for creating, destroying and delivering the instance of the connector when needed.
