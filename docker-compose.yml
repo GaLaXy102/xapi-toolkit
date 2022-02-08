@@ -54,3 +54,4 @@ services:
       XAPITOOLS_DB_CONNECTION_STRING: mariadb://mariadb:3306/xapitools
       XAPITOOLS_DB_CONNECTION_USER: xapi
       XAPITOOLS_DB_CONNECTION_PASSWORD: toolkit
+      TZ: Europe/Berlin
