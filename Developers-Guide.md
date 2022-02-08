@@ -16,14 +16,15 @@ and think of great values for the variables in [application-dev.properties](src/
 
 For my setup, I have chosen the following parameters:
 
-| Environment Variable           | Value                 |
-|:-------------------------------|:----------------------|
-| XAPITOOLS_SEC_USERNAME         | foo                   |
-| XAPITOOLS_SEC_PASSWORD         | bar                   |
-| XAPITOOLS_SIM_BACKEND_BASE_URL | http://localhost:9090 |
-| XAPITOOLS_SIM_BACKEND_USERNAME | foo                   |
-| XAPITOOLS_SIM_BACKEND_PASSWORD | bar                   |
-| XAPITOOLS_SIM_STORAGE_DIR      | /tmp/xapitools        |
+| Environment Variable           | Value                               |
+|:-------------------------------|:------------------------------------|
+| XAPITOOLS_SEC_USERNAME         | foo                                 |
+| XAPITOOLS_SEC_PASSWORD         | bar                                 |
+| XAPITOOLS_SIM_BACKEND_BASE_URL | http://localhost:9090               |
+| XAPITOOLS_SIM_BACKEND_USERNAME | foo                                 |
+| XAPITOOLS_SIM_BACKEND_PASSWORD | bar                                 |
+| XAPITOOLS_SIM_STORAGE_DIR      | /tmp/xapitools                      |
+| XAPITOOLS_VIZ_BACKEND_BASE_URL | http://dave:password@localhost:9091 |
 
 Their semantic is explained in the README.
 

@@ -10,6 +10,8 @@ Weiterhin wird ein Zwischenspeicher für die Simulationsergebnisse benötigt. Di
 
 Die Verbindungsparameter für DATASIM werden mit den Umgebungsvariablen `XAPITOOLS_SIM_BACKEND_BASE_URL`, `XAPITOOLS_SIM_BACKEND_USERNAME` und `XAPITOOLS_SIM_BACKEND_PASSWORD` festgelegt.
 
+Über die Umgebungsvariable `XAPITOOLS_VIZ_SERVER_BASE_URL` kann die Verbindung zum DAVE-Framework parametrisiert werden. 
+
 Im produktiven Einsatz müssen die Variablen `XAPITOOLS_DB_CONNECTION_STRING`, `XAPITOOLS_DB_CONNECTION_USER` und `XAPITOOLS_DB_CONNECTION_PASSWORD` mit Zugangsdaten für eine relationale Datenbank wie MariaDB gefüllt werden. Ein Beispiel hierzu findet sich in der [Compose-Datei](docker-compose.yml).
 
 Da die Anwendung in Docker läuft, weiß sie nichts über die Systemzeitzone. Deshalb kann die Standardzeitzone `Etc/UTC` mit der Umgebungsvariable `TZ` überschrieben werden.

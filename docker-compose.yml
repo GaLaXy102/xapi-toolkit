@@ -25,6 +25,15 @@ services:
       credentials: foo:bar  # sic!
     ports:
       - "9090:9090"
+  dave:
+    # Image is built by CI of DAVE "mirror"
+    image: nexus.galaxion.de:5050/yetanalytics/dave:latest
+    # These credentials are read from command by webserver
+    command: --set-basic-auth dave:password
+    networks:
+      - xapitools0
+    ports:
+      - "9091:8043"
   permission_control:
     image: busybox
     command: /bin/sh -c 'touch /data/.initialized && chown -R 1000:1000 /data'
@@ -34,6 +43,7 @@ services:
     depends_on:
       - mariadb
       - datasim
+      - dave
       - permission_control
     restart: on-failure
     # Image is built by CI of this project.
@@ -51,6 +61,7 @@ services:
       XAPITOOLS_SIM_BACKEND_USERNAME: foo
       XAPITOOLS_SIM_BACKEND_PASSWORD: bar
       XAPITOOLS_SIM_STORAGE_DIR: /data                              # This path also is Docker-relative. See volumes section.
+      XAPITOOLS_VIZ_SERVER_BASE_URL: http://dave:password@dave:8043/
       XAPITOOLS_DB_CONNECTION_STRING: mariadb://mariadb:3306/xapitools
       XAPITOOLS_DB_CONNECTION_USER: xapi
       XAPITOOLS_DB_CONNECTION_PASSWORD: toolkit
