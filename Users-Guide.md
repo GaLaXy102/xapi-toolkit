@@ -23,7 +23,7 @@ In the Sidebar, there are three sections (from top to bottom):
    They represent means to handle xAPI Statements.
 2. Settings  
    There you can manipulate e.g. connection parameters.
-3. Status indicators
+3. Status indicators  
    At a quick glance, you can see which system components are healthy and which ones may need attention.  
    A green indicator means that everything should be alright.  
    Red indicates a remote server failure or a configuration mistake.  
@@ -34,7 +34,7 @@ You can access all Settings and Flows at any time by clicking the corresponding 
 
 ## Step-by-Step Guides: Flows
 
-### Perform Statement Simulation using DATASIM
+### Perform Statement Simulations using DATASIM
 For all guides below, please select the appropriate flow by clicking `Simulations` in the sidebar.
 
 Anatomy of the Simulation UI and nice to know:
@@ -58,11 +58,11 @@ Anatomy of the Simulation UI and nice to know:
    They each represent a schema after which statements will be generated.
 4. Create and select Personae.  
    A persona has a name and an email address (used as unique identifier). To add a persona, insert those details into the `Add new Persona` form. If you're to lazy to imagine an email address, hit the "refresh"-ish button on the right-hand side of the input field. Press `+` to add the persona to the simulation.  
-   Personae used in the simulation can be selected in bottom form. Multiple Personae can be selected by holding down `Shift` or `Ctrl` as usual.
+   Personae used in the simulation can be selected in the bottom form. Multiple Personae can be selected by holding down `Shift` or `Ctrl` as usual.
 5. Create alignments.  
    Alignments can be used to control the affinity of personae to a specific simulation element. For now, DATASIM does not allow aligning to xAPI Verbs.  
    First, add all components you want to align to by selecting their type and identifiers from the dropdown menus in the `Add new Component` form and hitting the `+` button.  
-   Afterwards, you can insert the affinities by expanding the component ($\lor$ button) and moving the sliders around as you wish.  
+   Afterwards, you can insert the affinities by expanding the component (&or; button) and moving the sliders around as you wish.  
    ![Alignment example](doc/ui-sim-alignment.png)
 6. Update the default simulation parameters.  
    Adapt them as you wish.  
@@ -77,7 +77,7 @@ Anatomy of the Simulation UI and nice to know:
 
 #### Creating a copy of a simulation description
 1. On the card with the simulation you want to copy, click the `Copy` button.  
-   This will create a decoupled and non-finalized version of the simulation card.
+   This will create a decoupled and non-finalized version of the simulation.
 
 #### Performing a DATASIM simulation
 1. Perform the steps in "Parametrize a DATASIM simulation" and "Making a simulation description read-only".
