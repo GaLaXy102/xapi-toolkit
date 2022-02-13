@@ -108,6 +108,7 @@ $(document).ready(function () {
     $("#contentFrame").bind('load', highlightFlowStep);
     // Alert on pending changes
     $('input').change(() => {hasChanges = true;});
+    $('select').change(() => {hasChanges = true;});
     $('form').submit(() => {hasChanges = false;});
     window.onbeforeunload = (ev) => {
         if (hasChanges) ev.returnValue = "Changes you made may not be saved.";
