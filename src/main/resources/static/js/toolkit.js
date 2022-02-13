@@ -1,15 +1,3 @@
-function removeAllActive() {
-    $('.nav-link').each(function () {
-        if (this.parentNode.classList.contains('xapi-flow')) this.parentNode.lastElementChild.classList.add('d-none');
-        this.classList.remove('active');
-    })
-}
-
-function setActive(el) {
-    el.parentNode.lastElementChild.classList.remove('d-none');
-    el.classList.add('active');
-}
-
 function queryExternalService(targetEl, endpoint) {
     fetch(endpoint)
         .then(response => response.ok ? response : new Response(""))
@@ -24,6 +12,22 @@ function queryExternalService(targetEl, endpoint) {
         });
 }
 
+function setHighlightOfNav(el, testPath) {
+    if (testPath.match($(el).attr('href').replace(new RegExp('\\w*$'), '.*').replace("/", "\\/"))) {
+        el.classList.add('active');
+        if (el.parentNode.classList.contains('xapi-flow')) el.parentNode.lastElementChild.classList.remove('d-none');
+    } else {
+        el.classList.remove('active');
+        if (el.parentNode.classList.contains('xapi-flow')) el.parentNode.lastElementChild.classList.add('d-none');
+    }
+}
+
+function highlightActiveSubapp(event) {
+    // This doesn't contain any query parameters :)
+    const targetPath = event.currentTarget.contentWindow.location.pathname;
+    $('a.nav-link').each((_, el) => setHighlightOfNav(el, targetPath));
+}
+
 function setHighlightOfStep(el, testPath) {
     if (testPath.match(el.dataset.pathregex.replace("/", "\\/"))) {
         el.classList.remove('text-opacity-25');
@@ -35,7 +39,7 @@ function setHighlightOfStep(el, testPath) {
 function highlightFlowStep(event) {
     // This doesn't contain any query parameters :)
     const targetPath = event.currentTarget.contentWindow.location.pathname;
-    $('.nav-link').first().parent().children('ol').children().each((_, el) => setHighlightOfStep(el, targetPath));
+    $('a.nav-link').first().parent().children('ol').children().each((_, el) => setHighlightOfStep(el, targetPath));
 }
 
 function addSpinner(el) {
@@ -93,18 +97,13 @@ let hasChanges = false;
 
 $(document).ready(function () {
     // Sidebar
-    $('.nav-link').each(function () {
-        $(this).click(function () {
-            removeAllActive();
-            setActive(this);
-        })
-    });
     $('.service-status').each(function () {
         // Query first
         setTimeout(queryExternalService, 0, this, $(this).get(0).dataset.checkendpoint);
         // Periodic query
         setInterval(queryExternalService, 60000, this, $(this).get(0).dataset.checkendpoint);
     });
+    $("#contentFrame").bind('load', highlightActiveSubapp);
     $("#contentFrame").bind('load', highlightFlowStep);
     // Alert on pending changes
     $('input').change(() => {hasChanges = true;});
