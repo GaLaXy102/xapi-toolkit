@@ -11,19 +11,19 @@
             <label class="mb-3">Simulation Parameters</label>
             <div class="row mb-3 me-2">
                 <label for="num" class="col-3">Number of Statements</label>
-                <input type="number" class="form-control col" id="num" name="max" th:value="${parameters.getMax()}" min="1">
+                <input type="number" class="form-control col" id="num" name="max" th:value="${parameters.getMax()}" min="1" required>
             </div>
             <div class="row mb-3 me-2">
                 <label for="seed" class="col-3">Simulation Seed</label>
-                <input type="number" class="form-control col" id="seed" name="seed" th:value="${parameters.getSeed()}" min="1">
+                <input type="number" class="form-control col" id="seed" name="seed" th:value="${parameters.getSeed()}" min="1" required>
             </div>
             <div class="row mb-3 me-2">
                 <label for="start" class="col-3">Simulation Start</label>
-                <input type="datetime-local" class="form-control col" id="start" name="start" th:value="${parameters.getStart()}" step="1">
+                <input type="datetime-local" class="form-control col" id="start" name="start" th:value="${parameters.getStart()}" step="1" required>
             </div>
             <div class="row mb-3 me-2">
                 <label for="end" class="col-3">Simulation End</label>
-                <input type="datetime-local" class="form-control col" id="end" name="end" th:value="${parameters.getEnd()}" step="1">
+                <input type="datetime-local" class="form-control col" id="end" name="end" th:value="${parameters.getEnd()}" step="1" required>
             </div>
         </div>
         <div class="row">
