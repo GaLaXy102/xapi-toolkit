@@ -112,6 +112,17 @@ $(document).ready(function () {
     window.onbeforeunload = (ev) => {
         if (hasChanges) ev.returnValue = "Changes you made may not be saved.";
     }
+    // Disallow start before end
+    $('input[type="datetime-local"]#start').change(function () {
+        const inputDate = new Date($(this).val());
+        inputDate.setSeconds(inputDate.getSeconds() + 1);
+        $('input[type="datetime-local"]#end').attr('min', inputDate.toISOString());
+    });
+    $('input[type="datetime-local"]#end').change(function () {
+        const inputDate = new Date($(this).val());
+        inputDate.setSeconds(inputDate.getSeconds() - 1);
+        $('input[type="datetime-local"]#start').attr('max', inputDate.toISOString());
+    });
     // Spinners
     $('.dropdown-spinner').click(function () {
         addSpinner($(this).parent().parent().parent().children().first());

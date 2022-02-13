@@ -137,6 +137,7 @@ public class DatasimConnector implements IExternalService {
             // but the contained statements have no delimiting ",", but rather "\n".
             // As none of these are safely replaceable, we have to remove the first two and the last two bytes of the result.
             assert result != null;
+            if (result.equals("[\n]")) return List.of();
             result = result.substring(2, result.length() - 2);
             // Now we have the statements remaining, one by line
             String[] statements = result.split("\n");
