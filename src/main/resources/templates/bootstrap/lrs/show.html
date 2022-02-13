@@ -11,7 +11,7 @@
                     <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/manage/lrs/add}">
                         <div class="flex-fill text-center align-self-center">
                             <i class="bi-file-earmark-plus fs-3 text-success me-2"></i>
-                            <span class="fs-3">Create new Connection</span>
+                            <span class="fs-3">Create new connection</span>
                         </div>
                     </a>
                 </div>
@@ -21,7 +21,7 @@
                         <button type="submit" class="btn btn-primary flex-fill">
                             <span th:unless="${#strings.equals(param.get('active_only'), 'false')}">Also</span>
                             <span th:if="${#strings.equals(param.get('active_only'), 'false')}">Don't</span>
-                            show inactive Connections
+                            show inactive connections
                         </button>
                     </form>
                 </div>

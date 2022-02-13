@@ -9,18 +9,18 @@
         <input type="hidden" name="mode" th:value="${mode}">
         <div class="form-control mt-3 mb-3">
             <div class="row">
-                <h3 class="mb-3">Add new Persona</h3>
+                <h3 class="mb-3">Add new persona</h3>
                 <div class="col-5">
                     <div class="mb-3 mt-3 form-floating">
                         <input type="text" class="form-control" minlength="3" maxlength="255" name="name" id="newPersonaName" placeholder="pseudo" required>
-                        <label for="newPersonaName">Persona Name</label>
+                        <label for="newPersonaName">Persona name</label>
                     </div>
                 </div>
                 <div class="col-5">
                     <div class="mb-3 mt-3 input-group">
                         <div class="form-floating form-floating-group flex-grow-1">
                             <input type="email" class="form-control" minlength="3" maxlength="255" name="mbox" id="newPersonaMbox" placeholder="pseudo" required>
-                            <label for="newPersonaMbox">Persona Mail (without prefixes)</label>
+                            <label for="newPersonaMbox">Persona mail (without prefixes)</label>
                         </div>
                         <button class="btn btn-outline-secondary" type="button" onclick="generateEmailAddress(this);"><i class="bi-arrow-repeat"></i></button>
                     </div>
@@ -37,7 +37,7 @@
         <input type="hidden" name="mode" th:value="${mode}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <div class="mb-3 form-control">
-            <h3 class="mb-3">Select Personae for Simulation</h3>
+            <h3 class="mb-3">Select personae for simulation</h3>
             <select class="form-select mt-3 mb-3" multiple id="personaInput" name="persona_id" required>
                 <option th:each="persona: ${personas}" th:value="${persona.getKey().getId()}"
                         th:text="${persona.getKey().getName()} + ' <' + ${persona.getKey().getMbox()} + '>'"

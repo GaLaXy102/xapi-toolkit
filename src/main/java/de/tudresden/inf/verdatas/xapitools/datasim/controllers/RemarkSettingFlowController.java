@@ -37,7 +37,7 @@ class RemarkSettingFlowController implements SimulationStep {
      */
     @Override
     public String getName() {
-        return "Set Remark";
+        return "Set title";
     }
 
     /**

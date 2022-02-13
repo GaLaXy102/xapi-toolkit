@@ -9,11 +9,11 @@
         <input type="hidden" name="mode" th:value="${mode}">
         <div class="form-control mt-3 mb-3">
             <div class="row">
-                <h3 class="mb-3">Add new Component</h3>
+                <h3 class="mb-3">Add new component</h3>
                 <div class="col-10">
                     <div class="mb-3 mt-3 input-group" id="componentSelectBase">
                         <select class="form-select" onchange="triggerComponentSelect(this);" id="componentSelectType" required>
-                            <option selected value="">Select Alignment Type</option>
+                            <option selected value="">Select alignment type</option>
                             <option th:each="alignmentType: ${#lists.sort(#lists.toList(possibleAlignments.keySet()))}"
                                     th:text="${alignmentType.getValue()}"
                                     th:value="${alignmentType}"></option>
@@ -23,7 +23,7 @@
                                 name="component"
                                 th:each="alignmentType: ${#lists.sort(#lists.toList(possibleAlignments.keySet()))}"
                                 th:id="'componentSelect-' + ${alignmentType}">
-                            <option selected value="">Select Component</option>
+                            <option selected value="">Select component</option>
                             <option th:each="component: ${possibleAlignments.get(alignmentType)}" th:text="${component}"></option>
                         </select>
                     </div>
@@ -40,7 +40,7 @@
         <input type="hidden" name="mode" th:value="${mode}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <div class="mb-3 form-control">
-            <h3 class="mb-3">Map Affinities</h3>
+            <h3 class="mb-3">Map affinities</h3>
             <div class="accordion">
                 <div class="accordion-item" th:each="alignment, loop: ${alignments}">
                     <div class="accordion-header btn-group d-flex">
@@ -56,7 +56,7 @@
                             <div class="col-6 align-content-center d-flex">
                                 <i class="bi-arrow-left"></i>&nbsp;
                                 less&nbsp;
-                                <span class="flex-fill text-center">Interaction Probability</span>&nbsp;
+                                <span class="flex-fill text-center">Interaction probability</span>&nbsp;
                                 more&nbsp;
                                 <i class="bi-arrow-right"></i>
                             </div>

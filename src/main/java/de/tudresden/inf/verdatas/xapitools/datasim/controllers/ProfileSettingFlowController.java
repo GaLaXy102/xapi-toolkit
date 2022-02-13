@@ -38,7 +38,7 @@ class ProfileSettingFlowController implements SimulationStep {
      */
     @Override
     public String getName() {
-        return "Select Profile";
+        return "Select profile";
     }
 
     /**

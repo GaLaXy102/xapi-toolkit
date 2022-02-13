@@ -11,7 +11,7 @@
             <select class="form-select" id="profileInput" name="profile_id" required>
                 <option th:each="profile: ${profiles}" th:value="${profile.getId().get()}" th:text="${profile.getName()}"></option>
             </select>
-            <label for="profileInput">xAPI Profile</label>
+            <label for="profileInput">xAPI profile</label>
         </div>
         <div class="row">
             <div class="col">

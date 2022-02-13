@@ -39,7 +39,7 @@ public class ParameterSettingFlowController implements SimulationStep {
      */
     @Override
     public String getName() {
-        return "Set Parameters";
+        return "Set parameters";
     }
 
     /**

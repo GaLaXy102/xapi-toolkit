@@ -42,7 +42,7 @@ public class AlignmentSettingFlowController implements SimulationStep {
      */
     @Override
     public String getName() {
-        return "Create Alignments";
+        return "Create alignments";
     }
 
     /**

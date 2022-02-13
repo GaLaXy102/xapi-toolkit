@@ -5,7 +5,7 @@
 <div class="container">
     <form method="POST" th:action="@{/ui/manage/lrs/{method}(method=${method})}">
         <div class="mt-3 mb-3 form-control">
-            <h3 class="mb-3">Connection Parameters</h3>
+            <h3 class="mb-3">Connection parameters</h3>
             <div class="row mb-3 me-2">
                 <label for="nameInput" class="col-3">Name</label>
                 <input th:if="${connection}" class="form-control col" id="nameInput" type="text" minlength="3" maxlength="255" name="name" th:value="${connection.getName()}" required>
@@ -17,12 +17,12 @@
                 <input th:unless="${connection}" class="form-control col" id="endpointInput" type="url" maxlength="255" name="endpoint" required>
             </div>
             <div class="row mb-3 me-2">
-                <label for="keyInput" class="col-3">Client Key</label>
+                <label for="keyInput" class="col-3">Client key</label>
                 <input th:if="${connection}" class="form-control col" id="keyInput" type="text" maxlength="255" name="clientKey" th:value="${connection.getClientKey()}" required>
                 <input th:unless="${connection}" class="form-control col" id="keyInput" type="text" maxlength="255" name="clientKey" required>
             </div>
             <div class="row mb-3 me-2">
-                <label for="secretInput" class="col-3">Client Secret</label>
+                <label for="secretInput" class="col-3">Client secret</label>
                 <input th:if="${connection}" class="form-control col" id="secretInput" type="text" maxlength="255" name="clientSecret" th:value="${connection.getClientSecret()}" required>
                 <input th:unless="${connection}" class="form-control col" id="secretInput" type="text" maxlength="255" name="clientSecret" required>
             </div>

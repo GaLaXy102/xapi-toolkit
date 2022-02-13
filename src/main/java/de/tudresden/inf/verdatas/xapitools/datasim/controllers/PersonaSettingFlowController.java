@@ -40,7 +40,7 @@ public class PersonaSettingFlowController implements SimulationStep {
      */
     @Override
     public String getName() {
-        return "Select Persona";
+        return "Select personae";
     }
 
     /**
