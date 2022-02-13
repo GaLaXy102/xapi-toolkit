@@ -125,7 +125,7 @@
                             <form method="POST" th:action="@{/ui/datasim/perform}" th:if="${simulation.getFinalized().get()}"
                                   th:unless="${resultsList.contains(simulation.getId().get())}" class="flex-fill d-flex">
                                 <input type="hidden" name="flow" th:value="${simulation.getId().get()}">
-                                <button type="submit" class="btn btn-outline-success flex-fill">Perform</button>
+                                <button type="submit" class="btn btn-outline-success button-spinner flex-fill">Perform</button>
                             </form>
                             <a th:href="'/api/v1/datasim/retrieve?flow=' + ${simulation.getId().get()}"
                                th:if="${resultsList.contains(simulation.getId().get())}" target="_blank" class="flex-fill d-flex text-decoration-none">
@@ -134,12 +134,12 @@
                         </div>
                         <div class="col" th:if="${resultsList.contains(simulation.getId().get())}">
                             <div class="dropdown flex-fill d-flex dropup">
-                                <button class="btn btn-secondary flex-fill no-spinner" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <button class="btn btn-secondary flex-fill" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Push
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li th:each="lrs: ${availableLrs}">
-                                        <button type="button" class="dropdown-item" th:text="${lrs.getName()}" th:data-lrs="${lrs.getUuid().get()}"
+                                        <button type="button" class="dropdown-item dropdown-spinner" th:text="${lrs.getName()}" th:data-lrs="${lrs.getUuid().get()}"
                                                 th:data-flow="${simulation.getId().get()}"
                                                 onclick="
                                                     document.getElementById('pushFlowId').value = this.getAttribute('data-flow');

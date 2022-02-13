@@ -113,10 +113,12 @@ $(document).ready(function () {
         if (hasChanges) ev.returnValue = "Changes you made may not be saved.";
     }
     // Spinners
-    $('button').click(function () {
-        if (this.classList.contains('dropdown-item')) addSpinner($(this).parent().parent().parent().children().first());
-        else if ($(this).parent('a').length === 0 && !this.classList.contains('no-spinner')) addSpinner(this);
+    $('.dropdown-spinner').click(function () {
+        addSpinner($(this).parent().parent().parent().children().first());
     });
+    $('.button-spinner').click(function () {
+        if (this.form.checkValidity()) addSpinner($(this));
+    })
     $('.toast').each(function () {
         (new bootstrap.Toast(this, {})).show();
     })
