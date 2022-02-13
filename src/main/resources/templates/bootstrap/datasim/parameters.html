@@ -8,7 +8,7 @@
         <input type="hidden" name="mode" th:value="${mode}">
         <input type="hidden" name="id" th:value="${parameters.getId().get()}">
         <div class="mt-3 mb-3 form-control">
-            <label class="mb-3">Simulation Parameters</label>
+            <h3 class="mb-3">Simulation Parameters</h3>
             <div class="row mb-3 me-2">
                 <label for="num" class="col-3">Number of Statements</label>
                 <input type="number" class="form-control col" id="num" name="max" th:value="${parameters.getMax()}" min="1" required>

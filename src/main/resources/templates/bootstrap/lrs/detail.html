@@ -5,7 +5,7 @@
 <div class="container">
     <form method="POST" th:action="@{/ui/manage/lrs/{method}(method=${method})}">
         <div class="mt-3 mb-3 form-control">
-            <label class="mb-3">Connection Parameters</label>
+            <h3 class="mb-3">Connection Parameters</h3>
             <div class="row mb-3 me-2">
                 <label for="nameInput" class="col-3">Name</label>
                 <input th:if="${connection}" class="form-control col" id="nameInput" type="text" minlength="3" name="name" th:value="${connection.getName()}" required>

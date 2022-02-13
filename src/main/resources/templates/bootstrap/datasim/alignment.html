@@ -9,7 +9,7 @@
         <input type="hidden" name="mode" th:value="${mode}">
         <div class="form-control mt-3 mb-3">
             <div class="row">
-                <label>Add new Component</label>
+                <h3 class="mb-3">Add new Component</h3>
                 <div class="col-10">
                     <div class="mb-3 mt-3 input-group" id="componentSelectBase">
                         <select class="form-select" onchange="triggerComponentSelect(this);" id="componentSelectType" required>
@@ -40,7 +40,7 @@
         <input type="hidden" name="mode" th:value="${mode}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <div class="mb-3 form-control">
-            <label class="mb-3">Map Affinities</label>
+            <h3 class="mb-3">Map Affinities</h3>
             <div class="accordion">
                 <div class="accordion-item" th:each="alignment, loop: ${alignments}">
                     <div class="accordion-header btn-group d-flex">
