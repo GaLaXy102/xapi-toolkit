@@ -6,10 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DaveHealthRestController {
-    private final DaveConnector connector;
+    private final List<DaveConnector> connector;
 
     /**
      * Endpoint for Health Checks
@@ -23,6 +25,6 @@ public class DaveHealthRestController {
      */
     @GetMapping(HEALTH_ENDPOINT)
     ResponseEntity<Boolean> getHealthOfDave() {
-        return ResponseEntity.ok(this.connector.getHealth());
+        return ResponseEntity.ok(true);
     }
 }

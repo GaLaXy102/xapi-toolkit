@@ -1,33 +1,53 @@
 package de.tudresden.inf.verdatas.xapitools.dave.connector;
 
+import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.openqa.selenium.WebDriver;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.Closeable;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-@EnableScheduling
-@Service
-@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public class DaveConnector implements IExternalService {
+public class DaveConnector implements IExternalService, Closeable {
     private static final String HEALTH_ENDPOINT = "";
     private final Logger logger = Logger.getLogger(this.getClass().getName());
-    @Value("${xapi.dave.backend-base-url}")
-    private URL daveEndpoint;
+    private final URL daveEndpoint;
+    private final LrsConnection lrsConnection;
+    private WebDriver driver;
     @Getter
     private Boolean health = null;
+
+    DaveConnector(URL daveEndpoint, LrsConnection lrsConnection) {
+        this.daveEndpoint = daveEndpoint;
+        this.lrsConnection = lrsConnection;
+    }
+
+    void initialize() {
+        if (this.driver != null) return;
+        this.driver = DaveInteractions.startNewSession(daveEndpoint);
+
+        try {
+            DaveInteractions.createWorkbook(this.driver);
+            DaveInteractions.connectLRS(this.driver, lrsConnection.getFriendlyName(),
+                    lrsConnection.getXApiEndpoint().toString(), lrsConnection.getXApiClientKey(),
+                    lrsConnection.getXApiClientSecret());
+        } catch (InterruptedException e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
+    public void close() {
+        if (this.driver == null) return;
+        this.driver.quit();
+    }
 
     /**
      * Get the Human readable name of this Service.
@@ -56,11 +76,12 @@ public class DaveConnector implements IExternalService {
      */
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
     protected void healthCheck() {
+        if (this.driver == null) return;
         // Build connection template
         RestTemplate restTemplate = this.daveEndpoint.getUserInfo() != null
                 ? new RestTemplateBuilder()
-                    .basicAuthentication(this.daveEndpoint.getUserInfo().split(":")[0], this.daveEndpoint.getUserInfo().split(":")[1])
-                    .build()
+                .basicAuthentication(this.daveEndpoint.getUserInfo().split(":")[0], this.daveEndpoint.getUserInfo().split(":")[1])
+                .build()
                 : new RestTemplate();
         boolean calculatedHealth;
         try {

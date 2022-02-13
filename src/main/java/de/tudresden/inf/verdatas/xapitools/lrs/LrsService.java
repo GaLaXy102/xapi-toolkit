@@ -1,6 +1,7 @@
 package de.tudresden.inf.verdatas.xapitools.lrs;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
 import de.tudresden.inf.verdatas.xapitools.lrs.connector.LrsConnector;
 import de.tudresden.inf.verdatas.xapitools.lrs.connector.LrsConnectorLifecycleManager;
 import de.tudresden.inf.verdatas.xapitools.lrs.validators.Active;
@@ -25,16 +26,20 @@ public class LrsService {
 
     private final LrsConnectionRepository lrsConnectionRepository;
     private final LrsConnectorLifecycleManager connectorLifecycleManager;
+    private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
 
     /**
      * This constructor is for Spring-internal use.
      * It also bootstraps the connectors for the enabled connections.
      */
-    LrsService(LrsConnectionRepository lrsConnectionRepository, LrsConnectorLifecycleManager connectorLifecycleManager) {
+    LrsService(LrsConnectionRepository lrsConnectionRepository, LrsConnectorLifecycleManager connectorLifecycleManager,
+               DaveConnectorLifecycleManager daveConnectorLifecycleManager) {
         this.lrsConnectionRepository = lrsConnectionRepository;
         this.connectorLifecycleManager = connectorLifecycleManager;
+        this.daveConnectorLifecycleManager = daveConnectorLifecycleManager;
         // Create Connectors for all active Connections at Boot time
         this.lrsConnectionRepository.findAll().stream().filter(LrsConnection::isEnabled).forEach(this.connectorLifecycleManager::createConnector);
+        this.lrsConnectionRepository.findAll().stream().filter(LrsConnection::isEnabled).forEach(this.daveConnectorLifecycleManager::createConnector);
     }
 
     /**
@@ -45,6 +50,7 @@ public class LrsService {
         LrsConnection created = lrsData.toNewLrsConnection();
         this.lrsConnectionRepository.save(created);
         this.connectorLifecycleManager.createConnector(created);
+        this.daveConnectorLifecycleManager.createConnector(created);
         return created;
     }
 
@@ -59,6 +65,7 @@ public class LrsService {
         connection.setEnabled(false);
         this.lrsConnectionRepository.save(connection);
         this.connectorLifecycleManager.deleteConnector(connection);
+        this.daveConnectorLifecycleManager.deleteConnector(connection);
         return connection;
     }
 
@@ -73,6 +80,7 @@ public class LrsService {
         connection.setEnabled(true);
         this.lrsConnectionRepository.save(connection);
         this.connectorLifecycleManager.createConnector(connection);
+        this.daveConnectorLifecycleManager.createConnector(connection);
         return connection;
     }
 
@@ -113,7 +121,9 @@ public class LrsService {
         found.setEnabled(lrsData.getEnabled().orElse(found.isEnabled()));
         this.lrsConnectionRepository.save(found);
         this.connectorLifecycleManager.deleteConnector(found);
+        this.daveConnectorLifecycleManager.deleteConnector(found);
         this.connectorLifecycleManager.createConnector(found);
+        this.daveConnectorLifecycleManager.createConnector(found);
         return found;
     }
 
