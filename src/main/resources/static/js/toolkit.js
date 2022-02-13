@@ -26,11 +26,9 @@ function queryExternalService(targetEl, endpoint) {
 
 function setHighlightOfStep(el, testPath) {
     if (testPath.match(el.dataset.pathregex.replace("/", "\\/"))) {
-        el.classList.remove('text-white-50')
-        el.classList.add('text-white')
+        el.classList.remove('text-opacity-25');
     } else {
-        el.classList.remove('text-white')
-        el.classList.add('text-white-50')
+        el.classList.add('text-opacity-25');
     }
 }
 
