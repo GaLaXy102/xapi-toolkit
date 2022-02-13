@@ -8,23 +8,23 @@
             <h3 class="mb-3">Connection Parameters</h3>
             <div class="row mb-3 me-2">
                 <label for="nameInput" class="col-3">Name</label>
-                <input th:if="${connection}" class="form-control col" id="nameInput" type="text" minlength="3" name="name" th:value="${connection.getName()}" required>
-                <input th:unless="${connection}" class="form-control col" id="nameInput" type="text" minlength="3" name="name" required>
+                <input th:if="${connection}" class="form-control col" id="nameInput" type="text" minlength="3" maxlength="255" name="name" th:value="${connection.getName()}" required>
+                <input th:unless="${connection}" class="form-control col" id="nameInput" type="text" minlength="3" maxlength="255" name="name" required>
             </div>
             <div class="row mb-3 me-2">
                 <label for="endpointInput" class="col-3">Endpoint</label>
-                <input th:if="${connection}" class="form-control col" id="endpointInput" type="url" name="endpoint" th:value="${connection.getEndpoint()}" required>
-                <input th:unless="${connection}" class="form-control col" id="endpointInput" type="url" name="endpoint" required>
+                <input th:if="${connection}" class="form-control col" id="endpointInput" type="url" maxlength="255" name="endpoint" th:value="${connection.getEndpoint()}" required>
+                <input th:unless="${connection}" class="form-control col" id="endpointInput" type="url" maxlength="255" name="endpoint" required>
             </div>
             <div class="row mb-3 me-2">
                 <label for="keyInput" class="col-3">Client Key</label>
-                <input th:if="${connection}" class="form-control col" id="keyInput" type="text" name="clientKey" th:value="${connection.getClientKey()}" required>
-                <input th:unless="${connection}" class="form-control col" id="keyInput" type="text" name="clientKey" required>
+                <input th:if="${connection}" class="form-control col" id="keyInput" type="text" maxlength="255" name="clientKey" th:value="${connection.getClientKey()}" required>
+                <input th:unless="${connection}" class="form-control col" id="keyInput" type="text" maxlength="255" name="clientKey" required>
             </div>
             <div class="row mb-3 me-2">
                 <label for="secretInput" class="col-3">Client Secret</label>
-                <input th:if="${connection}" class="form-control col" id="secretInput" type="text" name="clientSecret" th:value="${connection.getClientSecret()}" required>
-                <input th:unless="${connection}" class="form-control col" id="secretInput" type="text" name="clientSecret" required>
+                <input th:if="${connection}" class="form-control col" id="secretInput" type="text" maxlength="255" name="clientSecret" th:value="${connection.getClientSecret()}" required>
+                <input th:unless="${connection}" class="form-control col" id="secretInput" type="text" maxlength="255" name="clientSecret" required>
             </div>
         </div>
         <div class="row">
