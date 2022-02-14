@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.Closeable;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -95,5 +96,20 @@ public class DaveConnector implements IExternalService, Closeable {
         } else {
             this.logger.warning("DAVE-" + this.lrsConnection.getFriendlyName() + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
         }
+    }
+
+    public String executeAnalysis(List<String> paths) {
+        if (this.driver != null && this.interactable) {
+            try {
+                DaveInteractions.addDescriptionToAnalysis(this.driver, paths.get(0), false);
+                DaveInteractions.addDescriptionToAnalysis(this.driver, paths.get(1), true);
+                return DaveInteractions.getVisOfAnalysis(this.driver);
+            } catch (Exception e) {
+                this.interactable = false;
+                this.driver.quit();
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+        throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
     }
 }
