@@ -1,17 +1,24 @@
 package de.tudresden.inf.verdatas.xapitools.dave.connector;
 
+import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
+import de.tudresden.inf.verdatas.xapitools.lrs.LrsService;
+import de.tudresden.inf.verdatas.xapitools.lrs.validators.Active;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.UUID;
 
 @RestController
+@Validated
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DaveHealthRestController {
-    private final List<DaveConnector> connector;
+    private final LrsService lrsService;
+    private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
 
     /**
      * Endpoint for Health Checks
@@ -21,10 +28,12 @@ public class DaveHealthRestController {
     /**
      * Respond to Health Check Queries
      *
-     * @return true if alive, false if dead
+     * @param connectionId ID of {@link LrsConnection} which belongs to the DAVEConnector of which the Health shall be queried.
+     * @return 200 and true if alive, 200 and false if dead, 400 and error page if not found or inactive connection.
      */
     @GetMapping(HEALTH_ENDPOINT)
-    ResponseEntity<Boolean> getHealthOfDave() {
-        return ResponseEntity.ok(true);
+    ResponseEntity<Boolean> getHealthOfDave(@RequestParam(name = "id") UUID connectionId) {
+        @Active LrsConnection connection = this.lrsService.getConnection(connectionId);
+        return ResponseEntity.ok(this.daveConnectorLifecycleManager.getConnector(connection).getHealth());
     }
 }

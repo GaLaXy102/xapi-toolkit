@@ -4,12 +4,7 @@ import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
 import lombok.Getter;
 import org.openqa.selenium.WebDriver;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.Closeable;
 import java.net.URL;
@@ -24,6 +19,7 @@ public class DaveConnector implements IExternalService, Closeable {
     private WebDriver driver;
     @Getter
     private Boolean health = null;
+    private Boolean interactable = false;
 
     DaveConnector(URL daveEndpoint, LrsConnection lrsConnection) {
         this.daveEndpoint = daveEndpoint;
@@ -32,14 +28,18 @@ public class DaveConnector implements IExternalService, Closeable {
 
     void initialize() {
         if (this.driver != null) return;
-        this.driver = DaveInteractions.startNewSession(daveEndpoint);
+        this.driver = DaveInteractions.startNewSession(this.daveEndpoint);
 
         try {
             DaveInteractions.createWorkbook(this.driver);
-            DaveInteractions.connectLRS(this.driver, lrsConnection.getFriendlyName(),
-                    lrsConnection.getXApiEndpoint().toString(), lrsConnection.getXApiClientKey(),
-                    lrsConnection.getXApiClientSecret());
-        } catch (InterruptedException e) {
+            DaveInteractions.connectLRS(this.driver, this.lrsConnection.getFriendlyName(),
+                    this.lrsConnection.getXApiEndpoint().toString(), this.lrsConnection.getXApiClientKey(),
+                    this.lrsConnection.getXApiClientSecret());
+            DaveInteractions.createAnalysis(this.driver);
+            this.interactable = true;
+        } catch (Exception e) {
+            this.interactable = false;
+            this.driver.quit();
             throw new IllegalStateException(e.getMessage());
         }
     }
@@ -56,7 +56,7 @@ public class DaveConnector implements IExternalService, Closeable {
      */
     @Override
     public String getName() {
-        return "DAVE";
+        return "DAVE-" + this.lrsConnection.getFriendlyName();
     }
 
     /**
@@ -66,7 +66,7 @@ public class DaveConnector implements IExternalService, Closeable {
      */
     @Override
     public String getCheckEndpoint() {
-        return DaveHealthRestController.HEALTH_ENDPOINT;
+        return DaveHealthRestController.HEALTH_ENDPOINT + "?id=" + this.lrsConnection.getConnectionId();
     }
 
     /**
@@ -77,23 +77,9 @@ public class DaveConnector implements IExternalService, Closeable {
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
     protected void healthCheck() {
         if (this.driver == null) return;
-        // Build connection template
-        RestTemplate restTemplate = this.daveEndpoint.getUserInfo() != null
-                ? new RestTemplateBuilder()
-                .basicAuthentication(this.daveEndpoint.getUserInfo().split(":")[0], this.daveEndpoint.getUserInfo().split(":")[1])
-                .build()
-                : new RestTemplate();
-        boolean calculatedHealth;
-        try {
-            ResponseEntity<String> health = restTemplate.getForEntity(this.daveEndpoint.toString() + HEALTH_ENDPOINT, String.class);
-            calculatedHealth = health.getStatusCode().is2xxSuccessful();
-        } catch (ResourceAccessException | HttpClientErrorException e) {
-            // This happens when connection is refused
-            calculatedHealth = false;
-        }
         // Only log changes
-        if (this.health == null || calculatedHealth != this.health) {
-            this.healthChangedCallback(calculatedHealth);
+        if (this.health == null || this.interactable != this.health) {
+            this.healthChangedCallback(this.interactable);
         }
     }
 
@@ -105,9 +91,9 @@ public class DaveConnector implements IExternalService, Closeable {
     private void healthChangedCallback(boolean newHealth) {
         this.health = newHealth;
         if (this.health) {
-            this.logger.info("DAVE connection is alive.");
+            this.logger.info("DAVE-" + this.lrsConnection.getFriendlyName() + " connection is alive.");
         } else {
-            this.logger.warning("DAVE is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
+            this.logger.warning("DAVE-" + this.lrsConnection.getFriendlyName() + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
         }
     }
 }

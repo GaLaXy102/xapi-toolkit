@@ -58,18 +58,16 @@ class DaveInteractions {
         driver.manage().timeouts().implicitlyWait(750, TimeUnit.MILLISECONDS);
     }
 
-    static WebDriver createAnalysis(WebDriver driver, String name) throws InterruptedException {
+    static void createAnalysis(WebDriver driver) throws InterruptedException {
         driver.findElement(By.cssSelector(".majorbutton.newblock")).click();
 
         TimeUnit.MILLISECONDS.sleep(150);
-        driver.findElement(By.cssSelector(".mdc-text-field__input")).sendKeys(name);
+        driver.findElement(By.cssSelector(".mdc-text-field__input")).sendKeys("Analysis");
         TimeUnit.MILLISECONDS.sleep(75);
         driver.findElement(By.cssSelector(".wizardfooter :nth-child(2)")).click();
-
-        return driver;
     }
 
-    // TODO decider als Enum
+    // TODO decider als Enum, Rückgabe einer Fehlernachricht
     static void addDescriptionToAnalysis(WebDriver driver, String Path, Boolean decider) throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(75);
 
@@ -84,7 +82,7 @@ class DaveInteractions {
         } else {
             WebElement description_upload = driver.findElement(By.cssSelector("#vega-input-file"));
             description_upload.sendKeys(Path);
-            // empty String if query is valid (no error occurred)
+            // empty String if description is valid (no error occurred)
             String errorMessage = driver.findElements(By.cssSelector(".error")).get(1).getText();
             if (!errorMessage.isEmpty()) {
                 throw new IllegalStateException(errorMessage);
@@ -92,7 +90,7 @@ class DaveInteractions {
         }
     }
 
-    public String getVisOfAnalysis(WebDriver driver) throws InterruptedException {
+    static String getVisOfAnalysis(WebDriver driver) throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(150);
         List<WebElement> buttons = driver.findElements(By.cssSelector(".minorbutton"));
         buttons.get(4).click();
@@ -105,7 +103,7 @@ class DaveInteractions {
         return driver.findElement(By.cssSelector(".dave-vega-container svg")).getAttribute("outerHTML");
     }
 
-    public String getResultsForAnalysis(WebDriver driver) {
+    static String getResultsForAnalysis(WebDriver driver) {
         List<WebElement> sub_buttons = driver.findElements(By.cssSelector(".minimalbutton"));
         sub_buttons.get(4).click();
 
