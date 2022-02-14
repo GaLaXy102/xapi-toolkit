@@ -65,7 +65,8 @@
                             <label class="col-6 col-form-label" th:text="${personaAlign.getKey().getName()}"
                                    th:for="'range' + ${personaAlign.getKey().getId()}"></label>
                             <div class="col-6">
-                                <input type="range" class="form-range" min="-1" max="1" step="0.1" th:id="'range' + ${personaAlign.getKey().getId()}"
+                                <input type="range" class="form-range xapi-alignment-tooltip" min="-1" max="1" step="0.1"
+                                       th:id="'range' + ${personaAlign.getKey().getId()}"
                                        th:value="${personaAlign.getValue()}" th:name="${personaAlign.getKey().getId()} + '@' + ${alignment.getKey()}"
                                        th:disabled="${mode == mode.DISPLAYING}">
                             </div>

@@ -148,6 +148,23 @@ $(document).ready(function () {
     // Toasts
     $('.toast').each(function () {
         (new bootstrap.Toast(this, {})).show();
-    })
+    });
+    // Tooltips
+    $('.xapi-alignment-tooltip').each(function () {
+        (new bootstrap.Tooltip(this, {
+            title: 'x',
+            container: this.parentNode,
+            placement: 'left'
+        }));
+    }).on('input', function () {
+            const tt = bootstrap.Tooltip.getInstance(this).tip;
+            tt.lastElementChild.innerText = this.value;
+        }
+    );
+    $(window).on('inserted.bs.tooltip', function (ev) {
+        const inpEl = ev.target.parentNode.firstElementChild;
+        const tt = bootstrap.Tooltip.getInstance(inpEl).tip;
+        tt.lastElementChild.innerText = inpEl.value;
+    });
 });
 
