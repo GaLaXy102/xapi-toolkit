@@ -51,9 +51,9 @@ class DaveInteractions {
         lrsForm.get(3).sendKeys(secret);
         TimeUnit.MILLISECONDS.sleep(75);
         driver.findElement(By.cssSelector(".wizardfooter :nth-child(2)")).click();
+        driver.findElement(By.cssSelector(".testdatasetblock .mdc-linear-progress:not(.mdc-linear-progress--closed)"));
         // Wait until loading of statements from LRS has stopped
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.MINUTES);
-        driver.findElement(By.cssSelector(".testdatasetblock .mdc-linear-progress:not(.mdc-linear-progress--closed)"));
         driver.findElement(By.cssSelector(".testdatasetblock .mdc-linear-progress--closed"));
         driver.manage().timeouts().implicitlyWait(750, TimeUnit.MILLISECONDS);
     }

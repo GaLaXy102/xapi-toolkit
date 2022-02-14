@@ -20,7 +20,6 @@ public class DaveConnector implements IExternalService, Closeable {
     private WebDriver driver;
     @Getter
     private Boolean health = null;
-    private Boolean interactable = false;
 
     DaveConnector(URL daveEndpoint, LrsConnection lrsConnection) {
         this.daveEndpoint = daveEndpoint;
@@ -37,10 +36,10 @@ public class DaveConnector implements IExternalService, Closeable {
                     this.lrsConnection.getXApiEndpoint().toString(), this.lrsConnection.getXApiClientKey(),
                     this.lrsConnection.getXApiClientSecret());
             DaveInteractions.createAnalysis(this.driver);
-            this.interactable = true;
+            this.healthChangedCallback(true);
         } catch (Exception e) {
-            this.interactable = false;
             this.driver.quit();
+            this.healthChangedCallback(false);
             throw new IllegalStateException(e.getMessage());
         }
     }
@@ -71,20 +70,6 @@ public class DaveConnector implements IExternalService, Closeable {
     }
 
     /**
-     * Check whether the connected instance is alive
-     * <p>
-     * To run manually, call this method and afterwards get the result from getHealth()
-     */
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
-    protected void healthCheck() {
-        if (this.driver == null) return;
-        // Only log changes
-        if (this.health == null || this.interactable != this.health) {
-            this.healthChangedCallback(this.interactable);
-        }
-    }
-
-    /**
      * Callback for timed health check
      * <p>
      * Sets the health-Property and logs the result.
@@ -98,15 +83,15 @@ public class DaveConnector implements IExternalService, Closeable {
         }
     }
 
-    public String executeAnalysis(List<String> paths) {
-        if (this.driver != null && this.interactable) {
+    public synchronized String executeAnalysis(List<String> paths) {
+        if (this.getHealth()) {
             try {
                 DaveInteractions.addDescriptionToAnalysis(this.driver, paths.get(0), false);
                 DaveInteractions.addDescriptionToAnalysis(this.driver, paths.get(1), true);
                 return DaveInteractions.getVisOfAnalysis(this.driver);
             } catch (Exception e) {
-                this.interactable = false;
                 this.driver.quit();
+                this.healthChangedCallback(false);
                 throw new IllegalStateException(e.getMessage());
             }
         }
