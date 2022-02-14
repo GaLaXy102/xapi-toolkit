@@ -37,9 +37,9 @@
                     <h2>
                         <span th:text="${simulation.getRemark().orElse('Untitled Simulation')}"></span>
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit' + '?flow=' + ${simulation.getId().get()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit title"></i></a>
                         <a th:href="'/api/v1/datasim/simulation_description' + '?flow=' + ${simulation.getId().get()}" class="float-end text-dark me-3"
-                           target="_blank"><i class="bi-download"></i></a>
+                           target="_blank"><i class="bi-download" title="Download simulation description"></i></a>
                     </h2>
                 </div>
                 <ul class="list-group list-group-flush">
@@ -49,51 +49,51 @@
                         <span th:unless="${simulation.getProfiles().isEmpty()}" th:text="${simulation.getProfiles().get(0).getName()}"></span><span
                             th:if="${simulation.getProfiles().isEmpty()}">No</span>&nbsp;profile
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/profile' + '?flow=' + ${simulation.getId().get()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit profile"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-files"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${simulation.getParameters().getMax()}"></span>&nbsp;entries
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit parameters"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-flower3"></i>
                         &nbsp;&nbsp;&nbsp;
                         Seed&nbsp;<span th:text="${simulation.getParameters().getSeed()}"></span>
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit parameters"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-people-fill"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${numPersonae.get(simulation)}"></span>&nbsp;personae
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/persona' + '?flow=' + ${simulation.getId().get()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit personae"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-align-center"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${numAligns.get(simulation)}"></span>&nbsp;alignments
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/alignment' + '?flow=' + ${simulation.getId().get()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit alignments"></i></a>
                         <a th:if="${simulation.getFinalized().get()}" th:href="'/ui/datasim/show/alignment' + '?flow=' + ${simulation.getId().get()}"
-                           class="float-end text-dark"><i class="bi-search"></i></a>
+                           class="float-end text-dark"><i class="bi-search" title="View alignments"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-clock"></i><i class="bi-arrow-bar-right"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${#temporals.format(simulation.getParameters().getStart(), 'yyyy-MM-dd HH:mm:ss')}"></span>
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit parameters"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-clock"></i><i class="bi-arrow-bar-left"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${#temporals.format(simulation.getParameters().getEnd(), 'yyyy-MM-dd HH:mm:ss')}"></span>
                         <a th:unless="${simulation.getFinalized().get()}" th:href="'/ui/datasim/edit/parameters' + '?flow=' + ${simulation.getId().get()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit parameters"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-clock"></i><i class="bi-globe"></i>
