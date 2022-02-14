@@ -76,13 +76,22 @@ function setInvisible(el) {
 }
 
 function triggerComponentSelect(element) {
-    $('#componentSelectBase').children(':not(#componentSelectType)').each(function () {setInvisible(this);setNonReqiured(this);unsetName(this)});
+    $('#componentSelectBase').children(':not(#componentSelectType)').each(function () {
+        setInvisible(this);
+        setNonReqiured(this);
+        unsetName(this)
+    });
     const targetElementIdQuery = '#componentSelect-' + (element.value === '' ? 'NONE' : element.value);
-    $(targetElementIdQuery).each(function () {setVisible(this);setReqiured(this);setName(this, 'component')});
+    $(targetElementIdQuery).each(function () {
+        setVisible(this);
+        setReqiured(this);
+        setName(this, 'component')
+    });
 }
 
 // Inspired by https://thecoderain.blogspot.com/2020/11/generate-valid-random-email-js-jquery.html
 const emailChars = '1234567890';
+
 function generateEmailAddress(btnEl) {
     const target = $(btnEl).parent().children().first().children().first();
     var mail = 'mail';
@@ -106,9 +115,15 @@ $(document).ready(function () {
     $("#contentFrame").bind('load', highlightActiveSubapp);
     $("#contentFrame").bind('load', highlightFlowStep);
     // Alert on pending changes
-    $('input').change(() => {hasChanges = true;});
-    $('select').change(() => {hasChanges = true;});
-    $('form').submit(() => {hasChanges = false;});
+    $('input').change(() => {
+        hasChanges = true;
+    });
+    $('select').change(() => {
+        hasChanges = true;
+    });
+    $('form').submit(() => {
+        hasChanges = false;
+    });
     window.onbeforeunload = (ev) => {
         if (hasChanges) ev.returnValue = "Changes you made may not be saved.";
     }
@@ -129,7 +144,8 @@ $(document).ready(function () {
     });
     $('.button-spinner').click(function () {
         if (this.form.checkValidity()) addSpinner($(this));
-    })
+    });
+    // Toasts
     $('.toast').each(function () {
         (new bootstrap.Toast(this, {})).show();
     })
