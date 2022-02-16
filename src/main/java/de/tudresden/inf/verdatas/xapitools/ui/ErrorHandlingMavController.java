@@ -70,14 +70,14 @@ public class ErrorHandlingMavController {
     }
 
     /**
-     * Handler for {@link IllegalArgumentException} (manually raised from code) and {@link ConstraintViolationException} (automatically raised from Validators).
+     * Handler for {@link IllegalArgumentException}, {@link IllegalStateException} (manually raised from code) and {@link ConstraintViolationException} (automatically raised from Validators).
      * The {@link HttpStatus} raised for this Exception class is 400 (Bad Request).
      *
      * @param e Exception to be handled
      * @return ModelAndView for this Exception
      */
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({IllegalArgumentException.class, ConstraintViolationException.class})
+    @ExceptionHandler({IllegalArgumentException.class, ConstraintViolationException.class, IllegalStateException.class})
     public ModelAndView convertBadRequest(Exception e) {
         return this.baseModelAndView(e, HttpStatus.BAD_REQUEST);
     }

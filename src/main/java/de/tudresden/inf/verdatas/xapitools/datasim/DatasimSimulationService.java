@@ -278,6 +278,9 @@ public class DatasimSimulationService {
      */
     @Transactional
     public void finalizeSimulation(@NonFinalized DatasimSimulation simulation) {
+        if (simulation.getPersonaGroups().stream().allMatch((group) -> group.getMember().isEmpty())) {
+            throw new IllegalStateException("Simulations must have at least one persona.");
+        }
         simulation.setFinalized(true);
         this.simulationRepository.save(simulation);
     }
