@@ -136,6 +136,8 @@ public class LrsConnector implements IExternalService {
         } catch (HttpServerErrorException e) {
             // This happens when the server returns a bad status
             throw new LrsExceptions.NoLrsConnection(this.lrsConnection.getFriendlyName() + " has some issues.");
+        } catch (HttpClientErrorException e) {
+            throw new LrsExceptions.BadInputData(e.getMessage());
         }
     }
 
