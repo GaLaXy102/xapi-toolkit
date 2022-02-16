@@ -46,6 +46,16 @@ public class DatasimPersonaTO implements DatasimActor {
     }
 
     /**
+     * Create a TO with parameters
+     *
+     * @param name Name of the Persona
+     * @param mbox E-Mail address of the Persona
+     */
+    public static DatasimPersonaTO with(String name, String mbox) {
+        return new DatasimPersonaTO(Optional.empty(), name, mbox);
+    }
+
+    /**
      * Create a new DatasimPersona Entity for use in Services.
      *
      * @return persistable Entity
