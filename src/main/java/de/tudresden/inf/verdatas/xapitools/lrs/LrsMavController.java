@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -76,9 +78,10 @@ public class LrsMavController implements IUIManagementFlow {
      * @param lrsUuid UUID of the Connection to deactivate
      */
     @PostMapping(LrsMavController.BASE_URL + "/deactivate")
-    public ModelAndView deleteLrsConnection(@RequestParam(name = "lrs_uuid") UUID lrsUuid) {
+    public RedirectView deleteLrsConnection(@RequestParam(name = "lrs_uuid") UUID lrsUuid, RedirectAttributes attributes) {
         this.lrsService.deactivateConnection(lrsUuid);
-        return new ModelAndView("redirect:/ui/manage/lrs/");
+        attributes.addAttribute("deactivate", this.lrsService.getConnection(lrsUuid).getFriendlyName());
+        return new RedirectView(".");
     }
 
     /**
@@ -87,9 +90,10 @@ public class LrsMavController implements IUIManagementFlow {
      * @param lrsUuid UUID of the Connection to reactivate
      */
     @PostMapping(LrsMavController.BASE_URL + "/reactivate")
-    public ModelAndView reactivateLrsConnection(@RequestParam(name = "lrs_uuid") UUID lrsUuid) {
+    public RedirectView reactivateLrsConnection(@RequestParam(name = "lrs_uuid") UUID lrsUuid, RedirectAttributes attributes) {
         this.lrsService.activateConnection(lrsUuid);
-        return new ModelAndView("redirect:/ui/manage/lrs/");
+        attributes.addAttribute("reactivate", this.lrsService.getConnection(lrsUuid).getFriendlyName());
+        return new RedirectView(".");
     }
 
     /**
@@ -112,9 +116,10 @@ public class LrsMavController implements IUIManagementFlow {
      * @param data Transfer object containing the new details of the LRS Connection
      */
     @PostMapping(LrsMavController.BASE_URL + "/edit")
-    public ModelAndView editLrsConnection(@Validated LrsConnectionTO data) {
+    public RedirectView editLrsConnection(@Validated LrsConnectionTO data, RedirectAttributes attributes) {
         this.lrsService.updateConnection(data);
-        return new ModelAndView("redirect:/ui/manage/lrs/");
+        attributes.addAttribute("edit", data.getName());
+        return new RedirectView(".");
     }
 
     /**
@@ -133,8 +138,9 @@ public class LrsMavController implements IUIManagementFlow {
      * @param data Transfer object containing the new details of the LRS Connection
      */
     @PostMapping(LrsMavController.BASE_URL + "/add")
-    public ModelAndView addLrsConnection(@Validated LrsConnectionTO data) {
+    public RedirectView addLrsConnection(@Validated LrsConnectionTO data, RedirectAttributes attributes) {
         this.lrsService.createConnection(data);
-        return new ModelAndView("redirect:/ui/manage/lrs/");
+        attributes.addAttribute("create", data.getName());
+        return new RedirectView(".");
     }
 }

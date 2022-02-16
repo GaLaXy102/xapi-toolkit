@@ -65,6 +65,58 @@
             </div>
         </div>
     </div>
+    <!-- Create Toast -->
+    <div class="position-absolute top-0 start-0 w-100" th:if="${param.get('create')}">
+        <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center">
+            <div class="toast-container w-50 d-flex mt-3">
+                <div class="toast bg-success flex-fill" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-body fs-4 text-white text-center">
+                        Activated&nbsp;<span th:text="${param.get('create')}"></span>.<br />
+                        Refresh the application for status indicators to update.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Edit Toast -->
+    <div class="position-absolute top-0 start-0 w-100" th:if="${param.get('edit')}">
+        <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center">
+            <div class="toast-container w-50 d-flex mt-3">
+                <div class="toast bg-success flex-fill" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-body fs-4 text-white text-center">
+                        Edited&nbsp;<span th:text="${param.get('edit')}"></span>.<br />
+                        Refresh the application for status indicators to update.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Reactivate Toast -->
+    <div class="position-absolute top-0 start-0 w-100" th:if="${param.get('reactivate')}">
+        <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center">
+            <div class="toast-container w-50 d-flex mt-3">
+                <div class="toast bg-success flex-fill" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-body fs-4 text-white text-center">
+                        Reactivated&nbsp;<span th:text="${param.get('reactivate')}"></span>.<br />
+                        Refresh the application for status indicators to update.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Deactivate Toast -->
+    <div class="position-absolute top-0 start-0 w-100" th:if="${param.get('deactivate')}">
+        <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center">
+            <div class="toast-container w-50 d-flex mt-3">
+                <div class="toast bg-danger flex-fill" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-body fs-4 text-white text-center">
+                        Deactivated&nbsp;<span th:text="${param.get('deactivate')}"></span>.<br />
+                        Refresh the application for status indicators to update.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
