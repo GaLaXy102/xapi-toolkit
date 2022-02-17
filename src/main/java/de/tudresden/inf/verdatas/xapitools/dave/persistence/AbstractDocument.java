@@ -10,7 +10,8 @@ import java.util.UUID;
 public class AbstractDocument {
     @Id
     @Getter
-    private final UUID id = UUID.randomUUID();
+    @Setter
+    private UUID id = UUID.randomUUID();
 
     @Getter
     @Setter

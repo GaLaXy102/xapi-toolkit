@@ -28,20 +28,20 @@ public class DaveAnalysisService {
 
     @Transactional
     public DaveDashboard createEmptyDashboard() {
-        DaveDashboard emptyDashboard = new DaveDashboard(null, new LinkedList<>());
-        dashboardRepository.save(emptyDashboard);
+        DaveDashboard emptyDashboard = new DaveDashboard(null, new LinkedList<>(), new LinkedList<>());
+        this.dashboardRepository.save(emptyDashboard);
         return emptyDashboard;
     }
 
     @Transactional
     public void setDashboardIdentifier(DaveDashboard dashboard, String identifier) {
         dashboard.setIdentifier(identifier);
-        dashboardRepository.save(dashboard);
+        this.dashboardRepository.save(dashboard);
     }
 
     @Transactional
     public void setDashboardSource(DaveDashboard dashboard, LrsConnection lrsConnection) {
         dashboard.setLrsConnection(lrsConnection);
-        dashboardRepository.save(dashboard);
+        this.dashboardRepository.save(dashboard);
     }
 }

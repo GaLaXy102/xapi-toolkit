@@ -21,8 +21,14 @@ public class DaveDashboard extends AbstractDocument {
     @ManyToMany
     private List<DaveVis> visualisations;
 
-    public DaveDashboard(LrsConnection lrsConnection, List<DaveVis> visualisations) {
+    @Getter
+    @Setter
+    @ManyToMany
+    private List<String> visActivities;
+
+    public DaveDashboard(LrsConnection lrsConnection, List<DaveVis> visualisations, List<String> visActivities) {
         this.lrsConnection = lrsConnection;
         this.visualisations = visualisations;
+        this.visActivities = visActivities;
     }
 }
