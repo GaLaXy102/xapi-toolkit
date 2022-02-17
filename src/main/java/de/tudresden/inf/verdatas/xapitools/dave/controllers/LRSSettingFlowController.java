@@ -2,6 +2,7 @@ package de.tudresden.inf.verdatas.xapitools.dave.controllers;
 
 import de.tudresden.inf.verdatas.xapitools.dave.DaveAnalysisService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
+import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -51,7 +51,7 @@ public class LRSSettingFlowController implements AnalysisStep{
 
     @GetMapping(BASE_URL + "/new/source")
     public ModelAndView showSelectLRS(@RequestParam(name = "flow") UUID dashboardId) {
-        ModelAndView mav = new ModelAndView("bootstrap/dave/source");
+        ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/source");
         mav.addObject("activeLrs", this.lrsService.getConnections(true));
         mav.addObject("flow", dashboardId.toString());
         mav.addObject("mode", DaveAnalysisMavController.Mode.CREATING);
@@ -69,8 +69,9 @@ public class LRSSettingFlowController implements AnalysisStep{
     public RedirectView selectLRS(@RequestParam(name = "flow") UUID dashboardId, @RequestParam(name = "lrs_id") UUID lrsId,
                                   DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
         DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
-        this.daveAnalysisService.setDashboardSource(dashboard, this.lrsService.getConnection(lrsId));
+        LrsConnection lrsConnection = this.lrsService.getConnection(lrsId);
+        this.daveAnalysisService.setDashboardSource(dashboard, lrsConnection);
         attributes.addAttribute("flow", dashboard.getId());
-        return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "./dashboard/new/visualisations" : "../show");
+        return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "./visualisations" : "../show");
     }
 }

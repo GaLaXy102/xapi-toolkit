@@ -84,7 +84,7 @@ public class DaveAnalysisMavController implements IUIFlow {
 
     @GetMapping(BASE_URL + "/dashboards/show")
     public ModelAndView showDetail(@RequestParam(name = "flow") Optional<UUID> dashboardId) {
-        ModelAndView mav = new ModelAndView("bootstrap/dave/detail");
+        ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/detail");
         // Prepare and collect visualisation helpers
         Map<DaveDashboard, Long> numVis = new HashMap<>();
         List<DaveDashboard> dashboards = dashboardId
