@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="bootstrap/header.html :: scripted_head ('Set Title')"></head>
+<body class="bg-dark">
+<div class="container">
+  <form method="POST" th:action="@{/ui/dave/dashboards/new}">
+    <input type="hidden" name="flow" th:value="${flow}" th:if="${flow}">
+    <input type="hidden" name="mode" th:value="${mode}">
+    <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
+    <div class="mb-3 mt-3 form-floating">
+      <input class="form-control" id="identifierInput" name="identifier" th:value="${dashboardIdentifier}" minlength="3" placeholder="pseudo"/>
+      <label for="identifierInput">Dashboard title</label>
+    </div>
+    <div class="row">
+      <div class="col">
+        <a href="#" th:if="${mode == mode.CREATING}">
+          <button class="col btn btn-outline-danger" type="button" disabled>Back</button>
+        </a>
+        <a th:href="'/ui/dave/dashboards/show?flow=' + ${flow}" th:if="${mode == mode.EDITING}">
+          <button class="col btn btn-outline-danger" type="button">Back</button>
+        </a>
+      </div>
+      <div class="col">
+        <button class="col btn btn-success float-end" type="submit">Continue</button>
+      </div>
+    </div>
+  </form>
+</div>
+</body>
+</html>
