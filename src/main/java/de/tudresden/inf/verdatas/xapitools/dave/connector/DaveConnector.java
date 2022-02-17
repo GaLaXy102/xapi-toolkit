@@ -3,7 +3,9 @@ package de.tudresden.inf.verdatas.xapitools.dave.connector;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
 import lombok.Getter;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.Closeable;
@@ -11,6 +13,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 
 public class DaveConnector implements IExternalService, Closeable {
     private static final String HEALTH_ENDPOINT = "";
@@ -31,11 +35,9 @@ public class DaveConnector implements IExternalService, Closeable {
         this.driver = DaveInteractions.startNewSession(this.daveEndpoint);
 
         try {
-            DaveInteractions.createWorkbook(this.driver);
-            DaveInteractions.connectLRS(this.driver, this.lrsConnection.getFriendlyName(),
+            DaveInteractions.initializeDave(this.driver, this.lrsConnection.getFriendlyName(),
                     this.lrsConnection.getXApiEndpoint().toString(), this.lrsConnection.getXApiClientKey(),
                     this.lrsConnection.getXApiClientSecret());
-            DaveInteractions.createAnalysis(this.driver);
             this.healthChangedCallback(true);
         } catch (Exception e) {
             this.driver.quit();
@@ -86,9 +88,7 @@ public class DaveConnector implements IExternalService, Closeable {
     public synchronized String executeAnalysis(List<String> paths) {
         if (this.getHealth()) {
             try {
-                DaveInteractions.addDescriptionToAnalysis(this.driver, paths.get(0), false);
-                DaveInteractions.addDescriptionToAnalysis(this.driver, paths.get(1), true);
-                return DaveInteractions.getVisOfAnalysis(this.driver);
+                return DaveInteractions.executeAnalysis(this.driver, paths);
             } catch (Exception e) {
                 this.driver.quit();
                 this.healthChangedCallback(false);

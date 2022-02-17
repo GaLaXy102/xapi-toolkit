@@ -17,7 +17,25 @@ class DaveInteractions {
         return driver;
     }
 
-    static void createWorkbook(WebDriver driver) throws InterruptedException {
+    static void initializeDave(WebDriver driver, String name, String url, String key, String secret) throws InterruptedException {
+        createWorkbook(driver);
+        connectLRS(driver, name, url, key, secret);
+        createAnalysis(driver);
+    }
+
+    // TODO paths not null
+    static String executeAnalysis(WebDriver driver, List<String> paths) throws InterruptedException {
+        addDescriptionToAnalysis(driver, paths.get(0), false);
+        addDescriptionToAnalysis(driver, paths.get(1), true);
+        return getVisOfAnalysis(driver);
+    }
+
+    static String getAnalysisResult(WebDriver driver, List<String> paths) throws InterruptedException {
+        executeAnalysis(driver, paths);
+        return getResultsForAnalysis(driver);
+    }
+
+    private static void createWorkbook(WebDriver driver) throws InterruptedException {
         driver.findElement(By.cssSelector(".majorbutton")).click();
 
         TimeUnit.MILLISECONDS.sleep(150);
@@ -30,7 +48,7 @@ class DaveInteractions {
         driver.findElement(By.cssSelector(".wizardfooter :nth-child(2)")).click();
     }
 
-    static void connectLRS(WebDriver driver, String name, String url, String key, String secret) throws InterruptedException {
+    private static void connectLRS(WebDriver driver, String name, String url, String key, String secret) throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(75);
         driver.findElement(By.cssSelector(".testdatasetblock .minorbutton")).click();
         TimeUnit.MILLISECONDS.sleep(75);
@@ -58,19 +76,21 @@ class DaveInteractions {
         driver.manage().timeouts().implicitlyWait(750, TimeUnit.MILLISECONDS);
     }
 
-    static void createAnalysis(WebDriver driver) throws InterruptedException {
+    private static void createAnalysis(WebDriver driver) throws InterruptedException {
         driver.findElement(By.cssSelector(".majorbutton.newblock")).click();
 
         TimeUnit.MILLISECONDS.sleep(150);
         driver.findElement(By.cssSelector(".mdc-text-field__input")).sendKeys("Analysis");
         TimeUnit.MILLISECONDS.sleep(75);
         driver.findElement(By.cssSelector(".wizardfooter :nth-child(2)")).click();
+
+        TimeUnit.MILLISECONDS.sleep(75);
+        List<WebElement> sub_buttons = driver.findElements(By.cssSelector(".minimalbutton"));
+        sub_buttons.get(4).click();
     }
 
     // TODO decider als Enum, Rückgabe einer Fehlernachricht
-    static void addDescriptionToAnalysis(WebDriver driver, String Path, Boolean decider) throws InterruptedException {
-        TimeUnit.MILLISECONDS.sleep(75);
-
+    private static void addDescriptionToAnalysis(WebDriver driver, String Path, Boolean decider) {
         if (!decider) {
             WebElement query_upload = driver.findElement(By.cssSelector("#query-input-file"));
             query_upload.sendKeys(Path);
@@ -90,10 +110,9 @@ class DaveInteractions {
         }
     }
 
-    static String getVisOfAnalysis(WebDriver driver) throws InterruptedException {
+    private static String getVisOfAnalysis(WebDriver driver) throws InterruptedException {
         TimeUnit.MILLISECONDS.sleep(150);
-        List<WebElement> buttons = driver.findElements(By.cssSelector(".minorbutton"));
-        buttons.get(4).click();
+        driver.findElement(By.cssSelector(".header-button")).click();
 
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         driver.findElement(By.cssSelector(".mdc-snackbar.dave-snackbar.mdc-snackbar--active"));
@@ -103,10 +122,7 @@ class DaveInteractions {
         return driver.findElement(By.cssSelector(".dave-vega-container svg")).getAttribute("outerHTML");
     }
 
-    static String getResultsForAnalysis(WebDriver driver) {
-        List<WebElement> sub_buttons = driver.findElements(By.cssSelector(".minimalbutton"));
-        sub_buttons.get(4).click();
-
+    private static String getResultsForAnalysis(WebDriver driver) {
         return driver.findElement(By.cssSelector(".analysis-grid .analysis-inner .analysis-inner .cell-6 .result pre")).getText();
     }
 }
