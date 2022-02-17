@@ -49,7 +49,7 @@ public class IdentifierSettingFlowController implements AnalysisStep{
 
     @GetMapping(BASE_URL + "/new")
     public ModelAndView showSetIdentifier(@RequestParam(name = "flow") Optional<UUID> dashboardId) {
-        ModelAndView mav = new ModelAndView("bootstrap/dave/identifier");
+        ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/identifier");
         mav.addObject("dashboardIdentifier",
                 dashboardId
                         .map(this.daveAnalysisService::getDashboard)
