@@ -4,6 +4,7 @@ networks:
   xapitools0: {}
 volumes:
   xapitools_simulations: {}
+  xapitools_mongo: {}
 
 services:
   mariadb:
@@ -15,6 +16,21 @@ services:
       MARIADB_DATABASE: xapitools
       MARIADB_USER: xapi
       MARIADB_PASSWORD: toolkit
+  mongodb:
+    image: library/mongo:4.4.12
+    networks:
+      - xapitools0
+    volumes:
+      - ./init/mongodb:/docker-entrypoint-initdb.d:ro
+      - xapitools_mongo:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: xapitools
+      MONGO_INITDB_USERNAME: xapi
+      MONGO_INITDB_PASSWORD: toolkit
   datasim:
     # Image is built by CI of DATASIM "mirror"
     image: nexus.galaxion.de:5050/yetanalytics/datasim:latest
