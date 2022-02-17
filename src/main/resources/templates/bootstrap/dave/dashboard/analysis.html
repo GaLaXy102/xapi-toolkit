@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="bootstrap/header.html :: scripted_head ('Set Analysis')"></head>
+<body class="bg-dark">
+<div class="container">
+    <form method="POST" th:action="@{/ui/dave/dashboards/new/analysis/add}" th:unless="${mode == mode.DISPLAYING}">
+        <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
+        <input type="hidden" name="flow" th:value="${flow}">
+        <input type="hidden" name="mode" th:value="${mode}">
+        <div class="form-control mt-3 mb-3">
+            <div class="row">
+                <label>Add analysis</label>
+                <div class="col-10">
+                    <div class="mb-3 mt-3 input-group" id="componentSelectBase">
+                        <select class="form-select" id="componentSelectActivity" required>
+                            <option selected value="all">Whole LRS</option>
+                            <option th:each="activity: ${possibleActivities}"
+                                    th:text="${activity}"
+                                    th:value="${activity}"></option>
+                        </select>
+                        <select class="form-select"
+                                name="component"
+                                th:each="analysis: ${possibleAnalysis}">
+                            <option selected value="">Select analysis</option>
+                            <option th:each="analysis: ${possibleAnalysis}" th:text="${analysis.getIdentifier()}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1 align-self-center">
+                    <button class="col btn btn-success float-end" type="submit">+</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- Form to remove a component, filled and sent by JS -->
+    <div class="hidden">
+        <form method="POST" th:action="@{/ui/dave/dashboard/new/analysis/delete}" id="deleteComponentForm">
+            <input type="hidden" name="flow" th:value="${flow}">
+            <input type="hidden" name="mode" th:value="${mode}">
+            <input type="hidden" name="component" id="deleteComponentUrl">
+        </form>
+    </div>
+</div>
+</body>
+</html>

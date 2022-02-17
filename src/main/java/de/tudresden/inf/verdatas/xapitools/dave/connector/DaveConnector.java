@@ -97,4 +97,23 @@ public class DaveConnector implements IExternalService, Closeable {
         }
         throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
     }
+
+    public List<String> getAnalysisResult(List<String> paths) {
+        if (this.getHealth()) {
+            try {
+                String result = DaveInteractions.getAnalysisResult(this.driver, paths);
+                if (result.startsWith("#")) {
+                    result = result.substring(2, result.length() - 1);
+                } else {
+                    result = result.substring(1, result.length() - 1);
+                }
+                return Pattern.compile("\\[.*\\]", Pattern.MULTILINE).matcher(result).results().map(MatchResult::group).toList();
+            } catch (Exception e) {
+                this.driver.quit();
+                this.healthChangedCallback(false);
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+        throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
+    }
 }
