@@ -4,6 +4,7 @@ import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.util.Pair;
 
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -19,16 +20,10 @@ public class DaveDashboard extends AbstractDocument {
     @Getter
     @Setter
     @ManyToMany
-    private List<DaveVis> visualisations;
+    private List<Pair<String, DaveVis>> visualisations;
 
-    @Getter
-    @Setter
-    @ManyToMany
-    private List<String> visActivities;
-
-    public DaveDashboard(LrsConnection lrsConnection, List<DaveVis> visualisations, List<String> visActivities) {
+    public DaveDashboard(LrsConnection lrsConnection, List<Pair<String, DaveVis>> visualisations) {
         this.lrsConnection = lrsConnection;
         this.visualisations = visualisations;
-        this.visActivities = visActivities;
     }
 }
