@@ -1,22 +1,21 @@
 package de.tudresden.inf.verdatas.xapitools.dave.controllers;
 
-import de.tudresden.inf.verdatas.xapitools.datasim.DatasimSimulationService;
-import de.tudresden.inf.verdatas.xapitools.datasim.controllers.DatasimSimulationMavController;
-import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimProfileTO;
 import de.tudresden.inf.verdatas.xapitools.dave.DaveAnalysisService;
-import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnector;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -63,7 +62,27 @@ public class VisualisationsSettingFlowController implements AnalysisStep{
         mav.addObject("flow", dashboardId.toString());
         mav.addObject("possibleActivities", activities);
         mav.addObject("possibleAnalysis", this.daveAnalysisService.getAllAnalysis().toList());
+        mav.addObject("dashboardVisualisations", this.daveAnalysisService.getVisualisationsOfDashboard(dashboard));
         mav.addObject("mode", DaveAnalysisMavController.Mode.CREATING);
         return mav;
     }
+
+    @GetMapping(BASE_URL + "/edit/visualisations")
+    public ModelAndView showEditAnalysis(@RequestParam(name = "flow") UUID dashboardId) {
+        return null;
+    }
+
+    @PostMapping(BASE_URL + "/new/visualisations/add")
+    public ModelAndView addVisualisationToDashboard(@RequestParam(name = "flow") UUID dashboardId,
+                                                    @RequestParam(name = "activity") String activityId,
+                                                    @RequestParam(name = "analysis") String analysisIdentifier) {
+        return null;
+    }
+
+    @PostMapping(BASE_URL + "/new/visualisations")
+    public RedirectView selectVisualisations(@RequestParam(name = "flow") UUID dashboardId,
+                                             DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
+        return null;
+    }
+
 }

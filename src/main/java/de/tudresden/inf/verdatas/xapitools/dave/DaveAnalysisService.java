@@ -6,6 +6,7 @@ import de.tudresden.inf.verdatas.xapitools.dave.persistence.*;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+// TODO Zugriff auf Dokumente und deren Inhalt nur mit Überprüfung, ob vorhanden!! Auch in Controllern prüfen!!
 public class DaveAnalysisService {
     private final DaveDashboardRepository dashboardRepository;
     private final DaveVisRepository visRepository;
@@ -46,16 +48,10 @@ public class DaveAnalysisService {
 
     //public List<String> getPathsForAnalysisDescription(DaveVis vis, DaveConnector connector) {}
 
-    // TODO use path from DaveVis Object
-    public List<String> getActivitiesOfLrs(LrsConnection connection) {
-        List<String> paths = List.of("/home/ylvion/Downloads/query (5).json", "/home/ylvion/Downloads/query (6).json");
-        List<String> activities = this.daveConnectorLifecycleManager.getConnector(connection).getAnalysisResult(paths);
-        return activities.stream().map((s) -> s.substring(1, s.length() - 1)).map((s) -> s.split(" ")[1]).map((s) -> s.replace("\"", "")).toList();
-    }
 
     @Transactional
     public DaveDashboard createEmptyDashboard() {
-        DaveDashboard emptyDashboard = new DaveDashboard(null, new LinkedList<>(), new LinkedList<>());
+        DaveDashboard emptyDashboard = new DaveDashboard(null, new LinkedList<>());
         this.dashboardRepository.save(emptyDashboard);
         return emptyDashboard;
     }
@@ -70,5 +66,23 @@ public class DaveAnalysisService {
     public void setDashboardSource(DaveDashboard dashboard, LrsConnection lrsConnection) {
         dashboard.setLrsConnection(lrsConnection);
         this.dashboardRepository.save(dashboard);
+    }
+
+    // TODO use path from DaveVis Object
+    public List<String> getActivitiesOfLrs(LrsConnection connection) {
+        List<String> paths = List.of("/home/ylvion/Downloads/query (5).json", "/home/ylvion/Downloads/query (6).json");
+        List<String> activities = this.daveConnectorLifecycleManager.getConnector(connection).getAnalysisResult(paths);
+        return activities.stream().map((s) -> s.substring(1, s.length() - 1)).map((s) -> s.split(" ")[1]).map((s) -> s.replace("\"", "")).toList();
+    }
+
+    public void addVisualisationToDashboard(DaveDashboard dashboard, String activity, String analysis) {
+        List<Pair<String, DaveVis>> visualisations = dashboard.getVisualisations();
+        visualisations.add(Pair.of(activity, this.getAnalysisByIdentificator(analysis)));
+        dashboard.setVisualisations(visualisations);
+        this.dashboardRepository.save(dashboard);
+    }
+
+    public List<Pair<String, DaveVis>> getVisualisationsOfDashboard(DaveDashboard dashboard) {
+        return dashboard.getVisualisations();
     }
 }

@@ -3,7 +3,7 @@
 <head th:include="bootstrap/header.html :: scripted_head ('Set Analysis')"></head>
 <body class="bg-dark">
 <div class="container">
-    <form method="POST" th:action="@{/ui/dave/dashboards/new/analysis/add}" th:unless="${mode == mode.DISPLAYING}">
+    <form method="POST" th:action="@{/ui/dave/dashboards/new/visualisations/add}" th:unless="${mode == mode.DISPLAYING}">
         <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
         <input type="hidden" name="flow" th:value="${flow}">
         <input type="hidden" name="mode" th:value="${mode}">
@@ -12,14 +12,14 @@
                 <label>Add analysis</label>
                 <div class="col-10">
                     <div class="mb-3 mt-3 input-group" id="componentSelectBase">
-                        <select class="form-select" id="componentSelectActivity" required>
+                        <select class="form-select" id="componentSelectActivity" name="activity" required>
                             <option selected value="all">Whole LRS</option>
                             <option th:each="activity: ${possibleActivities}"
                                     th:text="${activity}"
                                     th:value="${activity}"></option>
                         </select>
                         <select class="form-select"
-                                name="component"
+                                name="analysis"
                                 th:each="analysis: ${possibleAnalysis}">
                             <option selected value="">Select analysis</option>
                             <option th:each="analysis: ${possibleAnalysis}" th:text="${analysis.getIdentifier()}"></option>
@@ -30,6 +30,43 @@
                 <div class="col-1 align-self-center">
                     <button class="col btn btn-success float-end" type="submit">+</button>
                 </div>
+            </div>
+        </div>
+    </form>
+    <form method="POST" th:action="@{/ui/dave/dashboards/new/visualisations}">
+        <input type="hidden" name="flow" th:value="${flow}">
+        <input type="hidden" name="mode" th:value="${mode}">
+        <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
+        <div class="mb-3 form-control">
+            <h3 class="mb-3">Selected analysis</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">activity</th>
+                    <th scope="col">analysis</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="idx, visualisation: ${dashboardVisualisations}">
+                    <th scope="row" th:text="${idx}"></th>
+                    <td th:text="${visualisation.current.getFirst()}"></td>
+                    <td th:text="${visualisation.current.getSecond().getIdentifier()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col">
+                <a th:href="'/ui/dave/dashboards/new/source?flow=' + ${flow}" th:if="${mode == mode.CREATING}">
+                    <button class="col btn btn-outline-danger" type="button">Back</button>
+                </a>
+                <a th:href="'/ui/dave/dashboards/show?flow=' + ${flow}" th:if="${mode == mode.EDITING}">
+                    <button class="col btn btn-outline-danger" type="button">Back</button>
+                </a>
+            </div>
+            <div class="col">
+                <button class="col btn btn-success float-end" type="submit">Continue</button>
             </div>
         </div>
     </form>
