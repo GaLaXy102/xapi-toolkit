@@ -11,10 +11,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @Order(3)
@@ -26,8 +31,7 @@ public class DaveAnalysisMavController implements IUIFlow {
      */
     enum Mode {
         CREATING,
-        EDITING,
-        DISPLAYING
+        EDITING
     }
 
     private final DaveAnalysisService daveAnalysisService;
@@ -83,15 +87,14 @@ public class DaveAnalysisMavController implements IUIFlow {
     }
 
     @GetMapping(BASE_URL + "/dashboards/show")
-    public ModelAndView showDetail(@RequestParam(name = "flow") Optional<UUID> dashboardId) {
+    public ModelAndView showDetails(@RequestParam(name = "flow") Optional<UUID> dashboardId) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/detail");
-        // Prepare and collect visualisation helpers
-        Map<DaveDashboard, Long> numVis = new HashMap<>();
         List<DaveDashboard> dashboards = dashboardId
                 .map(this.daveAnalysisService::getDashboard)
                 .map(List::of)
                 .orElseGet(
-                        () -> this.daveAnalysisService.getAllDashboards()
+                        () -> this.daveAnalysisService
+                                .getAllDashboards()
                                 .sorted(
                                         Comparator
                                                 .comparing(DaveDashboard::getName, Comparator.naturalOrder())
@@ -99,16 +102,27 @@ public class DaveAnalysisMavController implements IUIFlow {
                                 )
                                 .toList()
                 );
-        dashboards.forEach(
-                (dashboard) -> {
-                    numVis.put(
-                            dashboard,
-                            dashboard.getVisualisations().stream().distinct().count()
-                    );
-                }
-        );
         mav.addObject("dashboards", dashboards);
-        mav.addObject("numVis", numVis);
         return mav;
+    }
+
+    // TODO
+    @PostMapping(BASE_URL + "/dashboards/show")
+    public ModelAndView executeVisualisationsOfDashboard(@RequestParam(name = "flow") UUID dashboardId) {
+        return null;
+    }
+
+    @PostMapping(BASE_URL + "/dashboards/copy")
+    public RedirectView copyDashboard(@RequestParam(name = "flow") UUID dashboardId) {
+        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
+        DaveDashboard copy = this.daveAnalysisService.createCopyOfDashboard(dashboard);
+        return new RedirectView("../dashboards/show");
+    }
+
+    @PostMapping(BASE_URL + "/dashboards/delete")
+    public RedirectView deleteDashboard(@RequestParam(name = "flow") UUID dashboardId) {
+        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
+        this.daveAnalysisService.deleteDashboard(dashboard);
+        return new RedirectView("../dashboards/show");
     }
 }

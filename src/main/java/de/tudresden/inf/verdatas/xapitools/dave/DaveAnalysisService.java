@@ -6,8 +6,12 @@ import de.tudresden.inf.verdatas.xapitools.dave.persistence.*;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.util.Pair;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +21,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 @Service
 @DependsOn("daveVisSeeder")
+@EnableScheduling
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 // TODO Zugriff auf Dokumente und deren Inhalt nur mit Überprüfung, ob vorhanden!! Auch in Controllern prüfen!!
 public class DaveAnalysisService {
@@ -30,12 +37,14 @@ public class DaveAnalysisService {
     private final DaveGraphDescriptionRepository graphDescriptionRepository;
     private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
 
+    private final Logger logger = Logger.getLogger(DaveAnalysisService.class.getName());
+
     /**
      * UI helper enum, controls movement of analysis
      */
     public enum Move {
         UP,
-        DOWN;
+        DOWN
     }
 
     public DaveConnector getDaveConnector(LrsConnection lrsConnection) {
@@ -44,10 +53,6 @@ public class DaveAnalysisService {
 
     public Stream<DaveDashboard> getAllDashboards() {
         return this.dashboardRepository.findAll().stream();
-    }
-
-    public Stream<DaveDashboard> getFinalizedDashboards() {
-        return this.dashboardRepository.findAll().stream().filter(DaveDashboard::isFinalized);
     }
 
     public DaveDashboard getDashboard(UUID dashboardId) {
@@ -74,9 +79,23 @@ public class DaveAnalysisService {
 
     @Transactional
     public DaveDashboard createEmptyDashboard() {
-        DaveDashboard emptyDashboard = new DaveDashboard(null,null, new LinkedList<>(), false);
+        DaveDashboard emptyDashboard = new DaveDashboard(null,null, new LinkedList<>());
         this.dashboardRepository.save(emptyDashboard);
         return emptyDashboard;
+    }
+
+    @Transactional
+    public DaveDashboard createCopyOfDashboard(DaveDashboard dashboard) {
+        DaveDashboard created = this.createEmptyDashboard();
+        this.setDashboardName(created, "Copy of " + dashboard.getName());
+        this.setDashboardSource(created, dashboard.getLrsConnection());
+        this.setDashboardVisualisations(created, dashboard.getVisualisations());
+        return created;
+    }
+
+    @Transactional
+    public void deleteDashboard(DaveDashboard dashboard) {
+        this.dashboardRepository.delete(dashboard);
     }
 
     @Transactional
@@ -97,7 +116,21 @@ public class DaveAnalysisService {
         this.dashboardRepository.save(dashboard);
     }
 
+    // TODO Hinweis in Benutzerdokumentation
+    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
+    @CacheEvict(
+            cacheNames = "lrsActivities",
+            allEntries = true
+    )
+    public void cleanCaches() {
+        this.logger.info("Cleaned Caches.");
+    }
+
     // TODO use path from DaveVis Object
+    @Cacheable(
+            cacheNames = "lrsActivities",
+            key = "#connection.connectionId"
+    )
     public List<String> getActivitiesOfLrs(LrsConnection connection) {
         List<String> paths = List.of("/home/ylvion/Downloads/query (5).json", "/home/ylvion/Downloads/query (6).json");
         List<String> activities = this.daveConnectorLifecycleManager.getConnector(connection).getAnalysisResult(paths);
@@ -115,21 +148,19 @@ public class DaveAnalysisService {
                 activityUrl = new URL(activityId);
             }
         } catch (MalformedURLException e) {
-            new MalformedURLException("Unsuccessfull conversion of " + activityId + " to URL.");
+            throw new IllegalArgumentException("Unsuccessful conversion of " + activityId + " to URL.");
         }
         visualisations.add(Pair.of(activityUrl, analysis));
         this.setDashboardVisualisations(dashboard, visualisations);
     }
 
     @Transactional
-    public void moveVisualisationOfDashboard(DaveDashboard dashboard, int position, Move move) {
+    public void shiftPositionOfVisualisationOfDashboard(DaveDashboard dashboard, int position, Move move) {
         List<Pair<URL, DaveVis>> visualisations = getVisualisationsOfDashboard(dashboard);
+        Pair<URL, DaveVis> vis = visualisations.remove(position);
         if (move.equals(Move.UP)) {
-            Pair<URL, DaveVis> vis = visualisations.remove(position);
             visualisations.add(position - 1, vis);
-
         } else {
-            Pair<URL, DaveVis> vis = visualisations.remove(position);
             visualisations.add(position + 1, vis);
         }
         this.setDashboardVisualisations(dashboard, visualisations);
@@ -140,14 +171,5 @@ public class DaveAnalysisService {
         List<Pair<URL, DaveVis>> visualisations = getVisualisationsOfDashboard(dashboard);
         visualisations.remove(position);
         this.setDashboardVisualisations(dashboard, visualisations);
-    }
-
-    @Transactional
-    public void finalizeDashboard(DaveDashboard dashboard) {
-        if (dashboard.getVisualisations().isEmpty()) {
-            throw new IllegalStateException("Dashboards must have at least one analysis.");
-        }
-        dashboard.setFinalized(true);
-        this.dashboardRepository.save(dashboard);
     }
 }
