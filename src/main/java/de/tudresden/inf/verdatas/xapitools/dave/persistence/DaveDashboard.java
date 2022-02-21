@@ -9,7 +9,6 @@ import org.springframework.data.util.Pair;
 
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import java.net.URL;
 import java.util.List;
 
 @Document("daveDashboard")
@@ -27,9 +26,9 @@ public class DaveDashboard extends AbstractDocument {
     @Getter
     @Setter
     @ManyToMany
-    private List<Pair<URL, DaveVis>> visualisations;
+    private List<Pair<String, DaveVis>> visualisations;
 
-    public DaveDashboard(String name, LrsConnection lrsConnection, List<Pair<URL, DaveVis>> visualisations) {
+    public DaveDashboard(String name, LrsConnection lrsConnection, List<Pair<String, DaveVis>> visualisations) {
         this.name = name;
         this.lrsConnection = lrsConnection;
         this.visualisations = visualisations;

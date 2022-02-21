@@ -73,7 +73,7 @@ public class DaveAnalysisService {
 
     //public List<String> getPathsForAnalysisDescription(DaveVis vis, DaveConnector connector) {}
 
-    public List<Pair<URL, DaveVis>> getVisualisationsOfDashboard(DaveDashboard dashboard) {
+    public List<Pair<String, DaveVis>> getVisualisationsOfDashboard(DaveDashboard dashboard) {
         return dashboard.getVisualisations();
     }
 
@@ -111,7 +111,7 @@ public class DaveAnalysisService {
     }
 
     @Transactional
-    public void setDashboardVisualisations(DaveDashboard dashboard, List<Pair<URL, DaveVis>> visualisations) {
+    public void setDashboardVisualisations(DaveDashboard dashboard, List<Pair<String, DaveVis>> visualisations) {
         dashboard.setVisualisations(visualisations);
         this.dashboardRepository.save(dashboard);
     }
@@ -139,25 +139,15 @@ public class DaveAnalysisService {
 
     @Transactional
     public void addVisualisationToDashboard(DaveDashboard dashboard, String activityId, DaveVis analysis) {
-        List<Pair<URL, DaveVis>> visualisations = dashboard.getVisualisations();
-        URL activityUrl = null;
-        try {
-            if (activityId.equals("all")) {
-                activityUrl = new URL("http://all");
-            } else {
-                activityUrl = new URL(activityId);
-            }
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Unsuccessful conversion of " + activityId + " to URL.");
-        }
-        visualisations.add(Pair.of(activityUrl, analysis));
+        List<Pair<String, DaveVis>> visualisations = dashboard.getVisualisations();
+        visualisations.add(Pair.of(activityId, analysis));
         this.setDashboardVisualisations(dashboard, visualisations);
     }
 
     @Transactional
     public void shiftPositionOfVisualisationOfDashboard(DaveDashboard dashboard, int position, Move move) {
-        List<Pair<URL, DaveVis>> visualisations = getVisualisationsOfDashboard(dashboard);
-        Pair<URL, DaveVis> vis = visualisations.remove(position);
+        List<Pair<String, DaveVis>> visualisations = this.getVisualisationsOfDashboard(dashboard);
+        Pair<String, DaveVis> vis = visualisations.remove(position);
         if (move.equals(Move.UP)) {
             visualisations.add(position - 1, vis);
         } else {
@@ -168,7 +158,7 @@ public class DaveAnalysisService {
 
     @Transactional
     public void deleteVisualisationFromDashboard(DaveDashboard dashboard, int position) {
-        List<Pair<URL, DaveVis>> visualisations = getVisualisationsOfDashboard(dashboard);
+        List<Pair<String, DaveVis>> visualisations = getVisualisationsOfDashboard(dashboard);
         visualisations.remove(position);
         this.setDashboardVisualisations(dashboard, visualisations);
     }
