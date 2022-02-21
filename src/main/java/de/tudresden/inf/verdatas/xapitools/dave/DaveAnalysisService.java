@@ -6,10 +6,12 @@ import de.tudresden.inf.verdatas.xapitools.dave.persistence.*;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,6 +19,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 @Service
+@DependsOn("daveVisSeeder")
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 // TODO Zugriff auf Dokumente und deren Inhalt nur mit Überprüfung, ob vorhanden!! Auch in Controllern prüfen!!
 public class DaveAnalysisService {
@@ -75,14 +78,14 @@ public class DaveAnalysisService {
         return activities.stream().map((s) -> s.substring(1, s.length() - 1)).map((s) -> s.split(" ")[1]).map((s) -> s.replace("\"", "")).toList();
     }
 
-    public void addVisualisationToDashboard(DaveDashboard dashboard, String activity, String analysis) {
-        List<Pair<String, DaveVis>> visualisations = dashboard.getVisualisations();
-        visualisations.add(Pair.of(activity, this.getAnalysisByIdentificator(analysis)));
+    public void addVisualisationToDashboard(DaveDashboard dashboard, URL activityId, DaveVis analysis) {
+        List<Pair<URL, DaveVis>> visualisations = dashboard.getVisualisations();
+        visualisations.add(Pair.of(activityId, analysis));
         dashboard.setVisualisations(visualisations);
         this.dashboardRepository.save(dashboard);
     }
 
-    public List<Pair<String, DaveVis>> getVisualisationsOfDashboard(DaveDashboard dashboard) {
+    public List<Pair<URL, DaveVis>> getVisualisationsOfDashboard(DaveDashboard dashboard) {
         return dashboard.getVisualisations();
     }
 }

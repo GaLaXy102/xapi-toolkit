@@ -2,12 +2,12 @@ package de.tudresden.inf.verdatas.xapitools.dave.controllers;
 
 import de.tudresden.inf.verdatas.xapitools.dave.DaveAnalysisService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
+import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveVis;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -48,7 +50,7 @@ public class VisualisationsSettingFlowController implements AnalysisStep{
      */
     @Override
     public Pattern getPathRegex() {
-        return Pattern.compile(BASE_URL + "/(new|edit)/visualisations$");
+        return Pattern.compile(BASE_URL + "/(new|edit)/visualisations(/add)?$");
     }
 
     // TODO Write method to get results and activityId
@@ -69,14 +71,27 @@ public class VisualisationsSettingFlowController implements AnalysisStep{
 
     @GetMapping(BASE_URL + "/edit/visualisations")
     public ModelAndView showEditAnalysis(@RequestParam(name = "flow") UUID dashboardId) {
-        return null;
+        ModelAndView mav = this.showSelectAnalysis(dashboardId);
+        mav.addObject("mode", DaveAnalysisMavController.Mode.EDITING);
+        return mav;
     }
 
     @PostMapping(BASE_URL + "/new/visualisations/add")
-    public ModelAndView addVisualisationToDashboard(@RequestParam(name = "flow") UUID dashboardId,
+    public RedirectView addVisualisationToDashboard(@RequestParam(name = "flow") UUID dashboardId,
                                                     @RequestParam(name = "activity") String activityId,
-                                                    @RequestParam(name = "analysis") String analysisIdentifier) {
-        return null;
+                                                    @RequestParam(name = "analysis") String analysisIdentifier,
+                                                    DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
+        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
+        DaveVis visualisation = this.daveAnalysisService.getAnalysisByName(analysisIdentifier);
+
+        try {
+            this.daveAnalysisService.addVisualisationToDashboard(dashboard, new URL(activityId), visualisation);
+        } catch (MalformedURLException e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+
+        attributes.addAttribute("flow", dashboardId.toString());
+        return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "../visualisations" : "../../../edit/visualisations");
     }
 
     @PostMapping(BASE_URL + "/new/visualisations")
