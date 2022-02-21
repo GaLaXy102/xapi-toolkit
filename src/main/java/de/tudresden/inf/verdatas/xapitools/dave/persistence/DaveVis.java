@@ -13,6 +13,10 @@ import javax.persistence.OneToMany;
 public class DaveVis extends AbstractDocument {
     @Getter
     @Setter
+    private String name;
+
+    @Getter
+    @Setter
     @OneToMany
     private DaveQuery query;
 
@@ -22,7 +26,7 @@ public class DaveVis extends AbstractDocument {
     private DaveGraphDescription description;
 
     public DaveVis(String name, DaveQuery query, DaveGraphDescription description) {
-        setName(name);
+        this.name = name;
         this.query = query;
         this.description = description;
     }
