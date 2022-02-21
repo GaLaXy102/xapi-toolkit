@@ -12,10 +12,14 @@ import java.util.UUID;
 public class DaveGraphDescription extends AbstractDocument {
     @Getter
     @Setter
+    private String name;
+
+    @Getter
+    @Setter
     private String description;
 
     public DaveGraphDescription(String name, String description) {
-        super(name);
+        this.name = name;
         this.description = description;
     }
 }

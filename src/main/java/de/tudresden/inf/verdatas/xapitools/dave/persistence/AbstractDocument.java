@@ -15,12 +15,4 @@ public class AbstractDocument {
     @Getter
     @Setter
     private UUID id = UUID.randomUUID();
-
-    @Getter
-    @Setter
-    private String name;
-
-    public AbstractDocument(String name) {
-        this.name = name;
-    }
 }

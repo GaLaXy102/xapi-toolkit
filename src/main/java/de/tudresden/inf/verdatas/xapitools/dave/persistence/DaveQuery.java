@@ -11,10 +11,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class DaveQuery extends AbstractDocument {
     @Getter
     @Setter
+    private String name;
+
+    @Getter
+    @Setter
     private String query;
 
     public DaveQuery(String name, String query) {
-        super(name);
+        this.name = name;
         this.query = query;
     }
 }

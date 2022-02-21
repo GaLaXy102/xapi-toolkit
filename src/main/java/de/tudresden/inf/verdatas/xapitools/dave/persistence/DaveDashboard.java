@@ -17,6 +17,10 @@ import java.util.List;
 public class DaveDashboard extends AbstractDocument {
     @Getter
     @Setter
+    private String name;
+
+    @Getter
+    @Setter
     @ManyToOne
     private LrsConnection lrsConnection;
 
@@ -26,7 +30,7 @@ public class DaveDashboard extends AbstractDocument {
     private List<Pair<URL, DaveVis>> visualisations;
 
     public DaveDashboard(String name, LrsConnection lrsConnection, List<Pair<URL, DaveVis>> visualisations) {
-        super(name);
+        this.name = name;
         this.lrsConnection = lrsConnection;
         this.visualisations = visualisations;
     }
