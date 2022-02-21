@@ -39,7 +39,7 @@ function setHighlightOfStep(el, testPath) {
 function highlightFlowStep(event) {
     // This doesn't contain any query parameters :)
     const targetPath = event.currentTarget.contentWindow.location.pathname;
-    $('a.nav-link').first().parent().children('ol').children().each((_, el) => setHighlightOfStep(el, targetPath));
+    $('a.nav-link').parent().children('ol').children().each((_, el) => setHighlightOfStep(el, targetPath));
 }
 
 function addSpinner(el) {
