@@ -37,22 +37,43 @@
         <table class="table table-hover" id="visualisationsInput">
             <thead>
             <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
                 <th scope="col">#</th>
                 <th scope="col">activity</th>
                 <th scope="col">analysis</th>
+                <th scope="col"></th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="idx, visualisation: ${dashboardVisualisations}">
-                <form method="POST" th:action="action == x">
-                    <input type="hidden" th:value="${visualisation.current.getSecond().getName()}">
-                    <button th:action="x = @{/ui/dave/dashboards/new/visualisations/down}" th:if="!${dashboardVisualisations.indexOf(visualisation) == dashboardVisualisations.size()}" class="btn bi-caret-down-square" type="submit"></button>
-                    <button th:action="x = @{/ui/dave/dashboards/new/visualisations/up}" th:if="!${dashboardVisualisations.indexOf(visualisation) == 0}" class="btn bi-caret-up-square" type="submit"></button>
-                <th scope="row" th:text="${idx}"></th>
+                <td>
+                    <form method="POST" th:action="@{/ui/dave/dashboards/new/visualisations/up}" th:unless="first">
+                        <input type="hidden" name="flow" th:value="${flow}">
+                        <input type="hidden" name="mode" th:value="${mode}">
+                        <input type="hidden" th:value="${visualisation.current.getSecond().getId()}">
+                        <button class="btn bi-arrow-up-square" type="submit"></button>
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" th:action="@{/ui/dave/dashboards/new/visualisations/down}" th:unless="last">
+                        <input type="hidden" name="flow" th:value="${flow}">
+                        <input type="hidden" name="mode" th:value="${mode}">
+                        <input type="hidden" th:value="${visualisation.current.getSecond().getId()}">
+                        <button class="btn bi-arrow-down-square" type="submit"></button>
+                    </form>
+                </td>
+                <th scope="row" th:text="${visualisation.index}"></th>
                 <td th:text="${visualisation.current.getFirst()}"></td>
                 <td th:text="${visualisation.current.getSecond().getName()}"></td>
-                    <button th:action="x = @{/ui/dave/dashboards/new/visualisations/delete}" class="bi-trash" type="submit"></button>
-                </form>
+                <td>
+                    <form method="POST" th:action="@{/ui/dave/dashboards/new/visualisations/delete}">
+                        <input type="hidden" name="flow" th:value="${flow}">
+                        <input type="hidden" name="mode" th:value="${mode}">
+                        <input type="hidden" name="position" th:value="${visualisation.index}">
+                        <button class="btn bi-trash" type="submit"></button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>

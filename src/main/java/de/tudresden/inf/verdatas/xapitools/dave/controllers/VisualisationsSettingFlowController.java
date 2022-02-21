@@ -16,8 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -83,21 +81,48 @@ public class VisualisationsSettingFlowController implements AnalysisStep{
                                                     DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
         DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
         DaveVis visualisation = this.daveAnalysisService.getAnalysisByName(analysisIdentifier);
-
-        try {
-            this.daveAnalysisService.addVisualisationToDashboard(dashboard, new URL(activityId), visualisation);
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException(e.getMessage());
-        }
+        this.daveAnalysisService.addVisualisationToDashboard(dashboard, activityId, visualisation);
 
         attributes.addAttribute("flow", dashboardId.toString());
-        return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "../visualisations" : "../../../edit/visualisations");
+        return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "../visualisations" : ".../edit/visualisations");
     }
 
     @PostMapping(BASE_URL + "/new/visualisations")
     public RedirectView selectVisualisations(@RequestParam(name = "flow") UUID dashboardId,
                                              DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
-        return null;
+        this.daveAnalysisService.finalizeDashboard(this.daveAnalysisService.getDashboard(dashboardId));
+        attributes.addAttribute("flow", dashboardId.toString());
+        return new RedirectView("../show");
+    }
+
+    @PostMapping(BASE_URL + "/new/visualisations/up")
+    public RedirectView moveVisualisationUp(@RequestParam(name = "flow") UUID dashboardId, @RequestParam(name = "position") Integer position,
+                                            DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
+        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
+        this.daveAnalysisService.moveVisualisationOfDashboard(dashboard, position, DaveAnalysisService.Move.UP);
+
+        attributes.addAttribute("flow", dashboardId.toString());
+        return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "../visualisations" : ".../edit/visualisations");
+    }
+
+    @PostMapping(BASE_URL + "/new/visualisations/down")
+    public RedirectView moveVisualisationDown(@RequestParam(name = "flow") UUID dashboardId, @RequestParam(name = "position") Integer position,
+                                              DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
+        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
+        this.daveAnalysisService.moveVisualisationOfDashboard(dashboard, position, DaveAnalysisService.Move.DOWN);
+
+        attributes.addAttribute("flow", dashboardId.toString());
+        return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "../visualisations" : ".../edit/visualisations");
+    }
+
+    @PostMapping(BASE_URL + "/new/visualisations/delete")
+    public RedirectView deleteVisualisation(@RequestParam(name = "flow") UUID dashboardId, @RequestParam(name = "position") Integer position,
+                                            DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
+        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
+        this.daveAnalysisService.deleteVisualisationFromDashboard(dashboard, position);
+
+        attributes.addAttribute("flow", dashboardId.toString());
+        return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "../visualisations" : ".../edit/visualisations");
     }
 
 }

@@ -11,6 +11,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,12 +30,24 @@ public class DaveAnalysisService {
     private final DaveGraphDescriptionRepository graphDescriptionRepository;
     private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
 
+    /**
+     * UI helper enum, controls movement of analysis
+     */
+    public enum Move {
+        UP,
+        DOWN;
+    }
+
     public DaveConnector getDaveConnector(LrsConnection lrsConnection) {
         return this.daveConnectorLifecycleManager.getConnector(lrsConnection);
     }
 
     public Stream<DaveDashboard> getAllDashboards() {
         return this.dashboardRepository.findAll().stream();
+    }
+
+    public Stream<DaveDashboard> getFinalizedDashboards() {
+        return this.dashboardRepository.findAll().stream().filter(DaveDashboard::isFinalized);
     }
 
     public DaveDashboard getDashboard(UUID dashboardId) {
@@ -45,16 +58,23 @@ public class DaveAnalysisService {
         return this.visRepository.findAll().stream();
     }
 
+    public DaveVis getAnalysisById(UUID analysisId) {
+        return this.visRepository.findById(analysisId).orElseThrow(() -> new NoSuchElementException("No such analysis."));
+    }
+
     public DaveVis getAnalysisByName(String name) {
         return this.visRepository.findByName(name).orElseThrow(() -> new NoSuchElementException("No such analysis."));
     }
 
     //public List<String> getPathsForAnalysisDescription(DaveVis vis, DaveConnector connector) {}
 
+    public List<Pair<URL, DaveVis>> getVisualisationsOfDashboard(DaveDashboard dashboard) {
+        return dashboard.getVisualisations();
+    }
 
     @Transactional
     public DaveDashboard createEmptyDashboard() {
-        DaveDashboard emptyDashboard = new DaveDashboard(null,null, new LinkedList<>());
+        DaveDashboard emptyDashboard = new DaveDashboard(null,null, new LinkedList<>(), false);
         this.dashboardRepository.save(emptyDashboard);
         return emptyDashboard;
     }
@@ -71,6 +91,12 @@ public class DaveAnalysisService {
         this.dashboardRepository.save(dashboard);
     }
 
+    @Transactional
+    public void setDashboardVisualisations(DaveDashboard dashboard, List<Pair<URL, DaveVis>> visualisations) {
+        dashboard.setVisualisations(visualisations);
+        this.dashboardRepository.save(dashboard);
+    }
+
     // TODO use path from DaveVis Object
     public List<String> getActivitiesOfLrs(LrsConnection connection) {
         List<String> paths = List.of("/home/ylvion/Downloads/query (5).json", "/home/ylvion/Downloads/query (6).json");
@@ -78,14 +104,50 @@ public class DaveAnalysisService {
         return activities.stream().map((s) -> s.substring(1, s.length() - 1)).map((s) -> s.split(" ")[1]).map((s) -> s.replace("\"", "")).toList();
     }
 
-    public void addVisualisationToDashboard(DaveDashboard dashboard, URL activityId, DaveVis analysis) {
+    @Transactional
+    public void addVisualisationToDashboard(DaveDashboard dashboard, String activityId, DaveVis analysis) {
         List<Pair<URL, DaveVis>> visualisations = dashboard.getVisualisations();
-        visualisations.add(Pair.of(activityId, analysis));
-        dashboard.setVisualisations(visualisations);
-        this.dashboardRepository.save(dashboard);
+        URL activityUrl = null;
+        try {
+            if (activityId.equals("all")) {
+                activityUrl = new URL("http://all");
+            } else {
+                activityUrl = new URL(activityId);
+            }
+        } catch (MalformedURLException e) {
+            new MalformedURLException("Unsuccessfull conversion of " + activityId + " to URL.");
+        }
+        visualisations.add(Pair.of(activityUrl, analysis));
+        this.setDashboardVisualisations(dashboard, visualisations);
     }
 
-    public List<Pair<URL, DaveVis>> getVisualisationsOfDashboard(DaveDashboard dashboard) {
-        return dashboard.getVisualisations();
+    @Transactional
+    public void moveVisualisationOfDashboard(DaveDashboard dashboard, int position, Move move) {
+        List<Pair<URL, DaveVis>> visualisations = getVisualisationsOfDashboard(dashboard);
+        if (move.equals(Move.UP)) {
+            Pair<URL, DaveVis> vis = visualisations.remove(position);
+            visualisations.add(position - 1, vis);
+
+        } else {
+            Pair<URL, DaveVis> vis = visualisations.remove(position);
+            visualisations.add(position + 1, vis);
+        }
+        this.setDashboardVisualisations(dashboard, visualisations);
+    }
+
+    @Transactional
+    public void deleteVisualisationFromDashboard(DaveDashboard dashboard, int position) {
+        List<Pair<URL, DaveVis>> visualisations = getVisualisationsOfDashboard(dashboard);
+        visualisations.remove(position);
+        this.setDashboardVisualisations(dashboard, visualisations);
+    }
+
+    @Transactional
+    public void finalizeDashboard(DaveDashboard dashboard) {
+        if (dashboard.getVisualisations().isEmpty()) {
+            throw new IllegalStateException("Dashboards must have at least one analysis.");
+        }
+        dashboard.setFinalized(true);
+        this.dashboardRepository.save(dashboard);
     }
 }
