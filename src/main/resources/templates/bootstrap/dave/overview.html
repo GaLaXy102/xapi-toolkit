@@ -42,18 +42,6 @@
             </div>
         </div>
     </div>
-    <!-- Success Toast -->
-    <div class="position-absolute top-0 start-0 w-100" th:if="${param.get('success')}">
-        <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center">
-            <div class="toast-container w-50 d-flex mt-3">
-                <div class="toast bg-success flex-fill" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-body fs-4 text-white text-center">
-                        Successfully sent&nbsp;<span th:text="${param.get('success')}"></span>&nbsp;Statements.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 </body>
 </html>

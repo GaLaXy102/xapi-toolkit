@@ -4,44 +4,6 @@
 <body class="bg-dark">
 <div class="container">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
-        <!-- Create Cards -->
-        <div class="col d-flex align-items-stretch" th:unless="${param.get('flow')}">
-            <div class="card flex-fill">
-                <div class="card-body bg-light d-flex">
-                    <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/new}">
-                        <div class="flex-fill text-center align-self-center">
-                            <i class="bi-file-earmark-plus fs-1 text-success"></i>
-                            <p class="fs-2">Create new analysis</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="col d-flex align-items-stretch" th:unless="${param.get('flow')}">
-            <div class="card flex-fill">
-                <div class="card-body bg-light d-flex">
-                    <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/dashboard/new}">
-                        <div class="flex-fill text-center align-self-center">
-                            <i class="bi-file-earmark-plus fs-1 text-success"></i>
-                            <p class="fs-2">Create new dashboard</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <!-- Back card -->
-        <div class="col d-flex align-items-stretch" th:if="${param.get('flow')}">
-            <div class="card flex-fill">
-                <div class="card-body bg-light d-flex">
-                    <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/show}">
-                        <div class="flex-fill text-center align-self-center">
-                            <i class="bi-arrow-left-square-fill fs-1 text-warning"></i>
-                            <p class="fs-2">Back to all dashboards</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
         <!-- Content Cards -->
         <div class="col d-flex align-items-stretch" th:each="dashboard: ${dashboards}">
             <div class="card flex-fill">
@@ -56,14 +18,15 @@
                     <li class="list-group-item">
                         <i class="bi-magic"></i>
                         &nbsp;&nbsp;&nbsp;
-                        <span th:text="${dashboard.getLrsConnection().getFriendlyName()}"></span> Source LRs
+                        <span th:if="${dashboard.getLrsConnection()}" th:text="${dashboard.getLrsConnection().getFriendlyName()}"></span>
+                        <span th:unless="${dashboard.getLrsConnection()}">No LRS selected</span>
                         <a th:href="'/ui/dave/dashboards/edit/source' + '?flow=' + ${dashboard.getId()}"
                            class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
                     <li class="list-group-item">
                         <i class="bi-magic"></i>
                         &nbsp;&nbsp;&nbsp;
-                        <span th:text="${dashboard.getVisualisations().get(0).getSecond().getName()}"></span> Visualisations
+                        <span th:text="${dashboard.getVisualisations().size()}"></span> Visualisations
                         <a th:href="'/ui/dave/dashboards/edit/visualisations' + '?flow=' + ${dashboard.getId()}"
                            class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
@@ -80,6 +43,14 @@
                             <form method="POST" th:action="@{/ui/dave/dashboards/delete}" class="flex-fill d-flex">
                                 <input type="hidden" name="flow" th:value="${dashboard.getId()}">
                                 <button type="submit" class="btn btn-danger flex-fill">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <form method="POST" th:action="@{/ui/dave/dashboards/show}" class="flex-fill d-flex">
+                                <input type="hidden" name="flow" th:value="${dashboard.getId()}">
+                                <button type="submit" class="btn btn-outline-success button-spinner flex-fill">Perform</button>
                             </form>
                         </div>
                     </div>
