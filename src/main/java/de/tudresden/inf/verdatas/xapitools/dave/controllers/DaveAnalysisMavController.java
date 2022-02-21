@@ -94,7 +94,7 @@ public class DaveAnalysisMavController implements IUIFlow {
                         () -> this.daveAnalysisService.getAllDashboards()
                                 .sorted(
                                         Comparator
-                                                .comparing(DaveDashboard::getIdentifier, Comparator.naturalOrder())
+                                                .comparing(DaveDashboard::getName, Comparator.naturalOrder())
                                                 .thenComparing(DaveDashboard::getId, Comparator.naturalOrder())
                                 )
                                 .toList()

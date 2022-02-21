@@ -42,8 +42,8 @@ public class DaveAnalysisService {
         return this.visRepository.findAll().stream();
     }
 
-    public DaveVis getAnalysisByIdentificator(String identificator) {
-        return this.visRepository.findByIdentifier(identificator).orElseThrow(() -> new NoSuchElementException("No such analysis."));
+    public DaveVis getAnalysisByName(String name) {
+        return this.visRepository.findByName(name).orElseThrow(() -> new NoSuchElementException("No such analysis."));
     }
 
     //public List<String> getPathsForAnalysisDescription(DaveVis vis, DaveConnector connector) {}
@@ -51,14 +51,14 @@ public class DaveAnalysisService {
 
     @Transactional
     public DaveDashboard createEmptyDashboard() {
-        DaveDashboard emptyDashboard = new DaveDashboard(null, new LinkedList<>());
+        DaveDashboard emptyDashboard = new DaveDashboard(null,null, new LinkedList<>());
         this.dashboardRepository.save(emptyDashboard);
         return emptyDashboard;
     }
 
     @Transactional
-    public void setDashboardIdentifier(DaveDashboard dashboard, String identifier) {
-        dashboard.setIdentifier(identifier);
+    public void setDashboardName(DaveDashboard dashboard, String name) {
+        dashboard.setName(name);
         this.dashboardRepository.save(dashboard);
     }
 

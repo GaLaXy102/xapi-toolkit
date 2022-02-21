@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DaveDashboardRepository extends MongoRepository<DaveDashboard, UUID> {
-    Optional<DaveDashboard> findByIdentifier(String identifier);
+    Optional<DaveDashboard> findByName(String name);
 
     Streamable<DaveDashboard> findAllBy(Query mongoQuery);
 }

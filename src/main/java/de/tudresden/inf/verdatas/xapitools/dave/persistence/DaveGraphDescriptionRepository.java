@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface DaveGraphDescriptionRepository extends MongoRepository<DaveGraphDescription, UUID> {
 
-    Optional<DaveGraphDescription> findByIdentifier(String identifier);
+    Optional<DaveGraphDescription> findByName(String name);
 
     Streamable<DaveGraphDescription> findAllBy(Query mongoQuery);
 }

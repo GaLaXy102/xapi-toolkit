@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface DaveQueryRepository extends MongoRepository<DaveQuery, UUID> {
 
-    Optional<DaveQuery> findByIdentifier(String identifier);
+    Optional<DaveQuery> findByName(String name);
 
     Streamable<DaveQuery> findAllBy(Query mongoQuery);
 }

@@ -47,7 +47,7 @@
             <div class="card flex-fill">
                 <div class="card-header">
                     <h2>
-                        <span th:text="${dashboard.getIdentifier()}"></span>
+                        <span th:text="${dashboard.getName()}"></span>
                         <a th:href="'/ui/dave/dashboards/edit' + '?flow=' + ${dashboard.getId()}"
                            class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </h2>
@@ -63,7 +63,7 @@
                     <li class="list-group-item">
                         <i class="bi-magic"></i>
                         &nbsp;&nbsp;&nbsp;
-                        <span th:text="${dashboard.getVisualisations().get(0).getIdentifier()}"></span> Visualisations
+                        <span th:text="${dashboard.getVisualisations().get(0).getSecond().getName()}"></span> Visualisations
                         <a th:href="'/ui/dave/dashboards/edit/visualisations' + '?flow=' + ${dashboard.getId()}"
                            class="float-end text-dark"><i class="bi-pencil"></i></a>
                     </li>
