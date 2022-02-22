@@ -89,6 +89,9 @@ public class VisualisationsSettingFlowController implements AnalysisStep {
 
     @PostMapping(DaveAnalysisMavController.BASE_URL + "/new/visualisations")
     public RedirectView selectVisualisations(@RequestParam(name = "flow") UUID dashboardId, RedirectAttributes attributes) {
+        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
+        this.daveAnalysisService.checkDashboardConfiguration(dashboard);
+        this.daveAnalysisService.finalizeDashboard(dashboard);
         attributes.addAttribute("flow", dashboardId.toString());
         return new RedirectView("../show");
     }

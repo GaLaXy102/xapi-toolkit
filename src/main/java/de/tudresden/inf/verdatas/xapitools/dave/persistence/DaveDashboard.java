@@ -28,9 +28,14 @@ public class DaveDashboard extends AbstractDocument {
     @ManyToMany
     private List<Pair<String, DaveVis>> visualisations;
 
-    public DaveDashboard(String name, LrsConnection lrsConnection, List<Pair<String, DaveVis>> visualisations) {
+    @Getter
+    @Setter
+    private boolean finalized;
+
+    public DaveDashboard(String name, LrsConnection lrsConnection, List<Pair<String, DaveVis>> visualisations, boolean finalized) {
         this.name = name;
         this.lrsConnection = lrsConnection;
         this.visualisations = visualisations;
+        this.finalized = finalized;
     }
 }

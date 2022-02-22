@@ -69,6 +69,7 @@ public class LRSSettingFlowController implements AnalysisStep{
         DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
         LrsConnection lrsConnection = this.lrsService.getConnection(lrsId);
         this.daveAnalysisService.setDashboardSource(dashboard, lrsConnection);
+        this.daveAnalysisService.checkDashboardConfiguration(dashboard);
         attributes.addAttribute("flow", dashboardId.toString());
         return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "./visualisations" : "../show");
     }

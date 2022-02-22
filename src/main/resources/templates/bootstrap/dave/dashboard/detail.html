@@ -4,6 +4,42 @@
 <body class="bg-dark">
 <div class="container">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        <!-- Create Cards -->
+        <div class="col d-flex align-items-stretch" th:unless="${param.get('flow')}">
+            <div class="card flex-fill">
+                <div class="card-body bg-light d-flex">
+                    <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/dashboard/new}">
+                        <div class="flex-fill text-center align-self-center">
+                            <i class="bi-file-earmark-plus fs-3 text-success me-2"></i>
+                            <span class="fs-3">Create new dashboard</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="card-footer bg-light d-flex">
+                    <form method="GET" class="flex-fill d-flex">
+                        <input type="hidden" name="finalized_only" th:value="${#strings.equals(param.get('finalized_only'), 'false')}">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <span th:unless="${#strings.equals(param.get('finalized_only'), 'false')}">Also</span>
+                            <span th:if="${#strings.equals(param.get('finalized_only'), 'false')}">Don't</span>
+                            show unfinalized dashboards
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Back card -->
+        <div class="col d-flex align-items-stretch" th:if="${param.get('flow')}">
+            <div class="card flex-fill">
+                <div class="card-body bg-light d-flex">
+                    <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/dashboards/show}">
+                        <div class="flex-fill text-center align-self-center">
+                            <i class="bi-arrow-left-square-fill fs-1 text-warning"></i>
+                            <p class="fs-2">Back to all dashboards</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
         <!-- Content Cards -->
         <div class="col d-flex align-items-stretch" th:each="dashboard: ${dashboards}">
             <div class="card flex-fill">

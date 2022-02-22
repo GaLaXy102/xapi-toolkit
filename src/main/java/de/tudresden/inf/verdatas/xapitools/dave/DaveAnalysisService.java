@@ -51,8 +51,12 @@ public class DaveAnalysisService {
         return this.daveConnectorLifecycleManager.getConnector(lrsConnection);
     }
 
-    public Stream<DaveDashboard> getAllDashboards() {
-        return this.dashboardRepository.findAll().stream();
+    public Stream<DaveDashboard> getAllDashboards(boolean finalizedOnly) {
+        if (finalizedOnly) {
+            return this.dashboardRepository.findAllByFinalizedIsTrue().stream();
+        } else {
+            return this.dashboardRepository.findAll().stream();
+        }
     }
 
     public DaveDashboard getDashboard(UUID dashboardId) {
@@ -79,7 +83,7 @@ public class DaveAnalysisService {
 
     @Transactional
     public DaveDashboard createEmptyDashboard() {
-        DaveDashboard emptyDashboard = new DaveDashboard(null,null, new LinkedList<>());
+        DaveDashboard emptyDashboard = new DaveDashboard(null,null, new LinkedList<>(), false);
         this.dashboardRepository.save(emptyDashboard);
         return emptyDashboard;
     }
@@ -114,6 +118,16 @@ public class DaveAnalysisService {
     public void setDashboardVisualisations(DaveDashboard dashboard, List<Pair<String, DaveVis>> visualisations) {
         dashboard.setVisualisations(visualisations);
         this.dashboardRepository.save(dashboard);
+    }
+
+    public void checkDashboardConfiguration(DaveDashboard dashboard) {
+        if (!(dashboard.getLrsConnection() == null || dashboard.getVisualisations().isEmpty())) {
+            this.finalizeDashboard(dashboard);
+        } else {
+            if (dashboard.isFinalized()) {
+                throw new IllegalStateException("Dashboards must have a LRS connection and at least one analysis.");
+            }
+        }
     }
 
     // TODO Hinweis in Benutzerdokumentation
@@ -161,5 +175,16 @@ public class DaveAnalysisService {
         List<Pair<String, DaveVis>> visualisations = getVisualisationsOfDashboard(dashboard);
         visualisations.remove(position);
         this.setDashboardVisualisations(dashboard, visualisations);
+    }
+
+    @Transactional
+    public void finalizeDashboard(DaveDashboard dashboard) {
+        if (dashboard.getLrsConnection() == null) {
+            throw new IllegalStateException("Dashboards must have a LRS Connection.");
+        } else if (dashboard.getVisualisations().isEmpty()) {
+            throw new IllegalStateException("Dashboards must have at least one analysis.");
+        }
+        dashboard.setFinalized(true);
+        this.dashboardRepository.save(dashboard);
     }
 }

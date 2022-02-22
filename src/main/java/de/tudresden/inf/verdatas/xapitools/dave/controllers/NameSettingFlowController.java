@@ -73,6 +73,7 @@ public class NameSettingFlowController implements AnalysisStep{
                 .map(this.daveAnalysisService::getDashboard)
                 .orElseGet(this.daveAnalysisService::createEmptyDashboard);
         this.daveAnalysisService.setDashboardName(dashboard, identifier);
+        this.daveAnalysisService.checkDashboardConfiguration(dashboard);
         attributes.addAttribute("flow", dashboard.getId().toString());
         return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "./new/source" : "./show");
     }
