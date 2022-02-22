@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 @Order(3)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class VisualisationsSettingFlowController implements AnalysisStep {
-    static final String BASE_URL = DaveAnalysisMavController.BASE_URL + "/dashboards";
     private final DaveAnalysisService daveAnalysisService;
     private final LrsService lrsService;
 
@@ -48,11 +47,11 @@ public class VisualisationsSettingFlowController implements AnalysisStep {
      */
     @Override
     public Pattern getPathRegex() {
-        return Pattern.compile(BASE_URL + "/(new|edit)/visualisations(/add)?$");
+        return Pattern.compile(DaveAnalysisMavController.BASE_URL + "/(new|edit)/visualisations(/add)?$");
     }
 
     // TODO Write method to get results and activityId
-    @GetMapping(BASE_URL + "/new/visualisations")
+    @GetMapping(DaveAnalysisMavController.BASE_URL + "/new/visualisations")
     public ModelAndView showSelectAnalysis(@RequestParam(name = "flow") UUID dashboardId, Optional<Boolean> cache) {
         if (!cache.orElse(true)) this.daveAnalysisService.cleanCaches();
         DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
@@ -68,14 +67,14 @@ public class VisualisationsSettingFlowController implements AnalysisStep {
         return mav;
     }
 
-    @GetMapping(BASE_URL + "/edit/visualisations")
+    @GetMapping(DaveAnalysisMavController.BASE_URL + "/edit/visualisations")
     public ModelAndView showEditAnalysis(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = this.showSelectAnalysis(dashboardId, Optional.empty());
         mav.addObject("mode", DaveAnalysisMavController.Mode.EDITING);
         return mav;
     }
 
-    @PostMapping(BASE_URL + "/new/visualisations/add")
+    @PostMapping(DaveAnalysisMavController.BASE_URL + "/new/visualisations/add")
     public RedirectView addVisualisationToDashboard(@RequestParam(name = "flow") UUID dashboardId,
                                                     @RequestParam(name = "activity") String activityId,
                                                     @RequestParam(name = "analysis") String analysisIdentifier,
@@ -88,13 +87,13 @@ public class VisualisationsSettingFlowController implements AnalysisStep {
         return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "../visualisations" : "../../edit/visualisations");
     }
 
-    @PostMapping(BASE_URL + "/new/visualisations")
+    @PostMapping(DaveAnalysisMavController.BASE_URL + "/new/visualisations")
     public RedirectView selectVisualisations(@RequestParam(name = "flow") UUID dashboardId, RedirectAttributes attributes) {
         attributes.addAttribute("flow", dashboardId.toString());
         return new RedirectView("../show");
     }
 
-    @PostMapping(BASE_URL + "/new/visualisations/up")
+    @PostMapping(DaveAnalysisMavController.BASE_URL + "/new/visualisations/up")
     public RedirectView moveVisualisationUp(@RequestParam(name = "flow") UUID dashboardId, @RequestParam(name = "position") Integer position,
                                             DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
         DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
@@ -104,7 +103,7 @@ public class VisualisationsSettingFlowController implements AnalysisStep {
         return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "../visualisations" : "../../edit/visualisations");
     }
 
-    @PostMapping(BASE_URL + "/new/visualisations/down")
+    @PostMapping(DaveAnalysisMavController.BASE_URL + "/new/visualisations/down")
     public RedirectView moveVisualisationDown(@RequestParam(name = "flow") UUID dashboardId, @RequestParam(name = "position") Integer position,
                                               DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
         DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
@@ -114,7 +113,7 @@ public class VisualisationsSettingFlowController implements AnalysisStep {
         return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "../visualisations" : "../../edit/visualisations");
     }
 
-    @PostMapping(BASE_URL + "/new/visualisations/delete")
+    @PostMapping(DaveAnalysisMavController.BASE_URL + "/new/visualisations/delete")
     public RedirectView deleteVisualisation(@RequestParam(name = "flow") UUID dashboardId, @RequestParam(name = "position") Integer position,
                                             DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
         DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);

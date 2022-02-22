@@ -25,8 +25,6 @@ public class LRSSettingFlowController implements AnalysisStep{
     private final DaveAnalysisService daveAnalysisService;
     private final LrsService lrsService;
 
-    static final String BASE_URL = DaveAnalysisMavController.BASE_URL + "/dashboards";
-
     /**
      * Get the Human readable name of this Step
      *
@@ -46,10 +44,10 @@ public class LRSSettingFlowController implements AnalysisStep{
      */
     @Override
     public Pattern getPathRegex() {
-        return Pattern.compile(BASE_URL + "/(new|edit)/source$");
+        return Pattern.compile(DaveAnalysisMavController.BASE_URL + "/(new|edit)/source$");
     }
 
-    @GetMapping(BASE_URL + "/new/source")
+    @GetMapping(DaveAnalysisMavController.BASE_URL + "/new/source")
     public ModelAndView showSelectLRS(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/source");
         mav.addObject("activeLrs", this.lrsService.getConnections(true));
@@ -58,14 +56,14 @@ public class LRSSettingFlowController implements AnalysisStep{
         return mav;
     }
 
-    @GetMapping(BASE_URL + "/edit/source")
+    @GetMapping(DaveAnalysisMavController.BASE_URL + "/edit/source")
     public ModelAndView showEditLRS(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = this.showSelectLRS(dashboardId);
         mav.addObject("mode", DaveAnalysisMavController.Mode.EDITING);
         return mav;
     }
 
-    @PostMapping(BASE_URL + "/new/source")
+    @PostMapping(DaveAnalysisMavController.BASE_URL + "/new/source")
     public RedirectView selectLRS(@RequestParam(name = "flow") UUID dashboardId, @RequestParam(name = "lrs_id") UUID lrsId,
                                   DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
         DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);

@@ -23,8 +23,6 @@ import java.util.regex.Pattern;
 public class NameSettingFlowController implements AnalysisStep{
     private final DaveAnalysisService daveAnalysisService;
 
-    static final String BASE_URL = DaveAnalysisMavController.BASE_URL + "/dashboards";
-
     /**
      * Get the Human readable name of this Step
      *
@@ -44,10 +42,10 @@ public class NameSettingFlowController implements AnalysisStep{
      */
     @Override
     public Pattern getPathRegex() {
-        return Pattern.compile(BASE_URL + "/(new|edit)$");
+        return Pattern.compile(DaveAnalysisMavController.BASE_URL + "/(new|edit)$");
     }
 
-    @GetMapping(BASE_URL + "/new")
+    @GetMapping(DaveAnalysisMavController.BASE_URL + "/new")
     public ModelAndView showSetTitle(@RequestParam(name = "flow") Optional<UUID> dashboardId) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/identifier");
         mav.addObject("dashboardIdentifier",
@@ -61,14 +59,14 @@ public class NameSettingFlowController implements AnalysisStep{
         return mav;
     }
 
-    @GetMapping(BASE_URL + "/edit")
+    @GetMapping(DaveAnalysisMavController.BASE_URL + "/edit")
     public ModelAndView showEditTitle(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = this.showSetTitle(Optional.of(dashboardId));
         mav.addObject("mode", DaveAnalysisMavController.Mode.EDITING);
         return mav;
     }
 
-    @PostMapping(BASE_URL + "/new")
+    @PostMapping(DaveAnalysisMavController.BASE_URL + "/new")
     public RedirectView setTitleAndCreate(@RequestParam(name = "flow") Optional<UUID> dashboardId, String identifier,
                                           DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
         DaveDashboard dashboard = dashboardId
