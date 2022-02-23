@@ -108,7 +108,7 @@ public class DaveVisSeeder {
                                         "      }\n" +
                                         "    }\n" +
                                         "  ]\n" +
-                                        "}")));
+                                        "}"), true));
                 this.daveVisRepository.save(vis);
             }
         } catch (Exception ignored) {

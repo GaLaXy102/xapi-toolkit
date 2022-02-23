@@ -25,9 +25,14 @@ public class DaveVis extends AbstractDocument {
     @OneToMany
     private DaveGraphDescription description;
 
-    public DaveVis(String name, DaveQuery query, DaveGraphDescription description) {
+    @Getter
+    @Setter
+    private boolean finalized;
+
+    public DaveVis(String name, DaveQuery query, DaveGraphDescription description, boolean finalized) {
         this.name = name;
         this.query = query;
         this.description = description;
+        this.finalized = finalized;
     }
 }
