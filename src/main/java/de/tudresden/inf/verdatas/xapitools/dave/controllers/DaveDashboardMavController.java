@@ -1,6 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.dave.controllers;
 
-import de.tudresden.inf.verdatas.xapitools.dave.DaveAnalysisService;
+import de.tudresden.inf.verdatas.xapitools.dave.DaveDashboardService;
 import de.tudresden.inf.verdatas.xapitools.dave.DaveVisualisationService;
 import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
@@ -26,7 +26,7 @@ import java.util.UUID;
 @Controller
 @Order(3)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public class DaveAnalysisMavController implements IUIFlow {
+public class DaveDashboardMavController implements IUIFlow {
 
     /**
      * UI helper enum, controls button states
@@ -36,10 +36,10 @@ public class DaveAnalysisMavController implements IUIFlow {
         EDITING
     }
 
-    private final DaveAnalysisService daveAnalysisService;
+    private final DaveDashboardService daveAnalysisService;
     private final DaveVisualisationService daveVisualisationService;
     private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
-    private final List<AnalysisStep> children;
+    private final List<DashboardStep> children;
 
     static final String BASE_URL = "/ui/dave/dashboards";
 
@@ -69,7 +69,7 @@ public class DaveAnalysisMavController implements IUIFlow {
      * @return List of sub-app Steps
      */
     @Override
-    public List<AnalysisStep> getSteps() {
+    public List<DashboardStep> getSteps() {
         return this.children;
     }
 

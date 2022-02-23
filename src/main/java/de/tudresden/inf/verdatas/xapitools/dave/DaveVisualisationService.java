@@ -22,7 +22,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DaveVisualisationService {
-    private final DaveAnalysisService daveAnalysisService;
+    private final DaveDashboardService daveAnalysisService;
     private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
     private final ObjectMapper mapper;
 

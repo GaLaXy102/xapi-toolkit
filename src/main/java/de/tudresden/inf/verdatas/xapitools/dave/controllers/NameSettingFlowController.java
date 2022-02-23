@@ -1,6 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.dave.controllers;
 
-import de.tudresden.inf.verdatas.xapitools.dave.DaveAnalysisService;
+import de.tudresden.inf.verdatas.xapitools.dave.DaveDashboardService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 @Controller
 @Order(1)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-public class NameSettingFlowController implements AnalysisStep{
-    private final DaveAnalysisService daveAnalysisService;
+public class NameSettingFlowController implements DashboardStep {
+    private final DaveDashboardService daveAnalysisService;
 
     /**
      * Get the Human readable name of this Step
@@ -42,10 +42,10 @@ public class NameSettingFlowController implements AnalysisStep{
      */
     @Override
     public Pattern getPathRegex() {
-        return Pattern.compile(DaveAnalysisMavController.BASE_URL + "/(new|edit)$");
+        return Pattern.compile(DaveDashboardMavController.BASE_URL + "/(new|edit)$");
     }
 
-    @GetMapping(DaveAnalysisMavController.BASE_URL + "/new")
+    @GetMapping(DaveDashboardMavController.BASE_URL + "/new")
     public ModelAndView showSetTitle(@RequestParam(name = "flow") Optional<UUID> dashboardId) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/identifier");
         mav.addObject("dashboardIdentifier",
@@ -55,26 +55,26 @@ public class NameSettingFlowController implements AnalysisStep{
                         .orElse("")
         );
         dashboardId.ifPresent((id) -> mav.addObject("flow", id.toString()));
-        mav.addObject("mode", DaveAnalysisMavController.Mode.CREATING);
+        mav.addObject("mode", DaveDashboardMavController.Mode.CREATING);
         return mav;
     }
 
-    @GetMapping(DaveAnalysisMavController.BASE_URL + "/edit")
+    @GetMapping(DaveDashboardMavController.BASE_URL + "/edit")
     public ModelAndView showEditTitle(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = this.showSetTitle(Optional.of(dashboardId));
-        mav.addObject("mode", DaveAnalysisMavController.Mode.EDITING);
+        mav.addObject("mode", DaveDashboardMavController.Mode.EDITING);
         return mav;
     }
 
-    @PostMapping(DaveAnalysisMavController.BASE_URL + "/new")
+    @PostMapping(DaveDashboardMavController.BASE_URL + "/new")
     public RedirectView setTitleAndCreate(@RequestParam(name = "flow") Optional<UUID> dashboardId, String identifier,
-                                          DaveAnalysisMavController.Mode mode, RedirectAttributes attributes) {
+                                          DaveDashboardMavController.Mode mode, RedirectAttributes attributes) {
         DaveDashboard dashboard = dashboardId
                 .map(this.daveAnalysisService::getDashboard)
                 .orElseGet(this.daveAnalysisService::createEmptyDashboard);
         this.daveAnalysisService.setDashboardName(dashboard, identifier);
         this.daveAnalysisService.checkDashboardConfiguration(dashboard);
         attributes.addAttribute("flow", dashboard.getId().toString());
-        return new RedirectView(DaveAnalysisMavController.Mode.CREATING.equals(mode) ? "./new/source" : "./show");
+        return new RedirectView(DaveDashboardMavController.Mode.CREATING.equals(mode) ? "./new/source" : "./show");
     }
 }

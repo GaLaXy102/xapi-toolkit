@@ -28,14 +28,14 @@ import java.util.stream.Stream;
 @EnableScheduling
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 // TODO Zugriff auf Dokumente und deren Inhalt nur mit Überprüfung, ob vorhanden!! Auch in Controllern prüfen!!
-public class DaveAnalysisService {
+public class DaveDashboardService {
     private final DaveDashboardRepository dashboardRepository;
     private final DaveVisRepository visRepository;
     private final DaveQueryRepository queryRepository;
     private final DaveGraphDescriptionRepository graphDescriptionRepository;
     private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
 
-    private final Logger logger = Logger.getLogger(DaveAnalysisService.class.getName());
+    private final Logger logger = Logger.getLogger(DaveDashboardService.class.getName());
 
     /**
      * UI helper enum, controls movement of analysis
@@ -72,8 +72,6 @@ public class DaveAnalysisService {
     public DaveVis getAnalysisByName(String name) {
         return this.visRepository.findByName(name).orElseThrow(() -> new NoSuchElementException("No such analysis."));
     }
-
-    //public List<String> getPathsForAnalysisDescription(DaveVis vis, DaveConnector connector) {}
 
     public List<Pair<String, DaveVis>> getVisualisationsOfDashboard(DaveDashboard dashboard) {
         return dashboard.getVisualisations();
