@@ -10,6 +10,7 @@ import org.springframework.data.util.Pair;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import java.util.List;
+import java.util.UUID;
 
 @Document("daveDashboard")
 @NoArgsConstructor
@@ -26,13 +27,13 @@ public class DaveDashboard extends AbstractDocument {
     @Getter
     @Setter
     @ManyToMany
-    private List<Pair<String, DaveVis>> visualisations;
+    private List<Pair<String, UUID>> visualisations;
 
     @Getter
     @Setter
     private boolean finalized;
 
-    public DaveDashboard(String name, LrsConnection lrsConnection, List<Pair<String, DaveVis>> visualisations, boolean finalized) {
+    public DaveDashboard(String name, LrsConnection lrsConnection, List<Pair<String, UUID>> visualisations, boolean finalized) {
         this.name = name;
         this.lrsConnection = lrsConnection;
         this.visualisations = visualisations;

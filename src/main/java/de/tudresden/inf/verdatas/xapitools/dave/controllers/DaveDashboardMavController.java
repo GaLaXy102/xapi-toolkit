@@ -36,7 +36,7 @@ public class DaveDashboardMavController implements IUIFlow {
         EDITING
     }
 
-    private final DaveDashboardService daveAnalysisService;
+    private final DaveDashboardService daveDashboardService;
     private final DaveVisualisationService daveVisualisationService;
     private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
     private final List<DashboardStep> children;
@@ -88,10 +88,10 @@ public class DaveDashboardMavController implements IUIFlow {
                                     @RequestParam(name = "finalized_only") Optional<Boolean> finalizedOnly) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/detail");
         List<DaveDashboard> dashboards = dashboardId
-                .map(this.daveAnalysisService::getDashboard)
+                .map(this.daveDashboardService::getDashboard)
                 .map(List::of)
                 .orElseGet(
-                        () -> this.daveAnalysisService
+                        () -> this.daveDashboardService
                                 .getAllDashboards(finalizedOnly.orElse(true))
                                 .sorted(
                                         Comparator
@@ -114,7 +114,7 @@ public class DaveDashboardMavController implements IUIFlow {
     @GetMapping(BASE_URL + "/execute")
     public ModelAndView executeVisualisationsOfDashboard(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/show");
-        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
+        DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
 
         mav.addObject("dashboard", dashboard);
         mav.addObject("graphs", this.daveVisualisationService.executeVisualisationsOfDashboard(dashboard));
@@ -123,16 +123,16 @@ public class DaveDashboardMavController implements IUIFlow {
 
     @PostMapping(BASE_URL + "/copy")
     public RedirectView copyDashboard(@RequestParam(name = "flow") UUID dashboardId) {
-        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
-        DaveDashboard copy = this.daveAnalysisService.createCopyOfDashboard(dashboard);
-        this.daveAnalysisService.checkDashboardConfiguration(copy);
+        DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
+        DaveDashboard copy = this.daveDashboardService.createCopyOfDashboard(dashboard);
+        this.daveDashboardService.checkDashboardConfiguration(copy);
         return new RedirectView("../dashboards/show");
     }
 
     @PostMapping(BASE_URL + "/delete")
     public RedirectView deleteDashboard(@RequestParam(name = "flow") UUID dashboardId) {
-        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
-        this.daveAnalysisService.deleteDashboard(dashboard);
+        DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
+        this.daveDashboardService.deleteDashboard(dashboard);
         return new RedirectView("../dashboards/show");
     }
 }

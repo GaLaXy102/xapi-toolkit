@@ -52,13 +52,13 @@ public class DaveVisualisationService {
     // TODO refactor types
     public List<Pair<Pair<String, String>, String>> executeVisualisationsOfDashboard(DaveDashboard dashboard) {
         DaveConnector connector = this.daveConnectorLifecycleManager.getConnector(dashboard.getLrsConnection());
-        return this.daveAnalysisService.getVisualisationsOfDashboard(dashboard)
+        return dashboard.getVisualisations()
                 .stream()
                 .map((v) -> Pair.of(
-                        Pair.of(v.getSecond().getName(), v.getFirst()),
+                        Pair.of(this.daveAnalysisService.getAnalysisById(v.getSecond()).getName(), v.getFirst()),
                         Pair.of(
-                                this.prepareQuery(v.getSecond(), v.getFirst()).getAbsolutePath(),
-                                this.prepareVisualisation(v.getSecond()).getAbsolutePath()
+                                this.prepareQuery(this.daveAnalysisService.getAnalysisById(v.getSecond()), v.getFirst()).getAbsolutePath(),
+                                this.prepareVisualisation(this.daveAnalysisService.getAnalysisById(v.getSecond())).getAbsolutePath()
                         )
                 ))
                 .map((prep) -> Pair.of(
@@ -88,6 +88,4 @@ public class DaveVisualisationService {
         }
         return out;
     }
-
-
 }

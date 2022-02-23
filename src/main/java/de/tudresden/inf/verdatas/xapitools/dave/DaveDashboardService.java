@@ -74,7 +74,13 @@ public class DaveDashboardService {
     }
 
     public List<Pair<String, DaveVis>> getVisualisationsOfDashboard(DaveDashboard dashboard) {
-        return dashboard.getVisualisations();
+        List<Pair<String, UUID>> visualisations = dashboard.getVisualisations();
+        List<Pair<String, DaveVis>> analysis = new LinkedList<>();
+        for (Pair<String, UUID> vis:
+             visualisations) {
+            analysis.add(Pair.of(vis.getFirst(), this.getAnalysisById(vis.getSecond())));
+        }
+        return analysis;
     }
 
     @Transactional
@@ -111,7 +117,7 @@ public class DaveDashboardService {
     }
 
     @Transactional
-    public void setDashboardVisualisations(DaveDashboard dashboard, List<Pair<String, DaveVis>> visualisations) {
+    public void setDashboardVisualisations(DaveDashboard dashboard, List<Pair<String, UUID>> visualisations) {
         dashboard.setVisualisations(visualisations);
         this.dashboardRepository.save(dashboard);
     }
@@ -148,16 +154,16 @@ public class DaveDashboardService {
     }
 
     @Transactional
-    public void addVisualisationToDashboard(DaveDashboard dashboard, String activityId, DaveVis analysis) {
-        List<Pair<String, DaveVis>> visualisations = dashboard.getVisualisations();
-        visualisations.add(Pair.of(activityId, analysis));
+    public void addVisualisationToDashboard(DaveDashboard dashboard, String activityId, UUID analysisId) {
+        List<Pair<String, UUID>> visualisations = dashboard.getVisualisations();
+        visualisations.add(Pair.of(activityId, analysisId));
         this.setDashboardVisualisations(dashboard, visualisations);
     }
 
     @Transactional
     public void shiftPositionOfVisualisationOfDashboard(DaveDashboard dashboard, int position, Move move) {
-        List<Pair<String, DaveVis>> visualisations = this.getVisualisationsOfDashboard(dashboard);
-        Pair<String, DaveVis> vis = visualisations.remove(position);
+        List<Pair<String, UUID>> visualisations = dashboard.getVisualisations();
+        Pair<String, UUID> vis = visualisations.remove(position);
         if (move.equals(Move.UP)) {
             visualisations.add(position - 1, vis);
         } else {
@@ -168,7 +174,7 @@ public class DaveDashboardService {
 
     @Transactional
     public void deleteVisualisationFromDashboard(DaveDashboard dashboard, int position) {
-        List<Pair<String, DaveVis>> visualisations = getVisualisationsOfDashboard(dashboard);
+        List<Pair<String, UUID>> visualisations = dashboard.getVisualisations();
         visualisations.remove(position);
         this.setDashboardVisualisations(dashboard, visualisations);
     }
