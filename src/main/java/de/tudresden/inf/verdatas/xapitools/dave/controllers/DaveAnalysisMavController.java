@@ -1,6 +1,7 @@
 package de.tudresden.inf.verdatas.xapitools.dave.controllers;
 
 import de.tudresden.inf.verdatas.xapitools.dave.DaveAnalysisService;
+import de.tudresden.inf.verdatas.xapitools.dave.DaveVisualisationService;
 import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
 import de.tudresden.inf.verdatas.xapitools.ui.BootstrapUIIcon;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Comparator;
@@ -35,6 +37,7 @@ public class DaveAnalysisMavController implements IUIFlow {
     }
 
     private final DaveAnalysisService daveAnalysisService;
+    private final DaveVisualisationService daveVisualisationService;
     private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
     private final List<AnalysisStep> children;
 
@@ -101,10 +104,21 @@ public class DaveAnalysisMavController implements IUIFlow {
         return mav;
     }
 
-    // TODO
     @PostMapping(BASE_URL + "/show")
+    public RedirectView executeDashboard(@RequestParam(name = "flow") UUID dashboardId, RedirectAttributes attributes) {
+        attributes.addAttribute("flow", dashboardId.toString());
+        return new RedirectView("./execute");
+    }
+
+    // TODO
+    @GetMapping(BASE_URL + "/execute")
     public ModelAndView executeVisualisationsOfDashboard(@RequestParam(name = "flow") UUID dashboardId) {
-        return null;
+        ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/show");
+        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
+
+        mav.addObject("dashboard", dashboard);
+        mav.addObject("graphs", this.daveVisualisationService.executeVisualisationsOfDashboard(dashboard));
+        return mav;
     }
 
     @PostMapping(BASE_URL + "/copy")

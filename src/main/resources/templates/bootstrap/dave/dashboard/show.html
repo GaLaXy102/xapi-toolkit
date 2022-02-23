@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="bootstrap/header.html :: scripted_head ('Dashboard Details')"></head>
+<body class="bg-dark">
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <!-- Back card -->
+        <div class="col w-100 d-flex align-items-stretch" th:if="${param.get('flow')}">
+            <div class="card flex-fill">
+                <div class="card-body bg-light d-flex">
+                    <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/dashboards/show}">
+                        <div class="flex-fill text-center align-self-center">
+                            <i class="bi-arrow-left-square-fill fs-3 text-warning"></i>
+                            <span class="fs-3">Back to all dashboards</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col w-100 d-flex align-items-stretch" th:if="${param.get('flow')}">
+            <div class="card flex-fill">
+                <div class="card-body bg-light d-flex">
+                        <div class="flex-fill text-center align-self-center">
+                            <span class="fs-3" th:text="${dashboard.getName()}"></span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- Force break -->
+        <div class="w-100"></div>
+        <!-- Content Cards -->
+        <div class="col d-flex align-items-stretch" th:each="graph: ${graphs}">
+            <div class="card flex-fill">
+                <div class="card-header">
+                    <h4>
+                        <span th:text="${graph.getFirst().getFirst()}"></span>
+                        <br />
+                        <span th:text="${graph.getFirst().getSecond()}"></span>
+                        <!--<a th:href="'/api/v1/dave/visualisation' + '?flow=' + ${dashboard.getId()} + '?vis=' + ${vis.getSecond().getId()}" class="float-end text-dark me-3"
+                           target="_blank"><i class="bi-download" title="Download dashboard visualisation"></i></a>-->
+                    </h4>
+                </div>
+                <div class="card-body" th:utext="${graph.getSecond()}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

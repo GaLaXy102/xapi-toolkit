@@ -24,14 +24,14 @@ class DaveInteractions {
     }
 
     // TODO paths not null
-    static String executeAnalysis(WebDriver driver, List<String> paths) throws InterruptedException {
-        addDescriptionToAnalysis(driver, paths.get(0), false);
-        addDescriptionToAnalysis(driver, paths.get(1), true);
+    static String executeAnalysis(WebDriver driver, String query, String graph) throws InterruptedException {
+        addDescriptionToAnalysis(driver, query, false);
+        addDescriptionToAnalysis(driver, graph, true);
         return getVisOfAnalysis(driver);
     }
 
     static String getAnalysisResult(WebDriver driver, List<String> paths) throws InterruptedException {
-        executeAnalysis(driver, paths);
+        executeAnalysis(driver, paths.get(0), paths.get(1));
         return getResultsForAnalysis(driver);
     }
 

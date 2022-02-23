@@ -85,10 +85,10 @@ public class DaveConnector implements IExternalService, Closeable {
         }
     }
 
-    public synchronized String executeAnalysis(List<String> paths) {
+    public synchronized String executeAnalysis(String query, String graph) {
         if (this.getHealth()) {
             try {
-                return DaveInteractions.executeAnalysis(this.driver, paths);
+                return DaveInteractions.executeAnalysis(this.driver, query, graph);
             } catch (Exception e) {
                 this.driver.quit();
                 this.healthChangedCallback(false);
