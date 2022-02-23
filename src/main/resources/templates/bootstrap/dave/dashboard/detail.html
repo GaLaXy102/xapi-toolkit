@@ -8,7 +8,7 @@
         <div class="col d-flex align-items-stretch" th:unless="${param.get('flow')}">
             <div class="card flex-fill">
                 <div class="card-body bg-light d-flex">
-                    <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/dashboard/new}">
+                    <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/dashboards/new}">
                         <div class="flex-fill text-center align-self-center">
                             <i class="bi-file-earmark-plus fs-3 text-success me-2"></i>
                             <span class="fs-3">Create new dashboard</span>
@@ -84,7 +84,7 @@
                     </div>
                     <div class="row">
                         <div class="col">
-                            <form method="POST" th:action="@{/ui/dave/dashboards/show}" class="flex-fill d-flex">
+                            <form method="POST" th:if="${dashboard.isFinalized()}" th:action="@{/ui/dave/dashboards/show}" class="flex-fill d-flex">
                                 <input type="hidden" name="flow" th:value="${dashboard.getId()}">
                                 <button type="submit" class="btn btn-outline-success button-spinner flex-fill">Perform</button>
                             </form>
