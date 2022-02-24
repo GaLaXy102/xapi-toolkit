@@ -89,6 +89,36 @@ function triggerComponentSelect(element) {
     });
 }
 
+function triggerQuerySelect(element) {
+    $('#queryIdInput').val(element.dataset.qid);
+    $('#queryNameInput').val(element.innerText);
+    $('.xapi-query-content').each(function () {
+        setInvisible(this);
+        setNonReqiured(this);
+        unsetName(this);
+    });
+    $('#queryContentInput-' + element.dataset.qid).each(function () {
+        setVisible(this);
+        setReqiured(this);
+        setName(this, 'queryContent');
+    });
+}
+
+function triggerGraphSelect(element) {
+    $('#graphIdInput').val(element.dataset.gid);
+    $('#graphNameInput').val(element.innerText);
+    $('.xapi-graph-content').each(function () {
+        setInvisible(this);
+        setNonReqiured(this);
+        unsetName(this);
+    });
+    $('#graphContentInput-' + element.dataset.gid).each(function () {
+        setVisible(this);
+        setReqiured(this);
+        setName(this, 'graphContent');
+    });
+}
+
 // Inspired by https://thecoderain.blogspot.com/2020/11/generate-valid-random-email-js-jquery.html
 const emailChars = '1234567890';
 
