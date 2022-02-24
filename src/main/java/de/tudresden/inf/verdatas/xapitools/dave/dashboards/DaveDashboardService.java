@@ -1,4 +1,4 @@
-package de.tudresden.inf.verdatas.xapitools.dave;
+package de.tudresden.inf.verdatas.xapitools.dave.dashboards;
 
 import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnector;
 import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
@@ -61,8 +61,12 @@ public class DaveDashboardService {
         return this.dashboardRepository.findById(dashboardId).orElseThrow(() -> new NoSuchElementException("No such dashboard."));
     }
 
-    public Stream<DaveVis> getAllAnalysis() {
-        return this.visRepository.findAll().stream();
+    public Stream<DaveVis> getAllAnalysis(boolean finalizedOnly) {
+        if (finalizedOnly) {
+            return this.visRepository.findAllByFinalizedIsTrue().stream();
+        } else {
+            return this.visRepository.findAll().stream();
+        }
     }
 
     public DaveVis getAnalysisById(UUID analysisId) {

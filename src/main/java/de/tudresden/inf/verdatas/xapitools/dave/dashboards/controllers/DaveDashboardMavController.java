@@ -1,7 +1,7 @@
-package de.tudresden.inf.verdatas.xapitools.dave.controllers;
+package de.tudresden.inf.verdatas.xapitools.dave.dashboards.controllers;
 
-import de.tudresden.inf.verdatas.xapitools.dave.DaveDashboardService;
-import de.tudresden.inf.verdatas.xapitools.dave.DaveVisualisationService;
+import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveDashboardService;
+import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveVisualisationService;
 import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
 import de.tudresden.inf.verdatas.xapitools.ui.BootstrapUIIcon;

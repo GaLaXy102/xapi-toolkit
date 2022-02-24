@@ -1,8 +1,7 @@
-package de.tudresden.inf.verdatas.xapitools.dave.controllers;
+package de.tudresden.inf.verdatas.xapitools.dave.dashboards.controllers;
 
-import de.tudresden.inf.verdatas.xapitools.dave.DaveDashboardService;
+import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveDashboardService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
-import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveVis;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsService;
 import lombok.AccessLevel;
@@ -61,7 +60,7 @@ public class VisualisationsSettingFlowController implements DashboardStep {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/analysis");
         mav.addObject("flow", dashboardId.toString());
         mav.addObject("possibleActivities", activities);
-        mav.addObject("possibleAnalysis", this.daveAnalysisService.getAllAnalysis().toList());
+        mav.addObject("possibleAnalysis", this.daveAnalysisService.getAllAnalysis(true).toList());
         mav.addObject("dashboardVisualisations", this.daveAnalysisService.getVisualisationsOfDashboard(dashboard));
         mav.addObject("mode", DaveDashboardMavController.Mode.CREATING);
         return mav;

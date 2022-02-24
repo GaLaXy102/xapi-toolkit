@@ -1,6 +1,6 @@
-package de.tudresden.inf.verdatas.xapitools.dave.controllers;
+package de.tudresden.inf.verdatas.xapitools.dave.dashboards.controllers;
 
-import de.tudresden.inf.verdatas.xapitools.dave.DaveDashboardService;
+import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveDashboardService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsService;

@@ -1,4 +1,4 @@
-package de.tudresden.inf.verdatas.xapitools.dave;
+package de.tudresden.inf.verdatas.xapitools.dave.dashboards;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnector;
