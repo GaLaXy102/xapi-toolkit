@@ -1,5 +1,8 @@
 package de.tudresden.inf.verdatas.xapitools.dave.analysis;
 
+import de.tudresden.inf.verdatas.xapitools.dave.FileManagementService;
+import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
+import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveVisualisationService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +10,9 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -18,6 +24,8 @@ public class DaveAnalysisService {
     private final DaveQueryRepository queryRepository;
     private final DaveGraphDescriptionRepository graphDescriptionRepository;
     private final DaveDashboardRepository dashboardRepository;
+    private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
+    private final FileManagementService fileManagementService;
 
     public Stream<DaveVis> getAllAnalysis(boolean finalizedOnly) {
         if (finalizedOnly) {
@@ -49,7 +57,6 @@ public class DaveAnalysisService {
     // TODO Check query and graphDescription before saving analysis
     @Transactional
     public DaveVis createAnalysis(String name, String query, String queryName, String graphDescription, String graphName) {
-        Optional<String> error = Optional.empty();
         this.checkValidityOfInput(query, queryName, graphDescription, graphName);
         if (this.visRepository.findByName(name).isPresent()) {
             throw new IllegalStateException("Conflicting analysis objects. Please rename your analysis.");
@@ -215,6 +222,16 @@ public class DaveAnalysisService {
         }
         if (!(this.checkForGraphDescriptionDuplicates(graphName, graphDescription).isEmpty())) {
             throw new IllegalStateException("Duplication of graph description objects. Please select your graph description from the dropdown menu.");
+        }
+    }
+
+    public void checkValidityOfAnalysisDescription(String query, String queryName, String graphDescription, String graphName) {
+        Pair<String, String> analysisDescriptionPaths = this.fileManagementService
+                .prepareValidityCheck(queryName, query, graphName, graphDescription);
+        Optional<String> error = this.daveConnectorLifecycleManager.getTestConnector()
+                .testAnalysisExecution(analysisDescriptionPaths.getFirst(), analysisDescriptionPaths.getSecond());
+        if (error.isPresent()) {
+            throw new IllegalStateException(error.get());
         }
     }
 }

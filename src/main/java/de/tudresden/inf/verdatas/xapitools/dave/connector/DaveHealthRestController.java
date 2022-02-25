@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -32,8 +33,12 @@ public class DaveHealthRestController {
      * @return 200 and true if alive, 200 and false if dead, 400 and error page if not found or inactive connection.
      */
     @GetMapping(HEALTH_ENDPOINT)
-    ResponseEntity<Boolean> getHealthOfDave(@RequestParam(name = "id") UUID connectionId) {
-        @Active LrsConnection connection = this.lrsService.getConnection(connectionId);
-        return ResponseEntity.ok(this.daveConnectorLifecycleManager.getConnector(connection).getHealth());
+    ResponseEntity<Boolean> getHealthOfDave(@RequestParam(name = "id") Optional<UUID> connectionId) {
+        if (connectionId.isPresent()) {
+            @Active LrsConnection connection = this.lrsService.getConnection(connectionId.get());
+            return ResponseEntity.ok(this.daveConnectorLifecycleManager.getConnector(connection).getHealth());
+        } else {
+            return ResponseEntity.ok(this.daveConnectorLifecycleManager.getTestConnector().getHealth());
+        }
     }
 }

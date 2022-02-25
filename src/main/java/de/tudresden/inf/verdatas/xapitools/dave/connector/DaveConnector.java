@@ -3,6 +3,7 @@ package de.tudresden.inf.verdatas.xapitools.dave.connector;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.io.Closeable;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.regex.MatchResult;
@@ -20,7 +22,7 @@ public class DaveConnector implements IExternalService, Closeable {
     private static final String HEALTH_ENDPOINT = "";
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final URL daveEndpoint;
-    private final LrsConnection lrsConnection;
+    private LrsConnection lrsConnection = null;
     private WebDriver driver;
     @Getter
     private Boolean health = null;
@@ -28,6 +30,10 @@ public class DaveConnector implements IExternalService, Closeable {
     DaveConnector(URL daveEndpoint, LrsConnection lrsConnection) {
         this.daveEndpoint = daveEndpoint;
         this.lrsConnection = lrsConnection;
+    }
+
+    DaveConnector(URL daveEndpoint) {
+        this.daveEndpoint = daveEndpoint;
     }
 
     void initialize() {
@@ -46,6 +52,20 @@ public class DaveConnector implements IExternalService, Closeable {
         }
     }
 
+    void startTestSession() {
+        if (this.driver != null) return;
+        this.driver = DaveInteractions.startNewSession(this.daveEndpoint);
+        try {
+            DaveInteractions.initializeTestSession(this.driver);
+            this.healthChangedCallback(true);
+        } catch (Exception e) {
+            this.driver.quit();
+            this.healthChangedCallback(false);
+            throw new IllegalStateException(e.getMessage());
+        }
+
+    }
+
     public void close() {
         if (this.driver == null) return;
         this.driver.quit();
@@ -58,7 +78,11 @@ public class DaveConnector implements IExternalService, Closeable {
      */
     @Override
     public String getName() {
-        return "DAVE-" + this.lrsConnection.getFriendlyName();
+        if (this.lrsConnection != null) {
+            return "DAVE-" + this.lrsConnection.getFriendlyName();
+        } else {
+            return "DAVE-Test";
+        }
     }
 
     /**
@@ -68,7 +92,11 @@ public class DaveConnector implements IExternalService, Closeable {
      */
     @Override
     public String getCheckEndpoint() {
-        return DaveHealthRestController.HEALTH_ENDPOINT + "?id=" + this.lrsConnection.getConnectionId();
+        if (this.lrsConnection != null) {
+            return DaveHealthRestController.HEALTH_ENDPOINT + "?id=" + this.lrsConnection.getConnectionId();
+        } else {
+            return DaveHealthRestController.HEALTH_ENDPOINT;
+        }
     }
 
     /**
@@ -78,10 +106,15 @@ public class DaveConnector implements IExternalService, Closeable {
      */
     private void healthChangedCallback(boolean newHealth) {
         this.health = newHealth;
-        if (this.health) {
+        if (this.health && this.lrsConnection != null) {
             this.logger.info("DAVE-" + this.lrsConnection.getFriendlyName() + " connection is alive.");
-        } else {
+        } else if (this.health) {
+            this.logger.info("DAVE-Test" + " connection is alive.");
+        }
+        if (!this.health && this.lrsConnection != null) {
             this.logger.warning("DAVE-" + this.lrsConnection.getFriendlyName() + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
+        } else if (!this.health) {
+            this.logger.warning("DAVE-Test" + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
         }
     }
 
@@ -95,7 +128,31 @@ public class DaveConnector implements IExternalService, Closeable {
                 throw new IllegalStateException(e.getMessage());
             }
         }
-        throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
+        if (this.lrsConnection != null) {
+            throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
+        } else {
+            throw new IllegalStateException("Interaction with " + "DAVE-Test" + " not possible.");
+        }
+    }
+
+    public Optional<String> testAnalysisExecution(String query, String graph) {
+        if (this.getHealth()) {
+            try {
+                Optional<String> queryError = DaveInteractions.addDescriptionToAnalysis(this.driver, query, false);
+                Optional<String> graphError = DaveInteractions.addDescriptionToAnalysis(this.driver, graph, true);
+                if (queryError.isPresent()) {
+                    return queryError;
+                } else if (graphError.isPresent()) {
+                    return graphError;
+                }
+                return Optional.empty();
+            } catch (Exception e) {
+                this.driver.quit();
+                this.healthChangedCallback(false);
+                throw new IllegalStateException(e.getMessage());
+            }
+        }
+        throw new IllegalStateException("Interaction with " + "DAVE-Test" + " not possible.");
     }
 
     public List<String> getAnalysisResult(List<String> paths) {
@@ -114,6 +171,10 @@ public class DaveConnector implements IExternalService, Closeable {
                 throw new IllegalStateException(e.getMessage());
             }
         }
-        throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
+        if (this.lrsConnection != null) {
+            throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
+        } else {
+            throw new IllegalStateException("Interaction with " + "DAVE-Test" + " not possible.");
+        }
     }
 }

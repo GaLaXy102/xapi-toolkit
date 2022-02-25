@@ -30,7 +30,8 @@ public class LrsService {
 
     /**
      * This constructor is for Spring-internal use.
-     * It also bootstraps the connectors for the enabled connections.
+     * It also bootstraps the connectors for the enabled connections and creates a
+     * {@link de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnector} for validation of created analysis.
      */
     LrsService(LrsConnectionRepository lrsConnectionRepository, LrsConnectorLifecycleManager connectorLifecycleManager,
                DaveConnectorLifecycleManager daveConnectorLifecycleManager) {
@@ -40,6 +41,7 @@ public class LrsService {
         // Create Connectors for all active Connections at Boot time
         this.lrsConnectionRepository.findAll().stream().filter(LrsConnection::isEnabled).forEach(this.connectorLifecycleManager::createConnector);
         this.lrsConnectionRepository.findAll().stream().filter(LrsConnection::isEnabled).forEach(this.daveConnectorLifecycleManager::createConnector);
+        this.daveConnectorLifecycleManager.createTestConnector();
     }
 
     /**

@@ -7,6 +7,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 class DaveInteractions {
@@ -25,8 +26,13 @@ class DaveInteractions {
 
     // TODO paths not null
     static String executeAnalysis(WebDriver driver, String query, String graph) throws InterruptedException {
-        addDescriptionToAnalysis(driver, query, false);
-        addDescriptionToAnalysis(driver, graph, true);
+        Optional<String> queryError = addDescriptionToAnalysis(driver, query, false);
+        Optional<String> graphError = addDescriptionToAnalysis(driver, graph, true);
+        if (queryError.isPresent()) {
+            throw new IllegalStateException("Error during parsing of query description.");
+        } else if (graphError.isPresent()) {
+            throw new IllegalStateException("Error during parsing of graph description.");
+        }
         return getVisOfAnalysis(driver);
     }
 
@@ -46,6 +52,16 @@ class DaveInteractions {
         workbookForm.get(1).sendKeys("Description");
         TimeUnit.MILLISECONDS.sleep(75);
         driver.findElement(By.cssSelector(".wizardfooter :nth-child(2)")).click();
+    }
+
+    public static void initializeTestSession(WebDriver driver) throws InterruptedException {
+        driver.findElement(By.cssSelector(".workbookinfo")).click();
+
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.MINUTES);
+        driver.findElement(By.cssSelector(".testdatasetblock .mdc-linear-progress:not(.mdc-linear-progress--closed)"));
+        driver.findElement(By.cssSelector(".testdatasetblock .mdc-linear-progress--closed"));
+        driver.manage().timeouts().implicitlyWait(750, TimeUnit.MILLISECONDS);
+        createAnalysis(driver);
     }
 
     private static void connectLRS(WebDriver driver, String name, String url, String key, String secret) throws InterruptedException {
@@ -89,15 +105,15 @@ class DaveInteractions {
         sub_buttons.get(4).click();
     }
 
-    // TODO decider als Enum, Rückgabe einer Fehlernachricht
-    private static void addDescriptionToAnalysis(WebDriver driver, String Path, Boolean decider) {
+    // TODO decider als Enum
+    public static Optional<String> addDescriptionToAnalysis(WebDriver driver, String Path, Boolean decider) {
         if (!decider) {
             WebElement query_upload = driver.findElement(By.cssSelector("#query-input-file"));
             query_upload.sendKeys(Path);
             // empty String if query is valid (no error occurred)
             String errorMessage = driver.findElements(By.cssSelector(".error")).get(0).getText();
             if (!errorMessage.isEmpty()) {
-                throw new IllegalStateException(errorMessage);
+                return Optional.of(errorMessage);
             }
         } else {
             WebElement description_upload = driver.findElement(By.cssSelector("#vega-input-file"));
@@ -105,9 +121,10 @@ class DaveInteractions {
             // empty String if description is valid (no error occurred)
             String errorMessage = driver.findElements(By.cssSelector(".error")).get(1).getText();
             if (!errorMessage.isEmpty()) {
-                throw new IllegalStateException(errorMessage);
+                return Optional.of(errorMessage);
             }
         }
+        return Optional.empty();
     }
 
     private static String getVisOfAnalysis(WebDriver driver) throws InterruptedException {

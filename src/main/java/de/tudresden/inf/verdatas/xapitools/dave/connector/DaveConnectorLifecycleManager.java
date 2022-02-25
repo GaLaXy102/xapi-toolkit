@@ -64,6 +64,14 @@ public class DaveConnectorLifecycleManager implements BeanFactoryAware {
         this.taskExecutor.execute(connector::initialize);
     }
 
+    public void createTestConnector() {
+        String targetBeanName = "DaveConnector-Test";
+        DaveConnector connector = new DaveConnector(daveEndpoint);
+        this.beanFactory.registerSingleton(targetBeanName, connector);
+        this.schedulingRegistrar.postProcessAfterInitialization(this.beanFactory.getBean("DaveConnector-Test"), targetBeanName);
+        this.taskExecutor.execute(connector::startTestSession);
+    }
+
     /**
      * Get the {@link DaveConnector} for the given active {@link LrsConnection}.
      */
@@ -72,11 +80,25 @@ public class DaveConnectorLifecycleManager implements BeanFactoryAware {
         return this.beanFactory.getBean(targetBeanName, DaveConnector.class);
     }
 
+    public DaveConnector getTestConnector() {
+        String targetBeanName = "DaveConnector-Test";
+        return this.beanFactory.getBean(targetBeanName, DaveConnector.class);
+    }
+
     /**
      * Destroy the {@link DaveConnector} for the given {@link LrsConnection}.
      */
     public void deleteConnector(LrsConnection connection) {
         String targetBeanName = "DaveConnector-" + connection.getConnectionId();
+        // Disable Scheduling
+        DaveConnector targetBean = this.beanFactory.getBean(targetBeanName, DaveConnector.class);
+        this.schedulingRegistrar.postProcessBeforeDestruction(targetBean, targetBeanName);
+        // Remove from Application Context
+        this.beanFactory.destroySingleton(targetBeanName);
+    }
+
+    public void deleteTestConnector() {
+        String targetBeanName = "DaveConnector-Test";
         // Disable Scheduling
         DaveConnector targetBean = this.beanFactory.getBean(targetBeanName, DaveConnector.class);
         this.schedulingRegistrar.postProcessBeforeDestruction(targetBean, targetBeanName);

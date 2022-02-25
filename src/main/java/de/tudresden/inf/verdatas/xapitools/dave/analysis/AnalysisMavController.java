@@ -15,12 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @Order(2)
@@ -111,7 +109,9 @@ public class AnalysisMavController implements IUIManagementFlow {
                                        @RequestParam("queryName") String queryName,
                                        @RequestParam("graphContent") String graphDescription,
                                        @RequestParam("graphName") String graphName) {
-        DaveVis analysis = this.daveAnalysisService.createAnalysis(name, query.replace("\r", ""), queryName, graphDescription.replace("\r", ""), graphName);
+        this.daveAnalysisService.checkValidityOfAnalysisDescription(query, queryName, graphDescription, graphName);
+        DaveVis analysis = this.daveAnalysisService
+                .createAnalysis(name, query.replace("\r", ""), queryName, graphDescription.replace("\r", ""), graphName);
         return new RedirectView("./show");
     }
 
@@ -126,6 +126,7 @@ public class AnalysisMavController implements IUIManagementFlow {
         return mav;
     }
 
+    // TODO Check if analysis is in use in Dashboard, allow changing only after acknowledgement through user
     @PostMapping(BASE_URL + "/edit")
     public RedirectView editAnalysis(@RequestParam("flow") UUID analysisId,
                                      @RequestParam("name") String name,
@@ -134,9 +135,13 @@ public class AnalysisMavController implements IUIManagementFlow {
                                      @RequestParam("queryName") String queryName,
                                      @RequestParam("graphId") Optional<UUID> graphId,
                                      @RequestParam("graphContent") String graphDescription,
-                                     @RequestParam("graphName") String graphName) {
+                                     @RequestParam("graphName") String graphName,
+                                     RedirectAttributes attributes) {
         DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
-        this.daveAnalysisService.checkUsageOfAnalysis(analysis);
+        //if (!(this.daveAnalysisService.checkUsageOfAnalysis(analysis).isEmpty())) {
+        //    attributes.addAllAttributes(Map.of("flow", analysisId, "name", name, "queryId", ))
+        //}
+        this.daveAnalysisService.checkValidityOfAnalysisDescription(query, queryName, graphDescription, graphName);
         this.daveAnalysisService.updateAnalysis(analysis, name, query.replace("\r", ""), queryId, queryName,
                 graphDescription.replace("\r", ""), graphId, graphName);
         return new RedirectView("./show");
