@@ -105,12 +105,13 @@ function triggerQuerySelect(element) {
 }
 
 function triggerQueryShow(element) {
+    if ($('#queryIdInput')[0].value === '') return;
     $('.xapi-query-content').each(function () {
         setInvisible(this);
         setNonReqiured(this);
         unsetName(this);
     });
-    $('#queryContentInput-' + element.dataset.id).each(function () {
+    $('#queryContentInput-' + element.value).each(function () {
         setVisible(this);
         setReqiured(this);
         setName(this, 'queryContent');
@@ -126,6 +127,20 @@ function triggerGraphSelect(element) {
         unsetName(this);
     });
     $('#graphContentInput-' + element.dataset.gid).each(function () {
+        setVisible(this);
+        setReqiured(this);
+        setName(this, 'graphContent');
+    });
+}
+
+function triggerGraphShow(element) {
+    if ($('#graphIdInput')[0].value === '') return;
+    $('.xapi-graph-content').each(function () {
+        setInvisible(this);
+        setNonReqiured(this);
+        unsetName(this);
+    });
+    $('#graphContentInput-' + element.value).each(function () {
         setVisible(this);
         setReqiured(this);
         setName(this, 'graphContent');
@@ -191,6 +206,13 @@ $(document).ready(function () {
     // Toasts
     $('.toast').each(function () {
         (new bootstrap.Toast(this, {})).show();
+    });
+    // DAVE Analysis Editor
+    $('#queryIdInput').each(function () {
+        triggerQueryShow(this);
+    });
+    $('#graphIdInput').each(function () {
+        triggerGraphShow(this);
     });
     // Tooltips
     $('.xapi-alignment-tooltip').each(function () {

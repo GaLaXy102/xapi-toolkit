@@ -18,7 +18,7 @@
                     <ul class="dropdown-menu">
                         <li th:each="query: ${possibleQueries}"><a href="#" onclick="triggerQuerySelect(this);" class="dropdown-item" th:data-qid="${query.getId()}" th:text="${query.getName()}"></a></li>
                     </ul>
-                    <input th:if="${analysis}" onload="triggerQueryShow(this)" th:data-id="${analysis.getQuery().getId()}" type="hidden" id="queryIdInput" name="queryId" th:value="${analysis.getQuery().getId()}">
+                    <input th:if="${analysis}" type="hidden" id="queryIdInput" name="queryId" th:value="${analysis.getQuery().getId()}">
                     <input th:unless="${analysis}" type="hidden" id="queryIdInput" name="queryId" value="">
                     <input th:if="${analysis}" type="text" class="form-control" name="queryName" id="queryNameInput" th:value="${analysis.getQuery().getName()}" required>
                     <input th:unless="${analysis}" type="text" class="form-control" name="queryName" id="queryNameInput" placeholder="Enter title" required>
