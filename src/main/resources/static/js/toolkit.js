@@ -104,6 +104,19 @@ function triggerQuerySelect(element) {
     });
 }
 
+function triggerQueryShow(element) {
+    $('.xapi-query-content').each(function () {
+        setInvisible(this);
+        setNonReqiured(this);
+        unsetName(this);
+    });
+    $('#queryContentInput-' + element.dataset.id).each(function () {
+        setVisible(this);
+        setReqiured(this);
+        setName(this, 'queryContent');
+    });
+}
+
 function triggerGraphSelect(element) {
     $('#graphIdInput').val(element.dataset.gid);
     $('#graphNameInput').val(element.innerText);

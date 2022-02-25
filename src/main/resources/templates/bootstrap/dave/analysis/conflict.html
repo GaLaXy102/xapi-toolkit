@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="bootstrap/header.html :: scripted_head ('Conflict Acknowledgement')"></head>
+<body class="bg-dark">
+<div class="container">
+    <div class="row row-cols-1">
+        <div class="col d-flex">
+            <div class="card flex-fill">
+                <h2 class="card-header">
+                    Changing description of used analysis.
+                </h2>
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Acknowledgement needed</h5>
+                    <div class="mb-2">
+                        Reason:&nbsp;<span th:text="${message}"></span>
+                    </div>
+                    <div class="mb-2">
+                        Please make a copy the analysis first and modify it afterwarts if you do not want the dashboard(s) to be changed.
+                        Otherwise, continue the modification.
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row mb-2">
+                        <div class="col">
+                            <button class="btn btn-outline-danger flex-fill" type="button" onclick="history.go(-1);">Go Back</button>
+                        </div>
+                        <div class="col">
+                            <form method="POST" th:action="@{/ui/dave/manage/analysis/edit/ack}" class="flex-fill d-flex">
+                                <input type="hidden" name="flow" th:value="${flow}">
+                                <input type="hidden" name="name" th:value="${name}">
+                                <input type="hidden" name="queryName" th:value="${queryName}">
+                                <textarea class="d-none" name="queryContent" th:utext="${queryContent}"></textarea>
+                                <input type="hidden" name="graphName" th:value="${graphName}">
+                                <textarea class="d-none" name="graphContent" th:utext="${graphContent}"></textarea>
+                                <button type="submit" class="btn btn-outline-success button-spinner flex-fill">Continue</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

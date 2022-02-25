@@ -2,7 +2,6 @@ package de.tudresden.inf.verdatas.xapitools.dave.analysis;
 
 import de.tudresden.inf.verdatas.xapitools.dave.FileManagementService;
 import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
-import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveVisualisationService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.*;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +9,6 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -80,29 +76,20 @@ public class DaveAnalysisService {
         return created;
     }
 
-    // TODO Check query and graphDescription before saving analysis
     @Transactional
-    public void updateAnalysis(DaveVis analysis, String name, String query, Optional<UUID> queryId, String queryName,
-                               String graphDescription, Optional<UUID> graphId, String graphName) {
+    public void updateAnalysis(DaveVis analysis, String name, String query, String queryName,
+                               String graphDescription, String graphName) {
         Optional<DaveVis> copy = this.visRepository.findByName(name);
-        if (copy.isPresent() && !(copy.get().getId() == analysis.getId())) {
+        if (copy.isPresent() && !(copy.get().getId().equals(analysis.getId()))) {
             throw new IllegalStateException("Conflicting analysis objects. Please rename your analysis.");
         } else {
             this.setAnalysisName(analysis, name);
         }
         this.checkValidityOfInput(query, queryName, graphDescription, graphName);
-        if (queryId.isPresent() && this.checkUsageOfQuery(queryId.get()).size() > 1) {
-            this.setAnalysisQuery(analysis, this.queryRepository.save(new DaveQuery(queryName, query)));
-        } else {
-            this.setAnalysisQuery(analysis, this.queryRepository.findByName(queryName)
+        this.setAnalysisQuery(analysis, this.queryRepository.findByName(queryName)
                     .orElseGet(() -> this.queryRepository.save(new DaveQuery(queryName, query))));
-        }
-        if (graphId.isPresent() && this.checkUsageOfGraphDescription(graphId.get()).size() > 1) {
-            this.graphDescriptionRepository.save(new DaveGraphDescription(graphName, graphDescription));
-        } else {
-            this.setAnalysisGraphDescription(analysis, this.graphDescriptionRepository.findByName(graphName)
+        this.setAnalysisGraphDescription(analysis, this.graphDescriptionRepository.findByName(graphName)
                     .orElseGet(() -> this.graphDescriptionRepository.save(new DaveGraphDescription(graphName, graphDescription))));
-        }
     }
 
     @Transactional
@@ -167,18 +154,6 @@ public class DaveAnalysisService {
             }
         }
         return useAnalysis;
-    }
-
-    public Set<DaveVis> checkUsageOfQuery(UUID query) {
-        return this.getAllAnalysis(false)
-                .filter(daveVis -> daveVis.getQuery().getId() == query)
-                .collect(Collectors.toSet());
-    }
-
-    public Set<DaveVis> checkUsageOfGraphDescription(UUID graph) {
-        return this.getAllAnalysis(false)
-                .filter(daveVis -> daveVis.getDescription().getId() == graph)
-                .collect(Collectors.toSet());
     }
 
     public Set<DaveVis> checkForQueryConflicts(String queryName, String query) {

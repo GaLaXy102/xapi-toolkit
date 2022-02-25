@@ -14,8 +14,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.*;
@@ -126,25 +126,43 @@ public class AnalysisMavController implements IUIManagementFlow {
         return mav;
     }
 
-    // TODO Check if analysis is in use in Dashboard, allow changing only after acknowledgement through user
     @PostMapping(BASE_URL + "/edit")
-    public RedirectView editAnalysis(@RequestParam("flow") UUID analysisId,
+    public ModelAndView editAnalysis(@RequestParam("flow") UUID analysisId,
                                      @RequestParam("name") String name,
-                                     @RequestParam("queryId") Optional<UUID> queryId,
                                      @RequestParam("queryContent") String query,
                                      @RequestParam("queryName") String queryName,
-                                     @RequestParam("graphId") Optional<UUID> graphId,
                                      @RequestParam("graphContent") String graphDescription,
-                                     @RequestParam("graphName") String graphName,
-                                     RedirectAttributes attributes) {
-        DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
-        //if (!(this.daveAnalysisService.checkUsageOfAnalysis(analysis).isEmpty())) {
-        //    attributes.addAllAttributes(Map.of("flow", analysisId, "name", name, "queryId", ))
-        //}
+                                     @RequestParam("graphName") String graphName) {
         this.daveAnalysisService.checkValidityOfAnalysisDescription(query, queryName, graphDescription, graphName);
-        this.daveAnalysisService.updateAnalysis(analysis, name, query.replace("\r", ""), queryId, queryName,
-                graphDescription.replace("\r", ""), graphId, graphName);
-        return new RedirectView("./show");
+        DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
+        Set<String> dashboardNames = this.daveAnalysisService.checkUsageOfAnalysis(analysis);
+        if (!(dashboardNames.isEmpty())) {
+            ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/conflict");
+            mav.addObject("flow", analysisId);
+            mav.addObject("message", "Modification of " + analysis.getName() + " not possible.\n Still in use for dashboard(s) " + dashboardNames);
+            mav.addObject("name", name);
+            mav.addObject("queryContent", query);
+            mav.addObject("queryName", queryName);
+            mav.addObject("graphContent", graphDescription);
+            mav.addObject("graphName", graphName);
+            return mav;
+        }
+        this.daveAnalysisService.updateAnalysis(analysis, name, query.replace("\r", ""), queryName,
+                graphDescription.replace("\r", ""), graphName);
+        return new ModelAndView("redirect:./show");
+    }
+
+    @PostMapping(BASE_URL + "/edit/ack")
+    public RedirectView finalizeEditingOfAnalysis(@RequestParam("flow") UUID analysisId,
+                                                  @RequestParam("name") String name,
+                                                  @RequestParam("queryContent") String query,
+                                                  @RequestParam("queryName") String queryName,
+                                                  @RequestParam("graphContent") String graphDescription,
+                                                  @RequestParam("graphName") String graphName) {
+        DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
+        this.daveAnalysisService.updateAnalysis(analysis, name, query.replace("\r", ""), queryName,
+                graphDescription.replace("\r", ""), graphName);
+        return new RedirectView("../show");
     }
 
     @GetMapping("/dave/analysis_description")
