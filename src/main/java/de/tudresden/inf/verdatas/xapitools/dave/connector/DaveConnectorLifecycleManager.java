@@ -12,6 +12,7 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,7 @@ import java.net.URL;
  * @author Konstantin Köhring (@Galaxy102)
  */
 @Component
+@DependsOn("seleniumDriverProvider")
 @Validated
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DaveConnectorLifecycleManager implements BeanFactoryAware {
