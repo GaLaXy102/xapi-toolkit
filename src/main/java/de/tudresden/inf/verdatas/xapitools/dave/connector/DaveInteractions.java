@@ -3,16 +3,16 @@ package de.tudresden.inf.verdatas.xapitools.dave.connector;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 class DaveInteractions {
-    static WebDriver startNewSession(URL daveEndpoint) {
-        WebDriver driver = new ChromeDriver();
+    static WebDriver startNewSession(URL daveEndpoint, Supplier<WebDriver> getDriverFunction) {
+        WebDriver driver = getDriverFunction.get();
         driver.manage().timeouts().implicitlyWait(750, TimeUnit.MILLISECONDS);
         driver.get(daveEndpoint.toString());
         return driver;

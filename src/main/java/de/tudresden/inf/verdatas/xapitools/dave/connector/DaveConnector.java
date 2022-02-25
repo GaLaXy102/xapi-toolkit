@@ -3,17 +3,13 @@ package de.tudresden.inf.verdatas.xapitools.dave.connector;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.Closeable;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -22,23 +18,26 @@ public class DaveConnector implements IExternalService, Closeable {
     private static final String HEALTH_ENDPOINT = "";
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final URL daveEndpoint;
+    private final Supplier<WebDriver> getDriverFunction;
     private LrsConnection lrsConnection = null;
     private WebDriver driver;
     @Getter
     private Boolean health = null;
 
-    DaveConnector(URL daveEndpoint, LrsConnection lrsConnection) {
+    DaveConnector(URL daveEndpoint, LrsConnection lrsConnection, Supplier<WebDriver> getDriverFunction) {
         this.daveEndpoint = daveEndpoint;
         this.lrsConnection = lrsConnection;
+        this.getDriverFunction = getDriverFunction;
     }
 
-    DaveConnector(URL daveEndpoint) {
+    DaveConnector(URL daveEndpoint, Supplier<WebDriver> getDriverFunction) {
         this.daveEndpoint = daveEndpoint;
+        this.getDriverFunction = getDriverFunction;
     }
 
     void initialize() {
         if (this.driver != null) return;
-        this.driver = DaveInteractions.startNewSession(this.daveEndpoint);
+        this.driver = DaveInteractions.startNewSession(this.daveEndpoint, this.getDriverFunction);
 
         try {
             DaveInteractions.initializeDave(this.driver, this.lrsConnection.getFriendlyName(),
@@ -54,7 +53,7 @@ public class DaveConnector implements IExternalService, Closeable {
 
     void startTestSession() {
         if (this.driver != null) return;
-        this.driver = DaveInteractions.startNewSession(this.daveEndpoint);
+        this.driver = DaveInteractions.startNewSession(this.daveEndpoint, this.getDriverFunction);
         try {
             DaveInteractions.initializeTestSession(this.driver);
             this.healthChangedCallback(true);

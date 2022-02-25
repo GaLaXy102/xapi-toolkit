@@ -12,7 +12,6 @@ import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.stereotype.Component;
@@ -27,13 +26,14 @@ import java.net.URL;
  * @author Konstantin Köhring (@Galaxy102)
  */
 @Component
-@DependsOn("seleniumDriverProvider")
 @Validated
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DaveConnectorLifecycleManager implements BeanFactoryAware {
     private DefaultListableBeanFactory beanFactory;
     private final ScheduledAnnotationBeanPostProcessor schedulingRegistrar;
     private final TaskExecutor taskExecutor;
+    private final SeleniumWebDriverProvider webDriverProvider;
+
     @Value("${xapi.dave.backend-base-url}")
     private URL daveEndpoint;
 
@@ -59,7 +59,7 @@ public class DaveConnectorLifecycleManager implements BeanFactoryAware {
     public void createConnector(@Active LrsConnection connection) {
         String targetBeanName = "DaveConnector-" + connection.getConnectionId();
         // Add to Application Context
-        DaveConnector connector = new DaveConnector(daveEndpoint, connection);
+        DaveConnector connector = new DaveConnector(daveEndpoint, connection, this.webDriverProvider::getWebDriver);
         this.beanFactory.registerSingleton(targetBeanName, connector);
         // Enable Scheduling. This is what @EnableScheduling would normally do.
         this.schedulingRegistrar.postProcessAfterInitialization(this.beanFactory.getBean("DaveConnector-" + connection.getConnectionId()), targetBeanName);
@@ -68,7 +68,7 @@ public class DaveConnectorLifecycleManager implements BeanFactoryAware {
 
     public void createTestConnector() {
         String targetBeanName = "DaveConnector-Test";
-        DaveConnector connector = new DaveConnector(daveEndpoint);
+        DaveConnector connector = new DaveConnector(daveEndpoint, this.webDriverProvider::getWebDriver);
         this.beanFactory.registerSingleton(targetBeanName, connector);
         this.schedulingRegistrar.postProcessAfterInitialization(this.beanFactory.getBean("DaveConnector-Test"), targetBeanName);
         this.taskExecutor.execute(connector::startTestSession);
