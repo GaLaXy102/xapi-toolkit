@@ -46,7 +46,7 @@
                 <div class="card-header">
                     <h3>
                         <span th:text="${vis.getName()}"></span>
-                        <a th:href="'/dave/analysis_description' + '?flow=' + ${vis.getId()}" class="float-end text-dark me-3"
+                        <a th:href="'/api/v1/dave/analysis/description' + '?flow=' + ${vis.getId()}" class="float-end text-dark me-3"
                            target="_blank"><i class="bi-download" title="Download analysis description"></i></a>
                     </h3>
                 </div>

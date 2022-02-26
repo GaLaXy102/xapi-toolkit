@@ -7,14 +7,10 @@ import de.tudresden.inf.verdatas.xapitools.ui.UIIcon;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -111,7 +107,8 @@ public class AnalysisMavController implements IUIManagementFlow {
                                        @RequestParam("graphName") String graphName) {
         this.daveAnalysisService.checkValidityOfAnalysisDescription(query, queryName, graphDescription, graphName);
         DaveVis analysis = this.daveAnalysisService
-                .createAnalysis(name, query.replace("\r", ""), queryName, graphDescription.replace("\r", ""), graphName);
+                .createAnalysis(name, query.replace("\r", ""), queryName,
+                        graphDescription.replace("\r", ""), graphName);
         return new RedirectView("./show");
     }
 
@@ -163,17 +160,6 @@ public class AnalysisMavController implements IUIManagementFlow {
         this.daveAnalysisService.updateAnalysis(analysis, name, query.replace("\r", ""), queryName,
                 graphDescription.replace("\r", ""), graphName);
         return new RedirectView("../show");
-    }
-
-    @GetMapping("/dave/analysis_description")
-    public ResponseEntity<DaveVis> getAnalysisDescription(@RequestParam("flow") UUID analysisId) {
-        DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
-        ContentDisposition contentDisposition = ContentDisposition.attachment()
-                .filename(analysis.getName())
-                .build();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentDisposition(contentDisposition);
-        return ResponseEntity.ok().headers(headers).body(analysis);
     }
 }
 
