@@ -147,6 +147,14 @@ function triggerGraphShow(element) {
     });
 }
 
+function replaceSvgVis(element) {
+    fetch('/api/v1/dave/visualisation' + '?flow=' + element.dataset.did
+        + '&activityURL=' + element.dataset.aid
+        + '&visId=' + element.dataset.vid)
+        .then(response => response.text())
+        .then(data => element.innerHTML = data);
+}
+
 // Inspired by https://thecoderain.blogspot.com/2020/11/generate-valid-random-email-js-jquery.html
 const emailChars = '1234567890';
 
@@ -213,6 +221,11 @@ $(document).ready(function () {
     });
     $('#graphIdInput').each(function () {
         triggerGraphShow(this);
+    });
+    // Dashboard presenter
+    $('.xapi-dashboard-vis').each(function () {
+        replaceSvgVis(this);
+        setInterval(() => replaceSvgVis(this), 300000);
     });
     // Tooltips
     $('.xapi-alignment-tooltip').each(function () {

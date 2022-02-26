@@ -1,5 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.dave.dashboards;
 
+import de.tudresden.inf.verdatas.xapitools.dave.FileManagementService;
 import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnector;
 import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.*;
@@ -15,10 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -34,6 +32,7 @@ public class DaveDashboardService {
     private final DaveQueryRepository queryRepository;
     private final DaveGraphDescriptionRepository graphDescriptionRepository;
     private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
+    private final FileManagementService fileManagementService;
 
     private final Logger logger = Logger.getLogger(DaveDashboardService.class.getName());
 
@@ -192,5 +191,43 @@ public class DaveDashboardService {
         }
         dashboard.setFinalized(true);
         this.dashboardRepository.save(dashboard);
+    }
+
+    public static String prepareQueryLimit(DaveVis analysis, Optional<String> activityId) {
+        String query = analysis.getQuery().getQuery();
+        if (activityId.isPresent()) {
+            query = query.substring(0, query.length() - 1) +
+                    "[?s :statement/object ?ac][?ac :activity/id \"" + activityId.get() + "\"]"
+                    + "]";
+        }
+        return query;
+    }
+
+    public String executeVisualisationOfDashboard(DaveDashboard dashboard, String activityURL, UUID analysisId) {
+        DaveConnector connector = this.daveConnectorLifecycleManager.getConnector(dashboard.getLrsConnection());
+        return dashboard.getVisualisations()
+                .stream()
+                .filter((vis) -> vis.getFirst().equals(activityURL) && vis.getSecond().equals(analysisId))
+                .findFirst()
+                .map((v) -> Pair.of(
+                        this.fileManagementService
+                                .prepareQuery(this.getAnalysisById(v.getSecond()), v.getFirst()),
+                        this.fileManagementService
+                                .prepareVisualisation(this.getAnalysisById(v.getSecond()))))
+                .map((prep) ->
+                        Pair.of(
+                                connector.executeAnalysis(prep.getFirst().getAbsolutePath(), prep.getSecond().getAbsolutePath()),
+                                Pair.of(prep.getFirst(), prep.getSecond())
+                        ))
+                .map((visAndFiles) -> {
+                    visAndFiles.getSecond().getFirst().delete();
+                    visAndFiles.getSecond().getSecond().delete();
+                    return visAndFiles.getFirst();
+                })
+                .orElseThrow(() -> new NoSuchElementException("Could not find dashboard visualisation for execution."));
+    }
+
+    public String getNameOfAnalysis(UUID analysisId) {
+        return this.getAnalysisById(analysisId).getName();
     }
 }

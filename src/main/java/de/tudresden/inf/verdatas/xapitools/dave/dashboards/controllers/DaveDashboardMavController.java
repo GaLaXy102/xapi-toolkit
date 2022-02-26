@@ -1,8 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.dave.dashboards.controllers;
 
 import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveDashboardService;
-import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveVisualisationService;
-import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
 import de.tudresden.inf.verdatas.xapitools.ui.BootstrapUIIcon;
 import de.tudresden.inf.verdatas.xapitools.ui.IUIFlow;
@@ -10,6 +8,7 @@ import de.tudresden.inf.verdatas.xapitools.ui.UIIcon;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,10 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @Order(3)
@@ -37,8 +34,6 @@ public class DaveDashboardMavController implements IUIFlow {
     }
 
     private final DaveDashboardService daveDashboardService;
-    private final DaveVisualisationService daveVisualisationService;
-    private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
     private final List<DashboardStep> children;
 
     static final String BASE_URL = "/ui/dave/dashboards";
@@ -110,14 +105,20 @@ public class DaveDashboardMavController implements IUIFlow {
         return new RedirectView("./execute");
     }
 
-    // TODO
     @GetMapping(BASE_URL + "/execute")
     public ModelAndView executeVisualisationsOfDashboard(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/show");
         DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
+        HashMap<UUID, String> analysisIdToName = new HashMap<>(dashboard.getVisualisations()
+                .stream()
+                .map(Pair::getSecond)
+                .distinct()
+                .map((analysisId) -> Pair.of(analysisId, this.daveDashboardService.getNameOfAnalysis(analysisId)))
+                .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond))
+        );
 
         mav.addObject("dashboard", dashboard);
-        mav.addObject("graphs", this.daveVisualisationService.executeVisualisationsOfDashboard(dashboard));
+        mav.addObject("visNames", analysisIdToName);
         return mav;
     }
 
