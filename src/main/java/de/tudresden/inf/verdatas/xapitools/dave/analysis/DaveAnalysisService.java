@@ -1,5 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.dave.analysis;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import de.tudresden.inf.verdatas.xapitools.dave.FileManagementService;
 import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.*;
@@ -50,7 +51,6 @@ public class DaveAnalysisService {
         return emptyAnalysis;
     }
 
-    // TODO Check query and graphDescription before saving analysis
     @Transactional
     public DaveVis createAnalysis(String name, String query, String queryName, String graphDescription, String graphName) {
         this.checkValidityOfInput(query, queryName, graphDescription, graphName);
@@ -207,6 +207,19 @@ public class DaveAnalysisService {
                 .testAnalysisExecution(analysisDescriptionPaths.getFirst(), analysisDescriptionPaths.getSecond());
         if (error.isPresent()) {
             throw new IllegalStateException(error.get());
+        }
+    }
+
+    public void retrieveAnalysisDescriptions(List<JsonNode> analysisData) {
+        for (JsonNode analysisDescription:
+             analysisData) {
+            String analysisName = analysisDescription.get("name").asText();
+            Pair<String, String> query = Pair.of(analysisDescription.get("query").get("name").asText(),
+                    analysisDescription.get("query").get("query").asText());
+            Pair<String, String> graphDescription = Pair.of(analysisDescription.get("description").get("name").asText(),
+                    analysisDescription.get("description").get("description").asText());
+            this.checkValidityOfAnalysisDescription(query.getSecond(), query.getFirst(), graphDescription.getSecond(), graphDescription.getFirst());
+            this.createAnalysis(analysisName, query.getFirst(), query.getSecond(), graphDescription.getSecond(), graphDescription.getFirst());
         }
     }
 }

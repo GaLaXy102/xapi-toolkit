@@ -27,6 +27,24 @@
                 </div>
             </div>
         </div>
+        <div class="col d-flex align-items-stretch" th:unless="${param.get('flow')}">
+            <form method="POST" th:action="@{/api/v1/dave/analysis/insert}" class="card flex-fill" enctype="multipart/form-data">
+                <h2 class="card-header">
+                    Import from JSON
+                </h2>
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Select file</h5>
+                    <div class="mb-2">
+                        <input class="form-control" name="analysisFiles" type="file" accept="application/json" multiple required>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="mb-2 d-flex">
+                        <button class="btn btn-success button-spinner flex-fill" type="submit">Add</button>
+                    </div>
+                </div>
+            </form>
+        </div>
         <!-- Back card -->
         <div class="col d-flex align-items-stretch" th:if="${param.get('flow')}">
             <div class="card flex-fill">
