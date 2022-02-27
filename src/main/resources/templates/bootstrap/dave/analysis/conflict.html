@@ -14,9 +14,7 @@
                     <div class="mb-2">
                         Reason:&nbsp;<span th:text="${message}"></span>
                     </div>
-                    <div class="mb-2">
-                        Please make a copy the analysis first and modify it afterwarts if you do not want the dashboard(s) to be changed.
-                        Otherwise, continue the modification.
+                    <div class="mb-2" th:text="${hint}">
                     </div>
                 </div>
                 <div class="card-footer">
@@ -25,8 +23,8 @@
                             <button class="btn btn-outline-danger flex-fill" type="button" onclick="history.go(-1);">Go Back</button>
                         </div>
                         <div class="col">
-                            <form method="POST" th:action="@{/ui/dave/manage/analysis/edit/ack}" class="flex-fill d-flex">
-                                <input type="hidden" name="flow" th:value="${flow}">
+                            <form method="POST" th:action="${mode.EDITING.equals(mode)} ? '/ui/dave/manage/analysis/edit/ack' : '/ui/dave/manage/analysis/add/ack'" class="flex-fill d-flex">
+                                <input th:if="${flow}" type="hidden" name="flow" th:value="${flow}">
                                 <input type="hidden" name="name" th:value="${name}">
                                 <input type="hidden" name="queryName" th:value="${queryName}">
                                 <textarea class="d-none" name="queryContent" th:utext="${queryContent}"></textarea>

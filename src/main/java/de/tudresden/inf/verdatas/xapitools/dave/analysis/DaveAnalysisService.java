@@ -59,9 +59,8 @@ public class DaveAnalysisService {
         }
         DaveVis created = new DaveVis(
                 name,
-                this.queryRepository.findByName(queryName).orElseGet(() -> this.queryRepository.save(new DaveQuery(queryName, query))),
-                this.graphDescriptionRepository.findByName(graphName)
-                        .orElseGet(() -> this.graphDescriptionRepository.save(new DaveGraphDescription(graphName, graphDescription))),
+                this.updateQuery(queryName, query),
+                this.updateGraphDescription(graphName, graphDescription),
                 true
         );
         return this.visRepository.save(created);
@@ -85,11 +84,28 @@ public class DaveAnalysisService {
         } else {
             this.setAnalysisName(analysis, name);
         }
-        this.checkValidityOfInput(query, queryName, graphDescription, graphName);
-        this.setAnalysisQuery(analysis, this.queryRepository.findByName(queryName)
-                    .orElseGet(() -> this.queryRepository.save(new DaveQuery(queryName, query))));
-        this.setAnalysisGraphDescription(analysis, this.graphDescriptionRepository.findByName(graphName)
-                    .orElseGet(() -> this.graphDescriptionRepository.save(new DaveGraphDescription(graphName, graphDescription))));
+        this.checkForQueryDuplicates(queryName, query);
+        this.checkForGraphDescriptionDuplicates(graphName, graphDescription);
+        this.setAnalysisQuery(analysis, this.updateQuery(queryName, query));
+        this.setAnalysisGraphDescription(analysis, this.updateGraphDescription(graphName, graphDescription));
+    }
+
+    @Transactional
+    public DaveQuery updateQuery(String queryName, String query) {
+        DaveQuery updatedOrCreated = this.queryRepository.findByName(queryName).map(found -> {
+            found.setQuery(query);
+            return found;
+        }).orElseGet(() -> new DaveQuery(queryName, query));
+        return this.queryRepository.save(updatedOrCreated);
+    }
+
+    @Transactional
+    public DaveGraphDescription updateGraphDescription(String graphName, String graphDescription) {
+        DaveGraphDescription updatedOrCreated = this.graphDescriptionRepository.findByName(graphName).map(found -> {
+            found.setDescription(graphDescription);
+            return found;
+        }).orElseGet(() -> new DaveGraphDescription(graphName, graphDescription));
+        return this.graphDescriptionRepository.save(updatedOrCreated);
     }
 
     @Transactional
@@ -156,6 +172,22 @@ public class DaveAnalysisService {
         return useAnalysis;
     }
 
+    public Set<String> checkUsageOfQuery(DaveVis analysis, String queryName, String query) {
+        return this.checkForQueryConflicts(queryName, query)
+                .stream()
+                .filter(daveVis -> !(daveVis.getId().equals(analysis.getId())))
+                .map(DaveVis::getName)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<String> checkUsageOfGraphDescription(DaveVis analysis, String graphName, String graphDescription) {
+        return this.checkForGraphDescriptionConflicts(graphName, graphDescription)
+                .stream()
+                .filter(daveVis -> !(daveVis.getId().equals(analysis.getId())))
+                .map(DaveVis::getName)
+                .collect(Collectors.toSet());
+    }
+
     public Set<DaveVis> checkForQueryConflicts(String queryName, String query) {
         return this.getAllAnalysis(false)
                 .filter(daveVis -> daveVis.getQuery().getName().equals(queryName))
@@ -185,15 +217,8 @@ public class DaveAnalysisService {
     }
 
     public void checkValidityOfInput(String query, String queryName, String graphDescription, String graphName) {
-        Set<DaveVis> queryConflicts = this.checkForQueryConflicts(queryName, query);
-        if (!(queryConflicts.isEmpty())) {
-            throw new IllegalStateException("Conflicting query objects. Please rename your query.");
-        }
         if (!(this.checkForQueryDuplicates(queryName, query).isEmpty())) {
             throw new IllegalStateException("Duplication of query objects. Please select your query from the dropdown menu.");
-        }
-        if (!(this.checkForGraphDescriptionConflicts(graphName, graphDescription).isEmpty())) {
-            throw new IllegalStateException("Conflicting graph description objects. Please rename your graph description.");
         }
         if (!(this.checkForGraphDescriptionDuplicates(graphName, graphDescription).isEmpty())) {
             throw new IllegalStateException("Duplication of graph description objects. Please select your graph description from the dropdown menu.");

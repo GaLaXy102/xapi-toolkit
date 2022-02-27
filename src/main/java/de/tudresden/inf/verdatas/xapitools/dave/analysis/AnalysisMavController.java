@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @Order(2)
@@ -23,6 +24,15 @@ public class AnalysisMavController implements IUIManagementFlow {
     private final DaveAnalysisService daveAnalysisService;
 
     private static final String BASE_URL = "/ui/dave/manage/analysis";
+
+    /**
+     * UI helper enum, controls button states
+     */
+    enum Mode {
+        CREATING,
+        EDITING,
+        DISPLAYING
+    }
 
     /**
      * Get the Human readable name of this Setting.
@@ -100,16 +110,59 @@ public class AnalysisMavController implements IUIManagementFlow {
     }
 
     @PostMapping(BASE_URL + "/add")
-    public RedirectView createAnalysis(@RequestParam("name") String name,
+    public ModelAndView createAnalysis(@RequestParam("name") String name,
                                        @RequestParam("queryContent") String query,
                                        @RequestParam("queryName") String queryName,
                                        @RequestParam("graphContent") String graphDescription,
                                        @RequestParam("graphName") String graphName) {
         this.daveAnalysisService.checkValidityOfAnalysisDescription(query, queryName, graphDescription, graphName);
+
+        Set<String> analysisWithSameQuery = this.daveAnalysisService.checkForQueryConflicts(queryName, query)
+                .stream()
+                .map(DaveVis::getName)
+                .collect(Collectors.toSet());
+        Set<String> analysisWithSameGraph = this.daveAnalysisService.checkForGraphDescriptionConflicts(graphName, graphDescription)
+                .stream()
+                .map(DaveVis::getName)
+                .collect(Collectors.toSet());
+        // Needed if checking for side effects provides error and user has to acknowledge changes
+        ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/conflict");
+        mav.addObject("mode", Mode.CREATING);
+        mav.addObject("name", name);
+        mav.addObject("queryContent", query);
+        mav.addObject("queryName", queryName);
+        mav.addObject("graphContent", graphDescription);
+        mav.addObject("graphName", graphName);
+
+        if (!(analysisWithSameQuery.isEmpty())) {
+            mav.addObject("message", "Modification of query not possible.\n Still in use for analysis "
+                    + analysisWithSameQuery);
+            mav.addObject("hint", "Please use a different name for your query " +
+                    "if you do not want the other analysis to be changed.\n Otherwise, continue the modification.");
+            return mav;
+        } else if (!(analysisWithSameGraph.isEmpty())) {
+            mav.addObject("message", "Modification of graph description not possible.\n Still in use for analysis "
+                    + analysisWithSameGraph);
+            mav.addObject("hint", "Please use a different name for your graphDescription " +
+                    "if you do not want the other analysis to be changed.\n Otherwise, continue the modification.");
+            return mav;
+        }
+
         DaveVis analysis = this.daveAnalysisService
                 .createAnalysis(name, query.replace("\r", ""), queryName,
                         graphDescription.replace("\r", ""), graphName);
-        return new RedirectView("./show");
+        return new ModelAndView("redirect:./show");
+    }
+
+    @PostMapping(BASE_URL + "/add/ack")
+    public RedirectView finalizeCreatingOfAnalysis(@RequestParam("name") String name,
+                                                  @RequestParam("queryContent") String query,
+                                                  @RequestParam("queryName") String queryName,
+                                                  @RequestParam("graphContent") String graphDescription,
+                                                  @RequestParam("graphName") String graphName) {
+        this.daveAnalysisService.createAnalysis(name, query.replace("\r", ""), queryName,
+                graphDescription.replace("\r", ""), graphName);
+        return new RedirectView("../show");
     }
 
     @GetMapping(BASE_URL + "/edit")
@@ -133,17 +186,38 @@ public class AnalysisMavController implements IUIManagementFlow {
         this.daveAnalysisService.checkValidityOfAnalysisDescription(query, queryName, graphDescription, graphName);
         DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
         Set<String> dashboardNames = this.daveAnalysisService.checkUsageOfAnalysis(analysis);
+        Set<String> analysisWithSameQuery = this.daveAnalysisService.checkUsageOfQuery(analysis, queryName, query);
+        Set<String> analysisWithSameGraph = this.daveAnalysisService.checkUsageOfGraphDescription(analysis, graphName, graphDescription);
+        // Needed if checking for side effects provides error and user has to acknowledge changes
+        ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/conflict");
+        mav.addObject("mode", Mode.EDITING);
+        mav.addObject("flow", analysisId);
+        mav.addObject("name", name);
+        mav.addObject("queryContent", query);
+        mav.addObject("queryName", queryName);
+        mav.addObject("graphContent", graphDescription);
+        mav.addObject("graphName", graphName);
+
         if (!(dashboardNames.isEmpty())) {
-            ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/conflict");
-            mav.addObject("flow", analysisId);
-            mav.addObject("message", "Modification of " + analysis.getName() + " not possible.\n Still in use for dashboard(s) " + dashboardNames);
-            mav.addObject("name", name);
-            mav.addObject("queryContent", query);
-            mav.addObject("queryName", queryName);
-            mav.addObject("graphContent", graphDescription);
-            mav.addObject("graphName", graphName);
+            mav.addObject("message", "Modification of " + analysis.getName()
+                    + " not possible.\n Still in use for dashboard(s) " + dashboardNames);
+            mav.addObject("hint", "Please make a copy the analysis first and modify it afterwarts " +
+                            "if you do not want the dashboard(s) to be changed.\n Otherwise, continue the modification.");
+            return mav;
+        } else if (!(analysisWithSameQuery.isEmpty())) {
+            mav.addObject("message", "Modification of query not possible.\n Still in use for analysis "
+                    + analysisWithSameQuery);
+            mav.addObject("hint", "Please use a different name for your query " +
+                    "if you do not want the other analysis to be changed.\n Otherwise, continue the modification.");
+            return mav;
+        } else if (!(analysisWithSameGraph.isEmpty())) {
+            mav.addObject("message", "Modification of graph description not possible.\n Still in use for analysis "
+                    + analysisWithSameGraph);
+            mav.addObject("hint", "Please use a different name for your graphDescription " +
+                    "if you do not want the other analysis to be changed.\n Otherwise, continue the modification.");
             return mav;
         }
+
         this.daveAnalysisService.updateAnalysis(analysis, name, query.replace("\r", ""), queryName,
                 graphDescription.replace("\r", ""), graphName);
         return new ModelAndView("redirect:./show");
