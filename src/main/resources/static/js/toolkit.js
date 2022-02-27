@@ -152,7 +152,9 @@ function replaceSvgVis(element) {
         + '&activityURL=' + element.dataset.aid
         + '&visId=' + element.dataset.vid)
         .then(response => response.text())
-        .then(data => element.innerHTML = data);
+        .then(data => element.innerHTML = data)
+        .then(() => element.firstElementChild.removeAttribute('viewport'))
+        .then(() => element.firstElementChild.setAttribute('height', 1.2 * element.firstElementChild.getAttribute('height')));
 }
 
 // Inspired by https://thecoderain.blogspot.com/2020/11/generate-valid-random-email-js-jquery.html
