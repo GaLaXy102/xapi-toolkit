@@ -197,7 +197,7 @@ public class DaveDashboardService {
         String query = analysis.getQuery().getQuery();
         if (activityId.isPresent()) {
             query = query.substring(0, query.length() - 1) +
-                    "[?s :statement/object ?ac][?ac :activity/id \"" + activityId.get() + "\"]"
+                    "[?s :statement/object ?so][?so :activity/id \"" + activityId.get() + "\"]"
                     + "]";
         }
         return query;
