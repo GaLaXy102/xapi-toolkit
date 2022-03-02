@@ -11,7 +11,7 @@ import java.net.URL;
 @Component
 @Profile("!dev")
 public class DockerSeleniumDriverProvider implements SeleniumWebDriverProvider {
-    @Value("xapi.dave.selenium-hub-url")
+    @Value("${xapi.dave.selenium-hub-url}")
     private URL seleniumURL;
 
     @Override
