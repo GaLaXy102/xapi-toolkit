@@ -193,7 +193,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 5,
+                                  "padding": 15,
 
                                   "data": [
                                     {     \s
@@ -274,7 +274,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 5,
+                                  "padding": 15,
 
                                   "data": [
                                     {     \s
@@ -355,7 +355,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 5,
+                                  "padding": 15,
 
                                   "data": [
                                     {     \s
@@ -436,7 +436,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 5,
+                                  "padding": 15,
 
                                   "data": [
                                     {     \s
@@ -517,7 +517,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 5,
+                                  "padding": 15,
 
                                   "data": [
                                     {     \s
@@ -598,7 +598,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 5,
+                                  "padding": 15,
 
                                   "data": [
                                     {     \s
@@ -679,7 +679,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 5,
+                                  "padding": 15,
 
                                   "data": [
                                     {     \s
@@ -759,7 +759,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 5,
+                                  "padding": 15,
 
                                   "data": [
                                     {     \s
@@ -889,7 +889,7 @@ public class DaveVisSeeder {
                                       }
                                     }
                                   ],
-                                  "padding": 5,
+                                  "padding": 15,
                                   "marks": [
                                     {
                                       "type": "group",
@@ -1011,7 +1011,7 @@ public class DaveVisSeeder {
                                       }
                                     }
                                   ],
-                                  "padding": 5,
+                                  "padding": 15,
                                   "marks": [
                                     {
                                       "type": "group",
