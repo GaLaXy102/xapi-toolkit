@@ -66,8 +66,8 @@ public class VisualisationsSettingFlowController implements DashboardStep {
     }
 
     @GetMapping(DaveDashboardMavController.BASE_URL + "/edit/visualisations")
-    public ModelAndView showEditAnalysis(@RequestParam(name = "flow") UUID dashboardId) {
-        ModelAndView mav = this.showSelectAnalysis(dashboardId, Optional.empty());
+    public ModelAndView showEditAnalysis(@RequestParam(name = "flow") UUID dashboardId, Optional<Boolean> cache) {
+        ModelAndView mav = this.showSelectAnalysis(dashboardId, cache);
         mav.addObject("mode", DaveDashboardMavController.Mode.EDITING);
         return mav;
     }
