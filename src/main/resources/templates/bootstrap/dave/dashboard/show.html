@@ -10,20 +10,20 @@
                 <div class="card-body bg-light d-flex">
                     <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/dashboards/show}">
                         <div class="flex-fill text-center align-self-center">
-                            <i class="bi-arrow-left-square-fill fs-3 text-warning"></i>
+                            <i class="bi-arrow-left-square-fill fs-3 text-warning" title="Back to all dashboards"></i>
                             <span class="fs-3">Back to all dashboards</span>
                         </div>
                     </a>
                 </div>
             </div>
         </div>
+        <!-- Title card -->
         <div class="col w-100 d-flex align-items-stretch" th:if="${param.get('flow')}">
             <div class="card flex-fill">
                 <div class="card-body bg-light d-flex">
                         <div class="flex-fill text-center align-self-center">
                             <span class="fs-3" th:text="${dashboard.getName()}"></span>
                         </div>
-                    </a>
                 </div>
             </div>
         </div>

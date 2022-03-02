@@ -10,7 +10,7 @@
                 <div class="card-body bg-light d-flex">
                     <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/dashboards/new}">
                         <div class="flex-fill text-center align-self-center">
-                            <i class="bi-file-earmark-plus fs-3 text-success me-2"></i>
+                            <i class="bi-file-earmark-plus fs-3 text-success me-2" title="Create new dashboard"></i>
                             <span class="fs-3">Create new dashboard</span>
                         </div>
                     </a>
@@ -33,7 +33,7 @@
                 <div class="card-body bg-light d-flex">
                     <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/dashboards/show}">
                         <div class="flex-fill text-center align-self-center">
-                            <i class="bi-arrow-left-square-fill fs-1 text-warning"></i>
+                            <i class="bi-arrow-left-square-fill fs-1 text-warning" title="Back to all dashboards"></i>
                             <p class="fs-2">Back to all dashboards</p>
                         </div>
                     </a>
@@ -47,24 +47,24 @@
                     <h2>
                         <span th:text="${dashboard.getName()}"></span>
                         <a th:href="'/ui/dave/dashboards/edit' + '?flow=' + ${dashboard.getId()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit title"></i></a>
                     </h2>
                 </div>
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                        <i class="bi-magic"></i>
+                        <i class="bi-cloud-arrow-up"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:if="${dashboard.getLrsConnection()}" th:text="${dashboard.getLrsConnection().getFriendlyName()}"></span>
                         <span th:unless="${dashboard.getLrsConnection()}">No LRS selected</span>
                         <a th:href="'/ui/dave/dashboards/edit/source' + '?flow=' + ${dashboard.getId()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit source LRS"></i></a>
                     </li>
                     <li class="list-group-item">
-                        <i class="bi-magic"></i>
+                        <i class="bi-bar-chart-line"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${dashboard.getVisualisations().size()}"></span> Visualisations
                         <a th:href="'/ui/dave/dashboards/edit/visualisations' + '?flow=' + ${dashboard.getId()}"
-                           class="float-end text-dark"><i class="bi-pencil"></i></a>
+                           class="float-end text-dark"><i class="bi-pencil" title="Edit analysis"></i></a>
                     </li>
                 </ul>
                 <div class="card-footer">

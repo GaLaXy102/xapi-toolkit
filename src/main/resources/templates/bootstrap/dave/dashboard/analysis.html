@@ -27,12 +27,12 @@
                 <div class="col-1 align-self-center">
                     <a th:href="'?flow=' + ${flow} + '&cache=false'">
                         <button class="col btn" type="button">
-                            <i class="bi-arrow-repeat"></i>
+                            <i class="bi-arrow-repeat" title="Load Activities of LRS"></i>
                         </button>
                     </a>
                 </div>
                 <div class="col-1 align-self-center">
-                    <button class="col btn btn-success float-end" type="submit">+</button>
+                    <button class="col btn btn-success float-end" type="submit" title="Add analysis to dashboard">+</button>
                 </div>
             </div>
         </div>
@@ -59,7 +59,7 @@
                         <input type="hidden" name="mode" th:value="${mode}">
                         <input type="hidden" name="position" th:value="${stat.index}">
                         <button class="btn" type="submit">
-                            <i class="bi-caret-up"></i>
+                            <i class="bi-caret-up" title="Move up"></i>
                         </button>
                     </form>
                 </td>
@@ -69,7 +69,7 @@
                         <input type="hidden" name="mode" th:value="${mode}">
                         <input type="hidden" name="position" th:value="${stat.index}">
                         <button class="btn" type="submit">
-                            <i class="bi-caret-down"></i>
+                            <i class="bi-caret-down" title="Move down"></i>
                         </button>
                     </form>
                 </td>
@@ -82,7 +82,7 @@
                         <input type="hidden" name="mode" th:value="${mode}">
                         <input type="hidden" name="position" th:value="${stat.index}">
                         <button class="btn" type="submit">
-                            <i class="bi-trash"></i>
+                            <i class="bi-trash" title="Delete analysis from dashboard"></i>
                         </button>
                     </form>
                 </td>

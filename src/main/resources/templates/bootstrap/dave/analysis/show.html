@@ -10,7 +10,7 @@
                 <div class="card-body bg-light d-flex">
                     <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/manage/analysis/add}">
                         <div class="flex-fill text-center align-self-center">
-                            <i class="bi-file-earmark-plus fs-3 text-success me-2"></i>
+                            <i class="bi-file-earmark-plus fs-3 text-success me-2" title="Create new analysis"></i>
                             <span class="fs-3">Create new analysis</span>
                         </div>
                     </a>
@@ -27,6 +27,7 @@
                 </div>
             </div>
         </div>
+        <!-- Import card -->
         <div class="col d-flex align-items-stretch" th:unless="${param.get('flow')}">
             <form method="POST" th:action="@{/api/v1/dave/analysis/insert}" class="card flex-fill" enctype="multipart/form-data">
                 <h2 class="card-header">
@@ -51,7 +52,7 @@
                 <div class="card-body bg-light d-flex">
                     <a class="flex-fill d-flex text-reset text-decoration-none" th:href="@{/ui/dave/manage/analysis/show}">
                         <div class="flex-fill text-center align-self-center">
-                            <i class="bi-arrow-left-square-fill fs-1 text-warning"></i>
+                            <i class="bi-arrow-left-square-fill fs-1 text-warning" title="Back to all analysis"></i>
                             <p class="fs-2">Back to all analysis</p>
                         </div>
                     </a>
@@ -87,7 +88,7 @@
                         <div class="col">
                             <form method="GET" th:action="@{/ui/dave/manage/analysis/edit}" class="flex-fill d-flex">
                                 <input type="hidden" name="flow" th:value="${vis.getId()}">
-                                <button type="submit" class="btn btn-warning flex-fill"><i class="bi bi-pencil-fill"></i>&nbsp;Edit</button>
+                                <button type="submit" class="btn btn-warning flex-fill">Edit</button>
                             </form>
                         </div>
                     </div>
