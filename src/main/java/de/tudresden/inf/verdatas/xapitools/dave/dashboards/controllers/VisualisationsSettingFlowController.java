@@ -49,7 +49,6 @@ public class VisualisationsSettingFlowController implements DashboardStep {
         return Pattern.compile(DaveDashboardMavController.BASE_URL + "/(new|edit)/visualisations(/add)?$");
     }
 
-    // TODO Write method to get results and activityId
     @GetMapping(DaveDashboardMavController.BASE_URL + "/new/visualisations")
     public ModelAndView showSelectAnalysis(@RequestParam(name = "flow") UUID dashboardId, Optional<Boolean> cache) {
         if (!cache.orElse(true)) this.daveAnalysisService.cleanCaches();

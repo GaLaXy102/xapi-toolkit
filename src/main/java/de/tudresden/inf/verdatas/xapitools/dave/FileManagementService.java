@@ -1,6 +1,5 @@
 package de.tudresden.inf.verdatas.xapitools.dave;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveDashboardService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveVis;
 import lombok.AccessLevel;
@@ -19,7 +18,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class FileManagementService {
-    private final ObjectMapper mapper;
 
     @Value("${xapi.datasim.sim-storage}")  // TODO
     private String basepath;
@@ -46,8 +44,7 @@ public class FileManagementService {
         return this.writeFile("analysis", analysis.getDescription().getDescription());
     }
 
-    public Pair<String, String> prepareValidityCheck(String queryName, String queryDescription,
-                                                     String graphName, String graphDescription) {
+    public Pair<String, String> prepareValidityCheck(String queryDescription, String graphDescription) {
         File query = this.writeFile("query", queryDescription);
         File graph = this.writeFile("graph", graphDescription);
         return Pair.of(query.getAbsolutePath(), graph.getAbsolutePath());

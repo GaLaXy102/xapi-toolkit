@@ -117,10 +117,10 @@ public class DaveConnector implements IExternalService, Closeable {
         }
     }
 
-    public synchronized String executeAnalysis(String query, String graph) {
+    public synchronized String executeAnalysis(String queryPath, String graphPath) {
         if (this.getHealth()) {
             try {
-                return DaveInteractions.executeAnalysis(this.driver, query, graph);
+                return DaveInteractions.executeAnalysis(this.driver, queryPath, graphPath);
             } catch (Exception e) {
                 this.driver.quit();
                 this.healthChangedCallback(false);
@@ -137,8 +137,8 @@ public class DaveConnector implements IExternalService, Closeable {
     public Optional<String> testAnalysisExecution(String query, String graph) {
         if (this.getHealth()) {
             try {
-                Optional<String> queryError = DaveInteractions.addDescriptionToAnalysis(this.driver, query, false);
-                Optional<String> graphError = DaveInteractions.addDescriptionToAnalysis(this.driver, graph, true);
+                Optional<String> queryError = DaveInteractions.addDescriptionToAnalysis(this.driver, query, DaveInteractions.AnalysisDescription.QUERY);
+                Optional<String> graphError = DaveInteractions.addDescriptionToAnalysis(this.driver, graph, DaveInteractions.AnalysisDescription.GRAPH);
                 if (queryError.isPresent()) {
                     return queryError;
                 } else if (graphError.isPresent()) {
@@ -154,10 +154,10 @@ public class DaveConnector implements IExternalService, Closeable {
         throw new IllegalStateException("Interaction with " + "DAVE-Test" + " not possible.");
     }
 
-    public List<String> getAnalysisResult(List<String> paths) {
+    public List<String> getAnalysisResult(String queryPath, String graphPath) {
         if (this.getHealth()) {
             try {
-                String result = DaveInteractions.getAnalysisResult(this.driver, paths);
+                String result = DaveInteractions.getAnalysisResult(this.driver, queryPath, graphPath);
                 if (result.startsWith("#")) {
                     result = result.substring(2, result.length() - 1);
                 } else {

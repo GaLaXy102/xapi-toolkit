@@ -25,12 +25,9 @@ import java.util.stream.Stream;
 @DependsOn("daveVisSeeder")
 @EnableScheduling
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
-// TODO Zugriff auf Dokumente und deren Inhalt nur mit Überprüfung, ob vorhanden!! Auch in Controllern prüfen!!
 public class DaveDashboardService {
     private final DaveDashboardRepository dashboardRepository;
     private final DaveVisRepository visRepository;
-    private final DaveQueryRepository queryRepository;
-    private final DaveGraphDescriptionRepository graphDescriptionRepository;
     private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
     private final FileManagementService fileManagementService;
 
@@ -145,14 +142,15 @@ public class DaveDashboardService {
         this.logger.info("Cleaned Caches.");
     }
 
-    // TODO use path from DaveVis Object
     @Cacheable(
             cacheNames = "lrsActivities",
             key = "#connection.connectionId"
     )
     public List<String> getActivitiesOfLrs(LrsConnection connection) {
-        List<String> paths = List.of("/home/ylvion/Downloads/query (5).json", "/home/ylvion/Downloads/query (6).json");
-        List<String> activities = this.daveConnectorLifecycleManager.getConnector(connection).getAnalysisResult(paths);
+        DaveVis getActivities = this.prepareGetActivitiesOfLRS();
+        List<String> activities = this.daveConnectorLifecycleManager.getConnector(connection)
+                .getAnalysisResult(this.fileManagementService.prepareQuery(getActivities, "all").getAbsolutePath(),
+                        this.fileManagementService.prepareVisualisation(getActivities).getAbsolutePath());
         return activities.stream().map((s) -> s.substring(1, s.length() - 1)).map((s) -> s.split(" ")[1]).map((s) -> s.replace("\"", "")).toList();
     }
 
@@ -229,5 +227,92 @@ public class DaveDashboardService {
 
     public String getNameOfAnalysis(UUID analysisId) {
         return this.getAnalysisById(analysisId).getName();
+    }
+
+    public DaveVis prepareGetActivitiesOfLRS() {
+        return new DaveVis("Activities of LRS",
+                new DaveQuery("Activities of LRS", """
+                        [:find (count ?s) ?c :where [?s :statement/object ?o][?o :activity/id ?c]]"""),
+                new DaveGraphDescription("Top 10",
+                        """
+                                {
+                                  "$schema": "https://vega.github.io/schema/vega/v5.json",
+                                  "width": 400,
+                                  "height": 200,
+                                  "padding": 15,
+
+                                  "data": [
+                                    {     \s
+                                      "name": "table",
+                                      "source": "result",
+                                      "transform": [
+                                        { "type": "collect", "sort": {"field": "count_?s", "order" : "descending"} },
+                                        {
+                                          "type": "window",
+                                          "sort": {"field": "count_?s", "order": "descending"},
+                                          "ops": ["rank"],
+                                          "fields": [null],
+                                          "as": ["rank"]
+                                        },
+                                       \s
+                                        { "type": "filter", "expr": "datum.rank < 11"}
+                                      ]
+                                    }
+                                  ],
+
+                                  "signals": [
+                                    {
+                                      "name": "tooltip",
+                                      "value": {},
+                                      "on": [
+                                        {"events": "rect:mouseover", "update": "datum"},
+                                        {"events": "rect:mouseout",  "update": "{}"}
+                                      ]
+                                    }
+                                  ],
+
+                                  "scales": [
+                                    {
+                                      "name": "xscale",
+                                      "type": "band",
+                                      "domain": {"data": "table", "field": "?c"},
+                                      "range": "width",
+                                      "padding": 0.05,
+                                      "round": true
+                                    },
+                                    {
+                                      "name": "yscale",
+                                      "domain": {"data": "table", "field": "count_?s"},
+                                      "nice": true,
+                                      "range": "height"
+                                    }
+                                  ],
+
+                                  "axes": [
+                                    { "orient": "bottom", "scale": "xscale", "labelAngle": -35, "zindex": 2 },
+                                    { "orient": "left", "scale": "yscale" }
+                                  ],
+
+                                  "marks": [
+                                    {
+                                      "type": "rect",
+                                      "from": {"data":"table"},
+                                      "encode": {
+                                        "enter": {
+                                          "x": {"scale": "xscale", "field": "?c"},
+                                          "width": {"scale": "xscale", "band": 1},
+                                          "y": {"scale": "yscale", "field": "count_?s"},
+                                          "y2": {"scale": "yscale", "value": 0}
+                                        },
+                                        "update": {
+                                          "fill": {"value": "steelblue"}
+                                        },
+                                        "hover": {
+                                          "fill": {"value": "red"}
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }"""), true);
     }
 }

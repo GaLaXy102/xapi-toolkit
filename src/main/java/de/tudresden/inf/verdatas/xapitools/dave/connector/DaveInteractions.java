@@ -11,6 +11,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 class DaveInteractions {
+
+    /**
+     * UI helper enum, controls insertion of analysis description
+     */
+    public enum AnalysisDescription {
+        QUERY,
+        GRAPH
+    }
+
     static WebDriver startNewSession(URL daveEndpoint, Supplier<WebDriver> getDriverFunction) {
         WebDriver driver = getDriverFunction.get();
         driver.manage().timeouts().implicitlyWait(750, TimeUnit.MILLISECONDS);
@@ -24,10 +33,9 @@ class DaveInteractions {
         createAnalysis(driver);
     }
 
-    // TODO paths not null
-    static String executeAnalysis(WebDriver driver, String query, String graph) throws InterruptedException {
-        Optional<String> queryError = addDescriptionToAnalysis(driver, query, false);
-        Optional<String> graphError = addDescriptionToAnalysis(driver, graph, true);
+    static String executeAnalysis(WebDriver driver, String queryPath, String graphPath) throws InterruptedException {
+        Optional<String> queryError = addDescriptionToAnalysis(driver, queryPath, AnalysisDescription.QUERY);
+        Optional<String> graphError = addDescriptionToAnalysis(driver, graphPath, AnalysisDescription.GRAPH);
         if (queryError.isPresent()) {
             throw new IllegalStateException("Error during parsing of query description.");
         } else if (graphError.isPresent()) {
@@ -36,8 +44,8 @@ class DaveInteractions {
         return getVisOfAnalysis(driver);
     }
 
-    static String getAnalysisResult(WebDriver driver, List<String> paths) throws InterruptedException {
-        executeAnalysis(driver, paths.get(0), paths.get(1));
+    static String getAnalysisResult(WebDriver driver, String queryPath, String graphPath) throws InterruptedException {
+        executeAnalysis(driver, queryPath, graphPath);
         return getResultsForAnalysis(driver);
     }
 
@@ -105,9 +113,8 @@ class DaveInteractions {
         sub_buttons.get(4).click();
     }
 
-    // TODO decider als Enum
-    public static Optional<String> addDescriptionToAnalysis(WebDriver driver, String Path, Boolean decider) {
-        if (!decider) {
+    public static Optional<String> addDescriptionToAnalysis(WebDriver driver, String Path, DaveInteractions.AnalysisDescription decider) {
+        if (decider.equals(AnalysisDescription.QUERY)) {
             WebElement query_upload = driver.findElement(By.cssSelector("#query-input-file"));
             query_upload.sendKeys(Path);
             // empty String if query is valid (no error occurred)

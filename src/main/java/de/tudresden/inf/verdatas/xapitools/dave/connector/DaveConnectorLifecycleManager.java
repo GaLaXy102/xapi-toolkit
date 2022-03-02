@@ -23,7 +23,6 @@ import java.net.URL;
  * Magic piece of Java that can spawn and despawn Beans.
  * Here it is used to control the Lifecycle of {@link DaveConnector}s.
  *
- * @author Konstantin Köhring (@Galaxy102)
  */
 @Component
 @Validated

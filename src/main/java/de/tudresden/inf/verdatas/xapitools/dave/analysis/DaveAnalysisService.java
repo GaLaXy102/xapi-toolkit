@@ -225,9 +225,9 @@ public class DaveAnalysisService {
         }
     }
 
-    public void checkValidityOfAnalysisDescription(String query, String queryName, String graphDescription, String graphName) {
+    public void checkValidityOfAnalysisDescription(String query, String graphDescription) {
         Pair<String, String> analysisDescriptionPaths = this.fileManagementService
-                .prepareValidityCheck(queryName, query, graphName, graphDescription);
+                .prepareValidityCheck(query, graphDescription);
         Optional<String> error = this.daveConnectorLifecycleManager.getTestConnector()
                 .testAnalysisExecution(analysisDescriptionPaths.getFirst(), analysisDescriptionPaths.getSecond());
         if (error.isPresent()) {
@@ -243,7 +243,7 @@ public class DaveAnalysisService {
                     analysisDescription.get("query").get("query").asText());
             Pair<String, String> graphDescription = Pair.of(analysisDescription.get("description").get("name").asText(),
                     analysisDescription.get("description").get("description").asText());
-            this.checkValidityOfAnalysisDescription(query.getSecond(), query.getFirst(), graphDescription.getSecond(), graphDescription.getFirst());
+            this.checkValidityOfAnalysisDescription(query.getSecond(), graphDescription.getSecond());
             this.createAnalysis(analysisName, query.getFirst(), query.getSecond(), graphDescription.getSecond(), graphDescription.getFirst());
         }
     }
