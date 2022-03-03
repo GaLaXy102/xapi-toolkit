@@ -4,6 +4,7 @@ import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
 import lombok.Getter;
 import org.openqa.selenium.WebDriver;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.io.Closeable;
 import java.net.URL;
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
-public class DaveConnector implements IExternalService, Closeable {
+public class DaveConnector implements IExternalService, Closeable, DisposableBean {
     private static final String HEALTH_ENDPOINT = "";
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final URL daveEndpoint;
@@ -68,6 +69,14 @@ public class DaveConnector implements IExternalService, Closeable {
     public void close() {
         if (this.driver == null) return;
         this.driver.quit();
+    }
+
+    /**
+     * Invoked by {@link DaveConnectorLifecycleManager} on destruction.
+     */
+    @Override
+    public void destroy() {
+        this.close();
     }
 
     /**
