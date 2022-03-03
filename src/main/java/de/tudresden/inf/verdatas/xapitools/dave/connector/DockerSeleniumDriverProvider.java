@@ -2,6 +2,8 @@ package de.tudresden.inf.verdatas.xapitools.dave.connector;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.LocalFileDetector;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,8 @@ public class DockerSeleniumDriverProvider implements SeleniumWebDriverProvider {
 
     @Override
     public WebDriver getWebDriver() {
-        return WebDriverManager.chromedriver().remoteAddress(this.seleniumURL).create();
+        RemoteWebDriver driver = (RemoteWebDriver) WebDriverManager.chromedriver().remoteAddress(this.seleniumURL).create();
+        driver.setFileDetector(new LocalFileDetector());
+        return driver;
     }
 }
