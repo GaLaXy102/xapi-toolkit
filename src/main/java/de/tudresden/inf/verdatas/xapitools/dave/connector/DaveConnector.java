@@ -89,7 +89,7 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
         if (this.lrsConnection != null) {
             return "DAVE-" + this.lrsConnection.getFriendlyName();
         } else {
-            return "DAVE-Test";
+            return "DAVE";
         }
     }
 
@@ -117,12 +117,12 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
         if (this.health && this.lrsConnection != null) {
             this.logger.info("DAVE-" + this.lrsConnection.getFriendlyName() + " connection is alive.");
         } else if (this.health) {
-            this.logger.info("DAVE-Test" + " connection is alive.");
+            this.logger.info("DAVE" + " connection is alive.");
         }
         if (!this.health && this.lrsConnection != null) {
             this.logger.warning("DAVE-" + this.lrsConnection.getFriendlyName() + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
         } else if (!this.health) {
-            this.logger.warning("DAVE-Test" + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
+            this.logger.warning("DAVE" + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
         }
     }
 
@@ -139,7 +139,7 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
         if (this.lrsConnection != null) {
             throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
         } else {
-            throw new IllegalStateException("Interaction with " + "DAVE-Test" + " not possible.");
+            throw new IllegalStateException("Interaction with " + "DAVE" + " not possible.");
         }
     }
 
@@ -160,7 +160,7 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
                 throw new IllegalStateException(e.getMessage());
             }
         }
-        throw new IllegalStateException("Interaction with " + "DAVE-Test" + " not possible.");
+        throw new IllegalStateException("Interaction with " + "DAVE" + " not possible.");
     }
 
     public List<String> getAnalysisResult(String queryPath, String graphPath) {
@@ -182,7 +182,7 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
         if (this.lrsConnection != null) {
             throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
         } else {
-            throw new IllegalStateException("Interaction with " + "DAVE-Test" + " not possible.");
+            throw new IllegalStateException("Interaction with " + "DAVE" + " not possible.");
         }
     }
 }
