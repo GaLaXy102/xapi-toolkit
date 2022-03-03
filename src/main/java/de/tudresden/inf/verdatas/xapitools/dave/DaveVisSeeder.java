@@ -1109,7 +1109,7 @@ public class DaveVisSeeder {
                 this.daveVisRepository.save(new DaveVis("Learners' unlearning [VerDatAs]",
                         this.daveQueryRepository.findByName("Learners' unlearning [VerDatAs]").get(),
                         this.daveGraphDescriptionRepository.findByName("Top 10 distinct DESC").get(), true));
-                this.daveVisRepository.save(new DaveVis("Successful completions per Activity",
+                this.daveVisRepository.save(new DaveVis("Successful execution per Activity",
                         this.daveQueryRepository.findByName("Successful execution per Activity").get(),
                         this.daveGraphDescriptionRepository.findByName("Top 10 value DESC").get(), true));
                 this.daveVisRepository.save(new DaveVis("Unsuccessful execution per Activity",
