@@ -21,7 +21,7 @@
                     <input th:if="${analysis}" type="hidden" id="queryIdInput" name="queryId" th:value="${analysis.getQuery().getId()}">
                     <input th:unless="${analysis}" type="hidden" id="queryIdInput" name="queryId" value="">
                     <input th:if="${analysis}" type="text" class="form-control" name="queryName" id="queryNameInput" th:value="${analysis.getQuery().getName()}" required>
-                    <input th:unless="${analysis}" type="text" class="form-control" name="queryName" id="queryNameInput" minlength="3" maxlength="255" placeholder="Enter title" required>
+                    <input th:unless="${analysis}" type="text" class="form-control" name="queryName" id="queryNameInput" minlength="3" maxlength="255" placeholder="Enter name" required>
                 </div>
             </div>
             <div class="row mb-3 me-2">
@@ -39,7 +39,7 @@
                     <input th:if="${analysis}" type="hidden" id="graphIdInput" name="graphId" th:value="${analysis.getDescription().getId()}">
                     <input th:unless="${analysis}" type="hidden" id="graphIdInput" name="graphId" value="">
                     <input th:if="${analysis}" type="text" class="form-control" name="graphName" id="graphNameInput" th:value="${analysis.getDescription().getName()}" required>
-                    <input th:unless="${analysis}" type="text" class="form-control" name="graphName" id="graphNameInput" minlength="3" maxlength="255" placeholder="Enter title" required>
+                    <input th:unless="${analysis}" type="text" class="form-control" name="graphName" id="graphNameInput" minlength="3" maxlength="255" placeholder="Enter name" required>
                 </div>
             </div>
             <div class="row mb-3 me-2">

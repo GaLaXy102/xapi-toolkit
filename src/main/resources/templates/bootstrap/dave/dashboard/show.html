@@ -22,13 +22,11 @@
             <div class="card flex-fill">
                 <div class="card-body bg-light d-flex">
                         <div class="flex-fill text-center align-self-center">
-                            <span class="fs-3" th:text="${dashboard.getName()}"></span>
+                            <span class="fs-1" th:text="${dashboard.getName()}"></span>
                         </div>
                 </div>
             </div>
         </div>
-        <!-- Force break -->
-        <div class="w-100"></div>
         <!-- Content Cards -->
         <div class="col d-flex align-items-stretch" th:each="vis: ${dashboard.getVisualisations()}">
             <div class="card flex-fill">

@@ -34,7 +34,7 @@
                     Import from JSON
                 </h2>
                 <div class="card-body">
-                    <h5 class="card-title mb-3">Select file</h5>
+                    <h5 class="card-title mb-3">Select files</h5>
                     <div class="mb-2">
                         <input class="form-control" name="analysisFiles" type="file" accept="application/json" multiple required>
                     </div>
@@ -62,7 +62,7 @@
         <!-- Content Cards -->
         <div class="col d-flex align-items-stretch" th:each="vis: ${analysis}">
             <div class="card flex-fill">
-                <div class="card-header">
+                <div class="card-header flex-fill">
                     <h3>
                         <span th:text="${vis.getName()}"></span>
                         <a th:href="'/api/v1/dave/analysis/description' + '?flow=' + ${vis.getId()}" class="float-end text-dark me-3"
