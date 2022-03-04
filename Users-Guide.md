@@ -549,6 +549,7 @@ If you want to visualize the Top 10 results of the Query 'Successful learners pe
 Please note that the naming of your return values of your DAVE Query has to be identical to the naming of the values you access and assign in your graph description.  
 Return values of a query can be referred to like this:
 | Value in DAVE Query        | Value in VEGA description |  example                                  |
+|:---------------------------|:--------------------------|:------------------------------------------|
 |   `value`                  |   `value`                 |  ?v and "?v"                              |
 |   `count` `value`          |   `count`_`value`         |  count ?v and "count_?v"                  |
 |   `count-distinct` `value` | `count-distinct`_`value`  | count-distinct ?v and "count-distinct_?v" |
