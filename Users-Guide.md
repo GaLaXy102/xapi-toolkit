@@ -450,6 +450,22 @@ In line 6 and 7 the `actor` of the xAPI Statements are queried and name of the c
 In line 4 the xAPI Statements are filtered according to their `result` part. Only these statements where this part contains the identification `success` which value has to be true, are kept.  
 The execution of this Query will provide you the number of user agents which have successfully completed an Activity for all possible Activities and groups the result by the Activities' identifiers.  
 
+Please note, that the structure of a xAPI Statement is build by nesting of the single parts. You have to keep this in mind, when you want to write a DAVE Query.   
+Example: Actor
+```
+actor:
+    objectType: "Agent"
+    name: "sampleName"
+    account:
+        homePage: "samplePage"
+        name: "sampleAccountId"
+```
+If you want to get the identification of a single account belonging to an Actor your have to write a query like this:
+```
+[?s :statement/actor ?a]
+[?a :agent.account/name ?an]]
+```
+
 Examples for further useful functions which can be applied to query values are: `count`, `min`, `max` and `avg`. A list of possible functions can be found at (https://docs.datomic.com/on-prem/query/query.html).  
 Please note, that nesting of these functions is **not** possible. You have to use variables to bind intermediate results and use them as parameters for further functions.
 
