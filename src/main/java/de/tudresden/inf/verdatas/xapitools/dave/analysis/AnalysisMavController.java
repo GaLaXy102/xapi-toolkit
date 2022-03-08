@@ -40,7 +40,7 @@ public class AnalysisMavController implements IUIManagementFlow {
      */
     @Override
     public String getName() {
-        return "DAVE Analysis";
+        return "DAVE Analyses";
     }
 
     /**

@@ -49,6 +49,14 @@ public class DaveVisSeeder {
                                   :where
                                   [?s :statement/object ?o]
                                   [?o :activity/id ?c]
+                                  [?s :statement/actor ?a]
+                                  [?a :agent/name ?ac]]"""));
+                this.daveQueryRepository.save(new DaveQuery("Learners per Activity [VerDatAs]",
+                        """
+                                [:find (count-distinct ?ac) ?c
+                                  :where
+                                  [?s :statement/object ?o]
+                                  [?o :activity/id ?c]
                                   [?s :statement/actor ?ac]]"""));
                 this.daveQueryRepository.save(new DaveQuery("Learners' task determination",
                         """
@@ -133,17 +141,37 @@ public class DaveVisSeeder {
                                 [:find (count-distinct ?ac) ?c
                                  :where
                                  [?s :statement/object ?o]
-                                 [?s :statement.result/success true ?ac]
+                                 [?s :statement.result/success true]
                                  [?o :activity/id ?c]
-                                 [?s :statement/actor ?l]]"""));
+                                 [?s :statement/actor ?l]
+                                 [?l :agent/name ?ac]]"""));
+                this.daveQueryRepository.save(new DaveQuery("Successful learners per Activity [VerDatAs]",
+                        """
+                                [:find (count-distinct ?ac) ?c
+                                 :where
+                                 [?s :statement/object ?o]
+                                 [?s :statement.result/success true]
+                                 [?o :activity/id ?c]
+                                 [?s :statement/actor ?l]
+                                 [?l :agent.account/name ?ac]]"""));
                 this.daveQueryRepository.save(new DaveQuery("Unsuccessful learners per Activity",
                         """
                                 [:find (count-distinct ?ac) ?c
                                  :where
                                  [?s :statement/object ?o]
-                                 [?s :statement.result/success false ?ac]
+                                 [?s :statement.result/success false]
                                  [?o :activity/id ?c]
-                                 [?s :statement/actor ?l]]"""));
+                                 [?s :statement/actor ?l]
+                                 [?l :agent/name ?ac]]"""));
+                this.daveQueryRepository.save(new DaveQuery("Unsuccessful learners per Activity [VerDatAs]",
+                        """
+                                [:find (count-distinct ?ac) ?c
+                                 :where
+                                 [?s :statement/object ?o]
+                                 [?s :statement.result/success false]
+                                 [?o :activity/id ?c]
+                                 [?s :statement/actor ?l]
+                                 [?l :agent.account/name ?ac]]"""));
                 this.daveQueryRepository.save(new DaveQuery("Learners' scaled scores over time [VerDatAs]",
                         """
                                 [:find ?x ?y ?c
@@ -151,9 +179,9 @@ public class DaveVisSeeder {
                                   [?s :statement/timestamp ?t]
                                   [?s :statement.result.score/scaled ?y]
                                   [?s :statement/actor ?a]
-                                  [?a :agent.account/name ?c]
+                                  [?a :agent/name ?c]
                                   [->unix ?t ?x]]"""));
-                this.daveQueryRepository.save(new DaveQuery("Learners' success over time [Datasim]",
+                this.daveQueryRepository.save(new DaveQuery("Learners' success over time [DATASIM]",
                         """
                                 [:find ?x ?y ?c
                                   :where
@@ -169,7 +197,7 @@ public class DaveVisSeeder {
                                   [?s :statement/object ?ac]
                                   [?s :statement.result.score/raw ?v]
                                   [?s :statement/actor ?a]
-                                  [?a :agent.account/name ?c]]"""));
+                                  [?a :agent/name ?c]]"""));
                 this.daveQueryRepository.save(new DaveQuery("Learners' average scaled score [VerDatAs]",
                         """
                                 [:find (avg ?v) ?c
@@ -177,7 +205,7 @@ public class DaveVisSeeder {
                                   [?s :statement/object ?ac]
                                   [?s :statement.result.score/scaled ?v]
                                   [?s :statement/actor ?a]
-                                  [?a :agent.account/name ?c]]"""));
+                                  [?a :agent/name ?c]]"""));
                 this.daveQueryRepository.save(new DaveQuery("Linear regression of learners' scaled scores by hour of day [VerDatAs]",
                         """
                                 [:find ?h ?y
@@ -371,7 +399,7 @@ public class DaveVisSeeder {
                                           "as": ["rank"]
                                         },
                                        \s
-                                        { "type": "filter", "expr": "datum.rank < 15"}
+                                        { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
                                   ],
@@ -452,7 +480,7 @@ public class DaveVisSeeder {
                                           "as": ["rank"]
                                         },
                                        \s
-                                        { "type": "filter", "expr": "datum.rank < 15"}
+                                        { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
                                   ],
@@ -695,7 +723,7 @@ public class DaveVisSeeder {
                                           "as": ["rank"]
                                         },
                                        \s
-                                        { "type": "filter", "expr": "datum.rank < 10"}
+                                        { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
                                   ],
@@ -775,7 +803,7 @@ public class DaveVisSeeder {
                                           "as": ["rank"]
                                         },
                                        \s
-                                        { "type": "filter", "expr": "datum.rank < 10"}
+                                        { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
                                   ],
@@ -1097,6 +1125,9 @@ public class DaveVisSeeder {
                 this.daveVisRepository.save(new DaveVis("Learners per Activity",
                         this.daveQueryRepository.findByName("Learners per Activity").get(),
                         this.daveGraphDescriptionRepository.findByName("Top 10 distinct DESC").get(), true));
+                this.daveVisRepository.save(new DaveVis("Learners per Activity [VerDatAs]",
+                        this.daveQueryRepository.findByName("Learners per Activity [VerDatAs]").get(),
+                        this.daveGraphDescriptionRepository.findByName("Top 10 distinct DESC").get(), true));
                 this.daveVisRepository.save(new DaveVis("Learners' task determination",
                         this.daveQueryRepository.findByName("Learners' task determination").get(),
                         this.daveGraphDescriptionRepository.findByName("Top 10 distinct DESC").get(), true));
@@ -1118,14 +1149,20 @@ public class DaveVisSeeder {
                 this.daveVisRepository.save(new DaveVis("Successful learners per Activity",
                         this.daveQueryRepository.findByName("Successful learners per Activity").get(),
                         this.daveGraphDescriptionRepository.findByName("Top 10 distinct DESC").get(), true));
+                this.daveVisRepository.save(new DaveVis("Successful learners per Activity [VerDatAs]",
+                        this.daveQueryRepository.findByName("Successful learners per Activity [VerDatAs]").get(),
+                        this.daveGraphDescriptionRepository.findByName("Top 10 distinct DESC").get(), true));
                 this.daveVisRepository.save(new DaveVis("Unsuccessful learners per Activity",
                         this.daveQueryRepository.findByName("Unsuccessful learners per Activity").get(),
+                        this.daveGraphDescriptionRepository.findByName("Top 10 distinct DESC").get(), true));
+                this.daveVisRepository.save(new DaveVis("Unsuccessful learners per Activity [VerDatAs]",
+                        this.daveQueryRepository.findByName("Unsuccessful learners per Activity [VerDatAs]").get(),
                         this.daveGraphDescriptionRepository.findByName("Top 10 distinct DESC").get(), true));
                 this.daveVisRepository.save(new DaveVis("Learners' scaled scores over time [VerDatAs]",
                         this.daveQueryRepository.findByName("Learners' scaled scores over time [VerDatAs]").get(),
                         this.daveGraphDescriptionRepository.findByName("Scatter Plot").get(), true));
-                this.daveVisRepository.save(new DaveVis("Learners' success over time [Datasim]",
-                        this.daveQueryRepository.findByName("Learners' success over time [Datasim]").get(),
+                this.daveVisRepository.save(new DaveVis("Learners' success over time [DATASIM]",
+                        this.daveQueryRepository.findByName("Learners' success over time [DATASIM]").get(),
                         this.daveGraphDescriptionRepository.findByName("Scatter Plot").get(), true));
                 this.daveVisRepository.save(new DaveVis("Learners' raw score per Activity [VerDatAs]",
                         this.daveQueryRepository.findByName("Learners' raw score per Activity [VerDatAs]").get(),
