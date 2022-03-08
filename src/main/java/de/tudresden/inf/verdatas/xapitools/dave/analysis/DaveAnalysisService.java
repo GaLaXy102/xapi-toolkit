@@ -218,10 +218,10 @@ public class DaveAnalysisService {
 
     public void checkValidityOfInput(String query, String queryName, String graphDescription, String graphName) {
         if (!(this.checkForQueryDuplicates(queryName, query).isEmpty())) {
-            throw new IllegalStateException("Duplication of query objects. Please select your query from the dropdown menu.");
+            throw new IllegalStateException("Duplication of query objects.");
         }
         if (!(this.checkForGraphDescriptionDuplicates(graphName, graphDescription).isEmpty())) {
-            throw new IllegalStateException("Duplication of graph description objects. Please select your graph description from the dropdown menu.");
+            throw new IllegalStateException("Duplication of graph description objects.");
         }
     }
 
