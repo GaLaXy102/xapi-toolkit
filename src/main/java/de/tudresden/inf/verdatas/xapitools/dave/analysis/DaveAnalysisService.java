@@ -240,11 +240,11 @@ public class DaveAnalysisService {
              analysisData) {
             String analysisName = analysisDescription.get("name").asText();
             Pair<String, String> query = Pair.of(analysisDescription.get("query").get("name").asText(),
-                    analysisDescription.get("query").get("query").asText());
+                    analysisDescription.get("query").get("query").asText().replace("\r", ""));
             Pair<String, String> graphDescription = Pair.of(analysisDescription.get("description").get("name").asText(),
-                    analysisDescription.get("description").get("description").asText());
+                    analysisDescription.get("description").get("description").asText().replace("\r", ""));
             this.checkValidityOfAnalysisDescription(query.getSecond(), graphDescription.getSecond());
-            this.createAnalysis(analysisName, query.getFirst(), query.getSecond(), graphDescription.getSecond(), graphDescription.getFirst());
+            this.createAnalysis(analysisName, query.getSecond(), query.getFirst(), graphDescription.getSecond(), graphDescription.getFirst());
         }
     }
 }
