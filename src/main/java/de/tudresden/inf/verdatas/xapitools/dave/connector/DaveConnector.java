@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 public class DaveConnector implements IExternalService, Closeable, DisposableBean {
     private static final String HEALTH_ENDPOINT = "";
+
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final URL daveEndpoint;
     private final Supplier<WebDriver> getDriverFunction;
@@ -38,18 +39,22 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
 
     void initialize() {
         if (this.driver != null) return;
-        this.driver = DaveInteractions.startNewSession(this.daveEndpoint, this.getDriverFunction);
-
-        try {
-            DaveInteractions.initializeDave(this.driver, this.lrsConnection.getFriendlyName(),
-                    this.lrsConnection.getXApiEndpoint().toString(), this.lrsConnection.getXApiClientKey(),
-                    this.lrsConnection.getXApiClientSecret());
-            this.healthChangedCallback(true);
-        } catch (Exception e) {
-            this.driver.quit();
-            this.healthChangedCallback(false);
-            throw new IllegalStateException(e.getMessage());
+        // Try to initialize DAVE connector, because of random errors caused by the use of selenium multiple tries could be necessary
+        for (int i = 0; i < 3; i++) {
+            this.driver = DaveInteractions.startNewSession(this.daveEndpoint, this.getDriverFunction);
+            try {
+                DaveInteractions.initializeDave(this.driver, this.lrsConnection.getFriendlyName(),
+                        this.lrsConnection.getXApiEndpoint().toString(), this.lrsConnection.getXApiClientKey(),
+                        this.lrsConnection.getXApiClientSecret());
+                this.healthChangedCallback(true);
+                return;
+            } catch (Exception e) {
+                this.close();
+                logger.warning("Starting exception occurred, retrying: " + e.getMessage());
+            }
         }
+        // Nothing helped...
+        this.healthChangedCallback(false);
     }
 
     void startTestSession() {
@@ -59,16 +64,19 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
             DaveInteractions.initializeTestSession(this.driver);
             this.healthChangedCallback(true);
         } catch (Exception e) {
-            this.driver.quit();
-            this.healthChangedCallback(false);
-            throw new IllegalStateException(e.getMessage());
+            this.close();
+            logger.warning("Exception occurred: " + e.getMessage());
+            logger.info("Restart connector " + this.getName());
+            this.startTestSession();
         }
 
     }
 
+    // TODO prevent null pointer exception
     public void close() {
         if (this.driver == null) return;
         this.driver.quit();
+        this.driver = null;
     }
 
     /**
@@ -131,8 +139,8 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
             try {
                 return DaveInteractions.executeAnalysis(this.driver, queryPath, graphPath);
             } catch (Exception e) {
-                this.driver.quit();
-                this.healthChangedCallback(false);
+                this.close();
+                this.initialize();
                 throw new IllegalStateException(e.getMessage());
             }
         }
@@ -155,8 +163,8 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
                 }
                 return Optional.empty();
             } catch (Exception e) {
-                this.driver.quit();
-                this.healthChangedCallback(false);
+                this.close();
+                this.startTestSession();
                 throw new IllegalStateException(e.getMessage());
             }
         }
@@ -174,8 +182,8 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
                 }
                 return Pattern.compile("\\[.*\\]", Pattern.MULTILINE).matcher(result).results().map(MatchResult::group).toList();
             } catch (Exception e) {
-                this.driver.quit();
-                this.healthChangedCallback(false);
+                this.close();
+                this.initialize();
                 throw new IllegalStateException(e.getMessage());
             }
         }
