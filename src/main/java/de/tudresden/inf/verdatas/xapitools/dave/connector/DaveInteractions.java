@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 
 import java.net.URL;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -47,6 +48,24 @@ class DaveInteractions {
     static String getAnalysisResult(WebDriver driver, String queryPath, String graphPath) throws InterruptedException {
         executeAnalysis(driver, queryPath, graphPath);
         return getResultsForAnalysis(driver);
+    }
+
+    static Boolean checkForLogo(WebDriver driver) {
+        try {
+            driver.findElement(By.cssSelector("#homeicon"));
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    static Boolean checkForInitSuccess(WebDriver driver) {
+        try {
+            driver.findElement(By.cssSelector(".page.question"));
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     private static void createWorkbook(WebDriver driver) throws InterruptedException {

@@ -5,11 +5,13 @@ import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
 import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.Closeable;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.regex.MatchResult;
@@ -76,6 +78,7 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
     public void close() {
         if (this.driver == null) return;
         this.driver.quit();
+        this.healthChangedCallback(false);
         this.driver = null;
     }
 
@@ -112,6 +115,15 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
             return DaveHealthRestController.HEALTH_ENDPOINT + "?id=" + this.lrsConnection.getConnectionId();
         } else {
             return DaveHealthRestController.HEALTH_ENDPOINT;
+        }
+    }
+
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+    protected void healthCheck() {
+        if (this.health != null && this.driver != null) {
+            this.healthChangedCallback(DaveInteractions.checkForInitSuccess(this.driver));
+        } else if (this.driver != null) {
+            DaveInteractions.checkForLogo(this.driver);
         }
     }
 
