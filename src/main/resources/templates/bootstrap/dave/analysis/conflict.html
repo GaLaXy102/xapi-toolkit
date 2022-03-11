@@ -23,7 +23,7 @@
                             <button class="btn btn-outline-danger flex-fill" type="button" onclick="history.go(-1);">Go Back</button>
                         </div>
                         <div class="col">
-                            <form method="POST" th:action="${mode.EDITING.equals(mode)} ? '/ui/dave/manage/analysis/edit/ack' : '/ui/dave/manage/analysis/add/ack'" class="flex-fill d-flex">
+                            <form method="POST" class="flex-fill d-flex">
                                 <input th:if="${flow}" type="hidden" name="flow" th:value="${flow}">
                                 <input type="hidden" name="name" th:value="${name}">
                                 <input type="hidden" name="queryName" th:value="${queryName}">

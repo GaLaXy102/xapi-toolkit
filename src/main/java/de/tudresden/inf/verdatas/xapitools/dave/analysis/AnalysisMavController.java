@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -109,31 +112,23 @@ public class AnalysisMavController implements IUIManagementFlow {
     }
 
     @PostMapping(BASE_URL + "/add")
-    public ModelAndView createAnalysis(@RequestParam("name") String name,
+    public RedirectView createAnalysis(@RequestParam("name") String name,
                                        @RequestParam("queryContent") String query,
                                        @RequestParam("queryName") String queryName,
                                        @RequestParam("graphContent") String graphDescription,
-                                       @RequestParam("graphName") String graphName) {
+                                       @RequestParam("graphName") String graphName,
+                                       RedirectAttributes attributes) {
         this.daveAnalysisService.checkValidityOfAnalysisDescription(query, graphDescription);
-        Optional<ModelAndView> mav = this.checkForSideEffects(Mode.CREATING, name, Optional.empty(),
+        Optional<Map<String, Object>> objectMap = this.checkForSideEffects(Mode.CREATING, name, Optional.empty(),
                 queryName, query, graphName, graphDescription);
-        if (mav.isPresent()) {
-            return mav.get();
+        if (objectMap.isPresent()) {
+            RedirectView red = new RedirectView("./ack");
+            objectMap.get().forEach(attributes::addFlashAttribute);
+            return red;
         }
         this.daveAnalysisService.createAnalysis(name, query.replace("\r", ""), queryName,
                         graphDescription.replace("\r", ""), graphName);
-        return new ModelAndView("redirect:./show");
-    }
-
-    @PostMapping(BASE_URL + "/add/ack")
-    public RedirectView finalizeCreatingOfAnalysis(@RequestParam("name") String name,
-                                                  @RequestParam("queryContent") String query,
-                                                  @RequestParam("queryName") String queryName,
-                                                  @RequestParam("graphContent") String graphDescription,
-                                                  @RequestParam("graphName") String graphName) {
-        this.daveAnalysisService.createAnalysis(name, query.replace("\r", ""), queryName,
-                graphDescription.replace("\r", ""), graphName);
-        return new RedirectView("../show");
+        return new RedirectView("./show");
     }
 
     @GetMapping(BASE_URL + "/edit")
@@ -148,42 +143,61 @@ public class AnalysisMavController implements IUIManagementFlow {
     }
 
     @PostMapping(BASE_URL + "/edit")
-    public ModelAndView editAnalysis(@RequestParam("flow") UUID analysisId,
+    public RedirectView editAnalysis(@RequestParam("flow") UUID analysisId,
                                      @RequestParam("name") String name,
                                      @RequestParam("queryContent") String query,
                                      @RequestParam("queryName") String queryName,
                                      @RequestParam("graphContent") String graphDescription,
-                                     @RequestParam("graphName") String graphName) {
+                                     @RequestParam("graphName") String graphName, RedirectAttributes attributes) {
         this.daveAnalysisService.checkValidityOfAnalysisDescription(query, graphDescription);
         DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
-        Optional<ModelAndView> mav = this.checkForSideEffects(Mode.EDITING, name, Optional.of(analysis),
+        Optional<Map<String, Object>> objectMap = this.checkForSideEffects(Mode.EDITING, name, Optional.of(analysis),
                 queryName, query, graphName, graphDescription);
-        if (mav.isPresent()) {
-            return mav.get();
+        if (objectMap.isPresent()) {
+            RedirectView red = new RedirectView("./ack");
+            objectMap.get().forEach(attributes::addFlashAttribute);
+            return red;
         }
         this.daveAnalysisService.updateAnalysis(analysis, name, query.replace("\r", ""), queryName,
                 graphDescription.replace("\r", ""), graphName);
-        return new ModelAndView("redirect:./show");
+        return new RedirectView("./show");
     }
 
-    @PostMapping(BASE_URL + "/edit/ack")
-    public RedirectView finalizeEditingOfAnalysis(@RequestParam("flow") UUID analysisId,
-                                                  @RequestParam("name") String name,
-                                                  @RequestParam("queryContent") String query,
-                                                  @RequestParam("queryName") String queryName,
-                                                  @RequestParam("graphContent") String graphDescription,
-                                                  @RequestParam("graphName") String graphName) {
-        DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
-        this.daveAnalysisService.updateAnalysis(analysis, name, query.replace("\r", ""), queryName,
-                graphDescription.replace("\r", ""), graphName);
-        return new RedirectView("../show");
+    // TODO Error page if parameters not there
+    @GetMapping(BASE_URL + "/ack")
+    public ModelAndView getUserAcknowledgement(HttpServletRequest request) {
+        Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
+        assert inputFlashMap != null;
+        return this.prepareAcknowledge((Mode) inputFlashMap.get("mode"), Optional.ofNullable((UUID) inputFlashMap.get("flow")),
+                (String) inputFlashMap.get("name"), (String) inputFlashMap.get("queryContent"), (String) inputFlashMap.get("queryName"),
+                (String) inputFlashMap.get("graphContent"), (String) inputFlashMap.get("graphName"), (String) inputFlashMap.get("message"),
+                (String) inputFlashMap.get("hint"));
+    }
+
+    @PostMapping(BASE_URL + "/ack")
+    public RedirectView finalizeModifyingOfAnalysis(@RequestParam("flow") Optional<UUID> analysisId,
+                                                    @RequestParam("name") String name,
+                                                    @RequestParam("queryContent") String query,
+                                                    @RequestParam("queryName") String queryName,
+                                                    @RequestParam("graphContent") String graphDescription,
+                                                    @RequestParam("graphName") String graphName) {
+        if (analysisId.isPresent()) {
+            DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId.get());
+            this.daveAnalysisService.updateAnalysis(analysis, name, query.replace("\r", ""), queryName,
+                    graphDescription.replace("\r", ""), graphName);
+        } else {
+            this.daveAnalysisService.createAnalysis(name, query.replace("\r", ""), queryName,
+                    graphDescription.replace("\r", ""), graphName);
+        }
+        return new RedirectView("./show");
     }
     
-    public Optional<ModelAndView> checkForSideEffects(Mode mode, String name, Optional<DaveVis> analysis, String queryName, String query,
+    public Optional<Map<String, Object>> checkForSideEffects(Mode mode, String name, Optional<DaveVis> analysis, String queryName, String query,
                                             String graphName, String graphDescription) {
         Set<String> analysisWithSameQuery;
         Set<String> analysisWithSameGraph;
         Set<String> dashboardNames = null;
+        Map<String, Object> objectMap = new HashMap<>();
         if (mode.equals(Mode.CREATING)) {
             analysisWithSameQuery = this.daveAnalysisService.checkForQueryConflicts(queryName, query)
                     .stream()
@@ -194,11 +208,49 @@ public class AnalysisMavController implements IUIManagementFlow {
                     .map(DaveVis::getName)
                     .collect(Collectors.toSet());
         } else {
+            // TODO
             dashboardNames = this.daveAnalysisService.checkUsageOfAnalysis(analysis.get());
             analysisWithSameQuery = this.daveAnalysisService.checkUsageOfQuery(analysis.get(), queryName, query);
             analysisWithSameGraph = this.daveAnalysisService.checkUsageOfGraphDescription(analysis.get(), graphName, graphDescription);
         }
+
         // Needed if checking for side effects provides error and user has to acknowledge changes
+        objectMap.put("mode", mode);
+        objectMap.put("name", name);
+        objectMap.put("queryContent", query);
+        objectMap.put("queryName", queryName);
+        objectMap.put("graphContent", graphDescription);
+        objectMap.put("graphName", graphName);
+
+        if (mode.equals(Mode.EDITING)) {
+            objectMap.put("flow", analysis.get().getId());
+            if (!(dashboardNames.isEmpty())) {
+                objectMap.put("message", "Modification of " + analysis.get().getName()
+                        + " not possible.\n Still in use for dashboard(s) " + dashboardNames);
+                objectMap.put("hint", "Please make a copy the analysis first and modify it afterwarts " +
+                        "if you do not want the dashboard(s) to be changed.\n Otherwise, continue the modification.");
+            }
+            return Optional.of(objectMap);
+        }
+
+        if (!(analysisWithSameQuery.isEmpty())) {
+            objectMap.put("message", "Modification of query not possible.\n Still in use for analysis "
+                        + analysisWithSameQuery);
+            objectMap.put("hint", "Please use a different name for your query " +
+                        "if you do not want the other analysis to be changed.\n Otherwise, continue the modification.");
+            return Optional.of(objectMap);
+        } else if (!(analysisWithSameGraph.isEmpty())) {
+            objectMap.put("message", "Modification of graph description not possible.\n Still in use for analysis "
+                        + analysisWithSameGraph);
+            objectMap.put("hint", "Please use a different name for your graphDescription " +
+                        "if you do not want the other analysis to be changed.\n Otherwise, continue the modification.");
+            return Optional.of(objectMap);
+        }
+        return Optional.empty();
+    }
+
+    public ModelAndView prepareAcknowledge(Mode mode, Optional<UUID> analysisId, String name, String query, String queryName,
+                                         String graphDescription, String graphName, String errorMessage, String hint) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/conflict");
         mav.addObject("mode", mode);
         mav.addObject("name", name);
@@ -206,31 +258,10 @@ public class AnalysisMavController implements IUIManagementFlow {
         mav.addObject("queryName", queryName);
         mav.addObject("graphContent", graphDescription);
         mav.addObject("graphName", graphName);
-        
-        if (mode.equals(Mode.EDITING)) {
-            mav.addObject("flow", analysis.get().getId());
-            if (!(dashboardNames.isEmpty())) {
-                mav.addObject("message", "Modification of " + analysis.get().getName()
-                        + " not possible.\n Still in use for dashboard(s) " + dashboardNames);
-                mav.addObject("hint", "Please make a copy the analysis first and modify it afterwarts " +
-                        "if you do not want the dashboard(s) to be changed.\n Otherwise, continue the modification.");
-                return Optional.of(mav);
-            }
-        }
-        if (!(analysisWithSameQuery.isEmpty())) {
-            mav.addObject("message", "Modification of query not possible.\n Still in use for analysis "
-                        + analysisWithSameQuery);
-            mav.addObject("hint", "Please use a different name for your query " +
-                        "if you do not want the other analysis to be changed.\n Otherwise, continue the modification.");
-            return Optional.of(mav);
-        } else if (!(analysisWithSameGraph.isEmpty())) {
-            mav.addObject("message", "Modification of graph description not possible.\n Still in use for analysis "
-                        + analysisWithSameGraph);
-            mav.addObject("hint", "Please use a different name for your graphDescription " +
-                        "if you do not want the other analysis to be changed.\n Otherwise, continue the modification.");
-            return Optional.of(mav);
-        }
-        return Optional.empty();
+        mav.addObject("message", errorMessage);
+        mav.addObject("hint", hint);
+        analysisId.ifPresent(uuid -> mav.addObject("flow", uuid));
+        return mav;
     }
 }
 
