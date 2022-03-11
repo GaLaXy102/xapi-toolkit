@@ -104,8 +104,13 @@ public class DaveDashboardService {
         this.dashboardRepository.delete(dashboard);
     }
 
+    // TODO Http Status anpassen bei Fehler
     @Transactional
     public void setDashboardName(DaveDashboard dashboard, String name) {
+        Optional<DaveDashboard> duplicate = this.dashboardRepository.findByName(name);
+        if (duplicate.isPresent()) {
+            throw new IllegalArgumentException("Duplicate dashboard identifier. Please change the name of your dashboard.");
+        }
         dashboard.setName(name);
         this.dashboardRepository.save(dashboard);
     }
