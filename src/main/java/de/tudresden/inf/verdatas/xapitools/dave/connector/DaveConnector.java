@@ -192,7 +192,7 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
                 } else {
                     result = result.substring(1, result.length() - 1);
                 }
-                return Pattern.compile("\\[.*\\]", Pattern.MULTILINE).matcher(result).results().map(MatchResult::group).toList();
+                return Pattern.compile("\\[[^\\[\\]]*\\]", Pattern.MULTILINE).matcher(result).results().map(MatchResult::group).toList();
             } catch (Exception e) {
                 this.close();
                 this.initialize();

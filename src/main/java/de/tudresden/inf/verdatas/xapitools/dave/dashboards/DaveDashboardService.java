@@ -155,7 +155,12 @@ public class DaveDashboardService {
         List<String> activities = this.daveConnectorLifecycleManager.getConnector(connection)
                 .getAnalysisResult(this.fileManagementService.prepareQuery(getActivities, "all").getAbsolutePath(),
                         this.fileManagementService.prepareVisualisation(getActivities).getAbsolutePath());
-        return activities.stream().map((s) -> s.substring(1, s.length() - 1)).map((s) -> s.split(" ")[1]).map((s) -> s.replace("\"", "")).toList();
+        return activities.stream()
+                .map((s) -> s.replace("\n", ""))
+                .map((s) -> s.substring(1, s.length() - 1))
+                .map((s) -> s.split(" +")[1])
+                .map((s) -> s.replace("\"", ""))
+                .toList();
     }
 
     @Transactional
