@@ -11,15 +11,20 @@
                 </h2>
                 <div class="card-body">
                     <h5 class="card-title mb-3">Acknowledgement needed</h5>
-                    <div class="mb-2" th:each="message : ${messages}">
-                        Reason:&nbsp;<span th:text="${message}"></span>
+                    <div class="mb-2"> Reason:
+                        <ul>
+                            <li th:each="message : ${messages}" th:text="${message}"></li>
+                        </ul>
                     </div>
-                    <div class="mb-2" th:each="hint : ${hints}" th:text="${hint}">
+                    <div class="mb-2"> Hints:
+                        <ul>
+                            <li th:each="hint : ${hints}" th:text="${hint}"></li>
+                        </ul>
                     </div>
                 </div>
                 <div class="card-footer">
                     <div class="row mb-2">
-                        <div class="col">
+                        <div class="col d-flex">
                             <button class="btn btn-outline-danger flex-fill" type="button" onclick="history.go(-1);">Go Back</button>
                         </div>
                         <div class="col">
