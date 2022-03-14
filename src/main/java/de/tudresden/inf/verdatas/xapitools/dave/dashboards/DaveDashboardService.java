@@ -83,17 +83,21 @@ public class DaveDashboardService {
         return analysis;
     }
 
+    // TODO Http Status anpassen bei Fehler
     @Transactional
-    public DaveDashboard createEmptyDashboard() {
-        DaveDashboard emptyDashboard = new DaveDashboard(null,null, new LinkedList<>(), false);
+    public DaveDashboard createEmptyDashboard(String name) {
+        Optional<DaveDashboard> duplicate = this.dashboardRepository.findByName(name);
+        if (duplicate.isPresent()) {
+            throw new IllegalArgumentException("Duplicate dashboard identifier. Please change the name of your dashboard.");
+        }
+        DaveDashboard emptyDashboard = new DaveDashboard(name,null, new LinkedList<>(), false);
         this.dashboardRepository.save(emptyDashboard);
         return emptyDashboard;
     }
 
     @Transactional
     public DaveDashboard createCopyOfDashboard(DaveDashboard dashboard) {
-        DaveDashboard created = this.createEmptyDashboard();
-        this.setDashboardName(created, "Copy of " + dashboard.getName());
+        DaveDashboard created = this.createEmptyDashboard("Copy of " + dashboard.getName());
         this.setDashboardSource(created, dashboard.getLrsConnection());
         this.setDashboardVisualisations(created, dashboard.getVisualisations());
         return created;
@@ -104,13 +108,8 @@ public class DaveDashboardService {
         this.dashboardRepository.delete(dashboard);
     }
 
-    // TODO Http Status anpassen bei Fehler
     @Transactional
     public void setDashboardName(DaveDashboard dashboard, String name) {
-        Optional<DaveDashboard> duplicate = this.dashboardRepository.findByName(name);
-        if (duplicate.isPresent()) {
-            throw new IllegalArgumentException("Duplicate dashboard identifier. Please change the name of your dashboard.");
-        }
         dashboard.setName(name);
         this.dashboardRepository.save(dashboard);
     }
