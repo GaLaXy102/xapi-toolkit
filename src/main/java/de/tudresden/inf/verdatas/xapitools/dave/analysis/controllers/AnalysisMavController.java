@@ -1,5 +1,6 @@
-package de.tudresden.inf.verdatas.xapitools.dave.analysis;
+package de.tudresden.inf.verdatas.xapitools.dave.analysis.controllers;
 
+import de.tudresden.inf.verdatas.xapitools.dave.analysis.DaveAnalysisService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveVis;
 import de.tudresden.inf.verdatas.xapitools.ui.BootstrapUIIcon;
 import de.tudresden.inf.verdatas.xapitools.ui.IUIManagementFlow;

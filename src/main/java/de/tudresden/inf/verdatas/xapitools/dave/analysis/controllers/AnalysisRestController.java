@@ -1,7 +1,8 @@
-package de.tudresden.inf.verdatas.xapitools.dave.analysis;
+package de.tudresden.inf.verdatas.xapitools.dave.analysis.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import de.tudresden.inf.verdatas.xapitools.dave.analysis.DaveAnalysisService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveVis;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
