@@ -55,7 +55,7 @@ public class DaveAnalysisService {
     public DaveVis createAnalysis(String name, String query, String queryName, String graphDescription, String graphName) {
         this.checkValidityOfInput(query, queryName, graphDescription, graphName);
         if (this.visRepository.findByName(name).isPresent()) {
-            throw new IllegalStateException("Conflicting analysis objects. Please rename your analysis.");
+            throw new AnalysisExceptions.ConfigurationConflict("Conflicting analysis objects. Please rename your analysis.");
         }
         DaveVis created = new DaveVis(
                 name,
@@ -80,7 +80,7 @@ public class DaveAnalysisService {
                                String graphDescription, String graphName) {
         Optional<DaveVis> copy = this.visRepository.findByName(name);
         if (copy.isPresent() && !(copy.get().getId().equals(analysis.getId()))) {
-            throw new IllegalStateException("Conflicting analysis objects. Please rename your analysis.");
+            throw new AnalysisExceptions.ConfigurationConflict("Conflicting analysis objects. Please rename your analysis.");
         } else {
             this.setAnalysisName(analysis, name);
         }
@@ -131,7 +131,7 @@ public class DaveAnalysisService {
             this.finalizeAnalysis(analysis);
         } else {
             if (analysis.isFinalized()) {
-                throw new IllegalStateException("Analysis must have a query and a graph description.");
+                throw new AnalysisExceptions.InvalidConfiguration("Analysis must have a query and a graph description.");
             }
         }
     }
@@ -139,9 +139,9 @@ public class DaveAnalysisService {
     @Transactional
     public void finalizeAnalysis(DaveVis analysis) {
         if (analysis.getQuery() == null) {
-            throw new IllegalStateException("Analysis must have a query.");
+            throw new AnalysisExceptions.InvalidConfiguration("Analysis must have a query.");
         } else if (analysis.getDescription() == null) {
-            throw new IllegalStateException("Analysis must have a graph description.");
+            throw new AnalysisExceptions.InvalidConfiguration("Analysis must have a graph description.");
         }
         analysis.setFinalized(true);
         this.visRepository.save(analysis);
@@ -153,7 +153,8 @@ public class DaveAnalysisService {
         if (used.isEmpty()) {
             this.visRepository.delete(analysis);
         } else {
-            throw new IllegalStateException("Deletion of " + analysis.getName() + " not possible.\n Still in use for " + used);
+            throw new AnalysisExceptions.SideEffectsError("Deletion of "
+                    + analysis.getName() + " not possible.\n Still in use for " + used);
         }
     }
 
@@ -218,10 +219,10 @@ public class DaveAnalysisService {
 
     public void checkValidityOfInput(String query, String queryName, String graphDescription, String graphName) {
         if (!(this.checkForQueryDuplicates(queryName, query).isEmpty())) {
-            throw new IllegalStateException("Duplication of query objects.");
+            throw new AnalysisExceptions.ConfigurationConflict("Duplication of query objects.");
         }
         if (!(this.checkForGraphDescriptionDuplicates(graphName, graphDescription).isEmpty())) {
-            throw new IllegalStateException("Duplication of graph description objects.");
+            throw new AnalysisExceptions.ConfigurationConflict("Duplication of graph description objects.");
         }
     }
 

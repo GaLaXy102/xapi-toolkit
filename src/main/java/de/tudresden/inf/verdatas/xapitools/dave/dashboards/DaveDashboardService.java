@@ -88,7 +88,7 @@ public class DaveDashboardService {
     public DaveDashboard createEmptyDashboard(String name) {
         Optional<DaveDashboard> duplicate = this.dashboardRepository.findByName(name);
         if (duplicate.isPresent()) {
-            throw new IllegalArgumentException("Duplicate dashboard identifier. Please change the name of your dashboard.");
+            throw new DashboardExceptions.ConfigurationConflict("Duplicate dashboard identifier. Please change the name of your dashboard.");
         }
         DaveDashboard emptyDashboard = new DaveDashboard(name,null, new LinkedList<>(), false);
         this.dashboardRepository.save(emptyDashboard);
@@ -131,7 +131,7 @@ public class DaveDashboardService {
             this.finalizeDashboard(dashboard);
         } else {
             if (dashboard.isFinalized()) {
-                throw new IllegalStateException("Dashboards must have a LRS connection and at least one analysis.");
+                throw new DashboardExceptions.InvalidConfiguration("Dashboards must have a LRS connection and at least one analysis.");
             }
         }
     }
@@ -192,9 +192,9 @@ public class DaveDashboardService {
     @Transactional
     public void finalizeDashboard(DaveDashboard dashboard) {
         if (dashboard.getLrsConnection() == null) {
-            throw new IllegalStateException("Dashboards must have a LRS Connection.");
+            throw new DashboardExceptions.InvalidConfiguration("Dashboards must have a LRS Connection.");
         } else if (dashboard.getVisualisations().isEmpty()) {
-            throw new IllegalStateException("Dashboards must have at least one analysis.");
+            throw new DashboardExceptions.InvalidConfiguration("Dashboards must have at least one analysis.");
         }
         dashboard.setFinalized(true);
         this.dashboardRepository.save(dashboard);
@@ -231,7 +231,7 @@ public class DaveDashboardService {
                     visAndFiles.getSecond().getSecond().delete();
                     return visAndFiles.getFirst();
                 })
-                .orElseThrow(() -> new NoSuchElementException("Could not find dashboard visualisation for execution."));
+                .orElseThrow(() -> new DashboardExceptions.InvalidConfiguration("Could not find dashboard visualisation for execution."));
     }
 
     public String getNameOfAnalysis(UUID analysisId) {

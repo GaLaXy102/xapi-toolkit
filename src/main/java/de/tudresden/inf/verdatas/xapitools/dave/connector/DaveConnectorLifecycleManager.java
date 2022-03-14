@@ -58,7 +58,8 @@ public class DaveConnectorLifecycleManager implements BeanFactoryAware {
     public void createConnector(@Active LrsConnection connection) {
         String targetBeanName = "DaveConnector-" + connection.getConnectionId();
         // Add to Application Context
-        DaveConnector connector = new DaveConnector(daveEndpoint, connection, this.webDriverProvider::getWebDriver);
+        DaveConnector connector = new DaveConnector(daveEndpoint, connection, this.webDriverProvider::getWebDriver,
+                taskExecutor);
         this.beanFactory.registerSingleton(targetBeanName, connector);
         this.beanFactory.registerDisposableBean(targetBeanName, connector);
         // Enable Scheduling. This is what @EnableScheduling would normally do.
@@ -68,7 +69,7 @@ public class DaveConnectorLifecycleManager implements BeanFactoryAware {
 
     public void createTestConnector() {
         String targetBeanName = "DaveConnector-Test";
-        DaveConnector connector = new DaveConnector(daveEndpoint, this.webDriverProvider::getWebDriver);
+        DaveConnector connector = new DaveConnector(daveEndpoint, this.webDriverProvider::getWebDriver, taskExecutor);
         this.beanFactory.registerSingleton(targetBeanName, connector);
         this.beanFactory.registerDisposableBean(targetBeanName, connector);
         this.schedulingRegistrar.postProcessAfterInitialization(this.beanFactory.getBean("DaveConnector-Test"), targetBeanName);

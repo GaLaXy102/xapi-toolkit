@@ -5,6 +5,7 @@ import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
 import lombok.Getter;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.Closeable;
@@ -21,6 +22,7 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
     private static final String HEALTH_ENDPOINT = "";
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final TaskExecutor taskExecutor;
     private final URL daveEndpoint;
     private final Supplier<WebDriver> getDriverFunction;
     private LrsConnection lrsConnection = null;
@@ -28,15 +30,18 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
     @Getter
     private Boolean health = null;
 
-    DaveConnector(URL daveEndpoint, LrsConnection lrsConnection, Supplier<WebDriver> getDriverFunction) {
+    DaveConnector(URL daveEndpoint, LrsConnection lrsConnection, Supplier<WebDriver> getDriverFunction,
+                  TaskExecutor taskExecutor) {
         this.daveEndpoint = daveEndpoint;
         this.lrsConnection = lrsConnection;
         this.getDriverFunction = getDriverFunction;
+        this.taskExecutor = taskExecutor;
     }
 
-    DaveConnector(URL daveEndpoint, Supplier<WebDriver> getDriverFunction) {
+    DaveConnector(URL daveEndpoint, Supplier<WebDriver> getDriverFunction, TaskExecutor taskExecutor) {
         this.daveEndpoint = daveEndpoint;
         this.getDriverFunction = getDriverFunction;
+        this.taskExecutor = taskExecutor;
     }
 
     void initialize() {
@@ -140,9 +145,11 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
             this.logger.info("DAVE" + " connection is alive.");
         }
         if (!this.health && this.lrsConnection != null) {
-            this.logger.warning("DAVE-" + this.lrsConnection.getFriendlyName() + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
+            this.logger.warning("DAVE-" + this.lrsConnection.getFriendlyName()
+                    + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
         } else if (!this.health) {
-            this.logger.warning("DAVE" + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
+            this.logger.warning("DAVE" + " is not responding correctly. Tried URL "
+                    + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
         }
     }
 
@@ -152,22 +159,25 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
                 return DaveInteractions.executeAnalysis(this.driver, queryPath, graphPath);
             } catch (Exception e) {
                 this.close();
-                this.initialize();
-                throw new IllegalStateException(e.getMessage());
+                this.taskExecutor.execute(this::initialize);
+                throw new DaveExceptions.AnalysisExecutionException(e.getMessage());
             }
         }
         if (this.lrsConnection != null) {
-            throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
+            throw new DaveExceptions.NoDaveConnection("Interaction with "
+                    + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
         } else {
-            throw new IllegalStateException("Interaction with " + "DAVE" + " not possible.");
+            throw new DaveExceptions.NoDaveConnection("Interaction with " + "DAVE" + " not possible.");
         }
     }
 
     public Optional<String> testAnalysisExecution(String query, String graph) {
         if (this.getHealth()) {
             try {
-                Optional<String> queryError = DaveInteractions.addDescriptionToAnalysis(this.driver, query, DaveInteractions.AnalysisDescription.QUERY);
-                Optional<String> graphError = DaveInteractions.addDescriptionToAnalysis(this.driver, graph, DaveInteractions.AnalysisDescription.GRAPH);
+                Optional<String> queryError = DaveInteractions.
+                        addDescriptionToAnalysis(this.driver, query, DaveInteractions.AnalysisDescription.QUERY);
+                Optional<String> graphError = DaveInteractions.
+                        addDescriptionToAnalysis(this.driver, graph, DaveInteractions.AnalysisDescription.GRAPH);
                 if (queryError.isPresent()) {
                     return queryError;
                 } else if (graphError.isPresent()) {
@@ -176,11 +186,11 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
                 return Optional.empty();
             } catch (Exception e) {
                 this.close();
-                this.startTestSession();
-                throw new IllegalStateException(e.getMessage());
+                this.taskExecutor.execute(this::startTestSession);
+                throw new DaveExceptions.AnalysisConfigurationException(e.getMessage());
             }
         }
-        throw new IllegalStateException("Interaction with " + "DAVE" + " not possible.");
+        throw new DaveExceptions.NoDaveConnection("Interaction with " + "DAVE" + " not possible.");
     }
 
     public List<String> getAnalysisResult(String queryPath, String graphPath) {
@@ -192,17 +202,22 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
                 } else {
                     result = result.substring(1, result.length() - 1);
                 }
-                return Pattern.compile("\\[[^\\[\\]]*\\]", Pattern.MULTILINE).matcher(result).results().map(MatchResult::group).toList();
+                return Pattern.compile("\\[[^\\[\\]]*\\]", Pattern.MULTILINE)
+                        .matcher(result)
+                        .results()
+                        .map(MatchResult::group)
+                        .toList();
             } catch (Exception e) {
                 this.close();
-                this.initialize();
-                throw new IllegalStateException(e.getMessage());
+                this.taskExecutor.execute(this::initialize);
+                throw new DaveExceptions.AnalysisResultError(e.getMessage());
             }
         }
         if (this.lrsConnection != null) {
-            throw new IllegalStateException("Interaction with " + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
+            throw new DaveExceptions.NoDaveConnection("Interaction with "
+                    + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
         } else {
-            throw new IllegalStateException("Interaction with " + "DAVE" + " not possible.");
+            throw new DaveExceptions.NoDaveConnection("Interaction with " + "DAVE" + " not possible.");
         }
     }
 }

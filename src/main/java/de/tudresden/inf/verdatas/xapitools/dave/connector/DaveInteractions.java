@@ -38,9 +38,9 @@ class DaveInteractions {
         Optional<String> queryError = addDescriptionToAnalysis(driver, queryPath, AnalysisDescription.QUERY);
         Optional<String> graphError = addDescriptionToAnalysis(driver, graphPath, AnalysisDescription.GRAPH);
         if (queryError.isPresent()) {
-            throw new IllegalStateException("Error during parsing of query description.");
+            throw new DaveExceptions.AnalysisExecutionException("Error during parsing of query description.");
         } else if (graphError.isPresent()) {
-            throw new IllegalStateException("Error during parsing of graph description.");
+            throw new DaveExceptions.AnalysisExecutionException("Error during parsing of graph description.");
         }
         return getVisOfAnalysis(driver);
     }
