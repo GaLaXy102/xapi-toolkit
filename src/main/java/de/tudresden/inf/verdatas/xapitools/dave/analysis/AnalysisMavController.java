@@ -120,6 +120,7 @@ public class AnalysisMavController implements IUIManagementFlow {
                                        RedirectAttributes attributes) {
         query = query.replace("\r", "");
         graphDescription = graphDescription.replace("\r", "");
+
         this.daveAnalysisService.checkValidityOfAnalysisDescription(query, graphDescription);
         Optional<Map<String, Object>> objectMap = this.checkForSideEffects(Mode.CREATING, name, Optional.empty(),
                 queryName, query, graphName, graphDescription);
@@ -152,6 +153,7 @@ public class AnalysisMavController implements IUIManagementFlow {
                                      @RequestParam("graphName") String graphName, RedirectAttributes attributes) {
         query = query.replace("\r", "");
         graphDescription = graphDescription.replace("\r", "");
+
         this.daveAnalysisService.checkValidityOfAnalysisDescription(query, graphDescription);
         DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
         Optional<Map<String, Object>> objectMap = this.checkForSideEffects(Mode.EDITING, name, Optional.of(analysis),
@@ -196,12 +198,11 @@ public class AnalysisMavController implements IUIManagementFlow {
         return new RedirectView("./show");
     }
 
-    // TODO Check and return multiple errors and messages
     public Optional<Map<String, Object>> checkForSideEffects(Mode mode, String name, Optional<DaveVis> analysis, String queryName, String query,
                                             String graphName, String graphDescription) {
-        Set<String> analysisWithQueryConflict;
-        Set<String> analysisWithGraphConflict;
-        Set<String> dashboardNames = null;
+        Set<String> analysisWithQueryConflict = Set.of();
+        Set<String> analysisWithGraphConflict = Set.of();
+        Set<String> dashboardNames = Set.of();
         Map<String, Object> objectMap = new HashMap<>();
         List<String> messages = new LinkedList<>();
         List<String> hints = new LinkedList<>();
@@ -215,8 +216,7 @@ public class AnalysisMavController implements IUIManagementFlow {
                     .stream()
                     .map(DaveVis::getName)
                     .collect(Collectors.toSet());
-        } else {
-            // TODO
+        } else if (analysis.isPresent()){
             dashboardNames = this.daveAnalysisService.checkUsageOfAnalysis(analysis.get());
             analysisWithQueryConflict = this.daveAnalysisService.checkUsageOfQuery(analysis.get(), queryName, query);
             analysisWithGraphConflict = this.daveAnalysisService.checkUsageOfGraphDescription(analysis.get(), graphName, graphDescription);
@@ -230,7 +230,7 @@ public class AnalysisMavController implements IUIManagementFlow {
         objectMap.put("graphContent", graphDescription);
         objectMap.put("graphName", graphName);
 
-        if (mode.equals(Mode.EDITING)) {
+        if (mode.equals(Mode.EDITING) && analysis.isPresent()) {
             objectMap.put("flow", analysis.get().getId());
             if (!(dashboardNames.isEmpty())) {
                 messages.add("Modification of " + analysis.get().getName()
