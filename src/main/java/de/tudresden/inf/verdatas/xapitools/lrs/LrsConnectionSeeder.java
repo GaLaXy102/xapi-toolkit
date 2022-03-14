@@ -45,6 +45,9 @@ public class LrsConnectionSeeder {
                 this.lrsConnectionRepository.save(
                         new LrsConnectionTO(Optional.empty(), "Dave-Test-LRS", new URL("https://ba-lrs.galaxion.de/data/xAPI"), "8bbb203add18ab964236346874db4f8d930c4eb8", "069e6b99c4c5cd31178a972ec25f769ea1c8ea0d", Optional.empty()).toNewLrsConnection()
                 );
+                this.lrsConnectionRepository.save(
+                        new LrsConnectionTO(Optional.empty(), "VerDatAs-Test-LRS", new URL("https://ba-lrs.galaxion.de/data/xAPI"), "16df080479a1d0848be040760dad31a7f2973678", "81b1ad91cfe66a0dfe1e159d723682b81a02aeb4", Optional.empty()).toNewLrsConnection()
+                );
             }
         } catch (MalformedURLException ignored) {
         }
