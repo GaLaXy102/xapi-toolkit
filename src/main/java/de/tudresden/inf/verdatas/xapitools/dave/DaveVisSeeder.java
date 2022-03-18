@@ -224,7 +224,7 @@ public class DaveVisSeeder {
                                   "padding": 15,
 
                                   "data": [
-                                    {     \s
+                                    {
                                       "name": "table",
                                       "source": "result",
                                       "transform": [
@@ -236,7 +236,6 @@ public class DaveVisSeeder {
                                           "fields": [null],
                                           "as": ["rank"]
                                         },
-                                       \s
                                         { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
@@ -305,7 +304,7 @@ public class DaveVisSeeder {
                                   "padding": 15,
 
                                   "data": [
-                                    {     \s
+                                    {
                                       "name": "table",
                                       "source": "result",
                                       "transform": [
@@ -317,7 +316,6 @@ public class DaveVisSeeder {
                                           "fields": [null],
                                           "as": ["rank"]
                                         },
-                                       \s
                                         { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
@@ -386,7 +384,7 @@ public class DaveVisSeeder {
                                   "padding": 15,
 
                                   "data": [
-                                    {     \s
+                                    {
                                       "name": "table",
                                       "source": "result",
                                       "transform": [
@@ -398,7 +396,6 @@ public class DaveVisSeeder {
                                           "fields": [null],
                                           "as": ["rank"]
                                         },
-                                       \s
                                         { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
@@ -467,7 +464,7 @@ public class DaveVisSeeder {
                                   "padding": 15,
 
                                   "data": [
-                                    {     \s
+                                    {
                                       "name": "table",
                                       "source": "result",
                                       "transform": [
@@ -479,7 +476,6 @@ public class DaveVisSeeder {
                                           "fields": [null],
                                           "as": ["rank"]
                                         },
-                                       \s
                                         { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
@@ -548,7 +544,7 @@ public class DaveVisSeeder {
                                   "padding": 15,
 
                                   "data": [
-                                    {     \s
+                                    {
                                       "name": "table",
                                       "source": "result",
                                       "transform": [
@@ -560,7 +556,6 @@ public class DaveVisSeeder {
                                           "fields": [null],
                                           "as": ["rank"]
                                         },
-                                       \s
                                         { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
@@ -629,7 +624,7 @@ public class DaveVisSeeder {
                                   "padding": 15,
 
                                   "data": [
-                                    {     \s
+                                    {
                                       "name": "table",
                                       "source": "result",
                                       "transform": [
@@ -641,7 +636,6 @@ public class DaveVisSeeder {
                                           "fields": [null],
                                           "as": ["rank"]
                                         },
-                                       \s
                                         { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
@@ -710,7 +704,7 @@ public class DaveVisSeeder {
                                   "padding": 15,
 
                                   "data": [
-                                    {     \s
+                                    {
                                       "name": "table",
                                       "source": "result",
                                       "transform": [
@@ -722,11 +716,11 @@ public class DaveVisSeeder {
                                           "fields": [null],
                                           "as": ["rank"]
                                         },
-                                       \s
                                         { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
                                   ],
+                                  
                                   "signals": [
                                     {
                                       "name": "tooltip",
@@ -790,7 +784,7 @@ public class DaveVisSeeder {
                                   "padding": 15,
 
                                   "data": [
-                                    {     \s
+                                    {
                                       "name": "table",
                                       "source": "result",
                                       "transform": [
@@ -802,11 +796,11 @@ public class DaveVisSeeder {
                                           "fields": [null],
                                           "as": ["rank"]
                                         },
-                                       \s
                                         { "type": "filter", "expr": "datum.rank < 11"}
                                       ]
                                     }
                                   ],
+                                  
                                   "signals": [
                                     {
                                       "name": "tooltip",
