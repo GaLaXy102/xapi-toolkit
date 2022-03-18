@@ -152,6 +152,14 @@ public class DaveAnalysisService {
         Set<String> used = this.checkUsageOfAnalysis(analysis);
         if (used.isEmpty()) {
             this.visRepository.delete(analysis);
+            if (this.checkUsageOfQuery(analysis, analysis.getQuery().getName(),
+                    analysis.getQuery().getQuery()).isEmpty()) {
+                this.queryRepository.delete(analysis.getQuery());
+            }
+            if (this.checkUsageOfGraphDescription(analysis, analysis.getDescription().getName(),
+                    analysis.getDescription().getDescription()).isEmpty()) {
+                this.graphDescriptionRepository.delete(analysis.getDescription());
+            }
         } else {
             throw new AnalysisExceptions.SideEffectsError("Deletion of "
                     + analysis.getName() + " not possible.\n Still in use for " + used);
