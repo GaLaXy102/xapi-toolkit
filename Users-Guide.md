@@ -5,7 +5,44 @@
 | xAPI Toolkit - DATASIM |   v1    | 08.02.2022 | Konstantin Köhring (@Galaxy102) |
 | xAPI Toolkit - DAVE    |   v2    | 19.03.2022 | Ylvi Sarah Bachmann (@ylvion)   |
 
-[[toc]]
+- [Intro](#intro)
+- [Application Overview](#application-overview)
+- [Step-by-Step Guides: Flows](#step-by-step-guides--flows)
+    * [Perform Statement Simulations using DATASIM](#perform-statement-simulations-using-datasim)
+        + [Parametrize a DATASIM simulation](#parametrize-a-datasim-simulation)
+        + [Editing a DATASIM simulation parametrization](#editing-a-datasim-simulation-parametrization)
+        + [Making a simulation description read-only](#making-a-simulation-description-read-only)
+        + [Creating a copy of a simulation description](#creating-a-copy-of-a-simulation-description)
+        + [Performing a DATASIM simulation](#performing-a-datasim-simulation)
+        + [Exporting DATASIM simulation results](#exporting-datasim-simulation-results)
+        + [Deleting a simulation description](#deleting-a-simulation-description)
+    * [Import and Export LRS Data](#import-and-export-lrs-data)
+        + [Importing xAPI Statements](#importing-xapi-statements)
+        + [Exporting xAPI Statements](#exporting-xapi-statements)
+    * [Perform analyses and create Dashboards on xAPI Statements](#perform-analyses-and-create-dashboards-on-xapi-statements)
+        + [Configure a Dashboard](#configure-a-dashboard)
+        + [Editing a Dashboard configuration](#editing-a-dashboard-configuration)
+        + [Creating a copy of a Dashboard description](#creating-a-copy-of-a-dashboard-description)
+        + [Deleting a Dashboard description](#deleting-a-dashboard-description)
+        + [Perform analysis of a Dashboard](#perform-analysis-of-a-dashboard)
+        + [Exporting visualisations](#exporting-visualisations)
+- [Step-by-Step Guides: Settings](#step-by-step-guides--settings)
+    * [Managing LRS Connections](#managing-lrs-connections)
+        + [Adding a connection](#adding-a-connection)
+        + [Editing a connection](#editing-a-connection)
+        + [Deactivating a connection](#deactivating-a-connection)
+        + [Reactivating a connection](#reactivating-a-connection)
+    * [Managing Analyses](#managing-analyses)
+        + [Adding an Analysis](#adding-an-analysis)
+        + [Editing an Analysis description](#editing-an-analysis-description)
+        + [Creating a copy of an Analysis](#creating-a-copy-of-an-analysis)
+        + [Deleting an Analysis](#deleting-an-analysis)
+        + [Import of Analysis](#import-of-analysis)
+        + [Export of Analysis](#export-of-analysis)
+        + [Predefined Analyses](#predefined-analyses)
+        + [DAVE Analysis](#dave-analysis)
+            - [Query description](#query-description)
+            - [Graph description](#graph-description)
 
 ## Intro
 
@@ -120,7 +157,7 @@ This feature allows you to analyse xAPI statements with the help of DAVE, a fram
 Nice to know:
 * Predefined Analyses set  
   During the configuration of a dashboard to show your visualisations you can choose Analyses from a predefined set.
-  For more information what analyses are available please read the section "Managing Analyses".
+  For more information what analyses are available please read the section [Managing Analyses](#managing-analyses).
 * Finalized Dashboards  
   After the configuration of a dashboard is completed it is marked as finalized.
   This happens if the dashboards has a connected LRS as data source and contains at least one analysis.
@@ -129,7 +166,7 @@ Nice to know:
   The application uses the browser automation tool Selenium to access the functionality of DAVE because it has been developed as a single-page web application with no REST API.
   For each active LRS connection a connector to access DAVE with the help of Selenium is created automatically.
   These connectors are named after the corresponding LRS connection with the prefix 'DAVE-' and their status indicators can also be found in the third section of the sidebar.  
-  Note that there is an **additional** DAVE connector which matches no LRS connection. This connector is used for the validation of analysis descriptions. For more information see section "Managing Analyses".
+  Note that there is an **additional** DAVE connector which matches no LRS connection. This connector is used for the validation of analysis descriptions. For more information see section [Managing Analyses](#managing-analyses).
 
 #### Configure a Dashboard
 1. Click the `Create new Dashboard` card.
@@ -141,13 +178,13 @@ Nice to know:
    If an LRS connection is added, reactivated or the application has just been started the DAVE connector can not be used until all xAPI Statements are read from the corresponding LRS. The waiting state is indicated by the yellow status indicator. Depending on the amount of data that should be read this step will take a few minutes.
    When the DAVE connector is ready the status indicator turns green.
 4. Select and add Analyses.  
-   First select all Analyses you want to use from the defined Analysis set by selecting them in the `Add analysis` form and hitting the `+` button. You can limit them to a specific activity by selecting its identifier from the dropdown menu. Note that not every analysis can be limited. Please refer to the section "Managing Analyses" for further information. By default, the selected analysis is performed using the whole data set specified.  
+   First select all Analyses you want to use from the defined Analysis set by selecting them in the `Add analysis` form and hitting the `+` button. You can limit them to a specific activity by selecting its identifier from the dropdown menu. Note that not every analysis can be limited. Please refer to the section [Managing Analyses](#managing-analyses) for further information. By default, the selected analysis is performed using the whole data set specified.  
    Afterwards, you can change the order of the analysis which have been added to the dashboard by clicking the ⬆ or ⬇ icons in the `Selected analyses` form. You can also delete an analysis from the dashboard by clicking the 🗑 icon.  
    To improve performance the specified LRS' activities are requested once and cached. After 10 minutes the cache is cleared and the activities are requested again, if needed. If you don't want to use the cache and request them again click the `Refresh` icon in the `Add analysis` form.
 
 #### Editing a Dashboard configuration
 1. On the card with the dashboard you want to edit, click the pencil icon on the part you want to change.
-2. Proceed with the corresponding step of the section "Configure a Dashboard".
+2. Proceed with the corresponding step of the section [Configure a Dashboard](#configure-a-dashboard).
 
 #### Creating a copy of a Dashboard description
 1. On the card with the dashboard you want to copy, click the `Copy` button.
@@ -161,7 +198,7 @@ Nice to know:
 1. Perform the steps in "Configure a Dashboard".
 2. Click `Perform` on the card with the dashboard you want to view.  
    The graphics will be updated every five minutes.  
-   **Important:** There is no way to distinguish whether an empty graphic is the result of a bad analysis description (e.g. Query parameter naming does not match the Graph Description naming), the misuse of a predefined analysis on the data set or the source data set not containing the queried data. Please refer to section "Managing Analyses" for further information.
+   **Important:** There is no way to distinguish whether an empty graphic is the result of a bad analysis description (e.g. Query parameter naming does not match the Graph Description naming), the misuse of a predefined analysis on the data set or the source data set not containing the queried data. Please refer to section [Managing Analyses](#managing-analyses) for further information.
 
 #### Exporting visualisations
 1. After executing the step "Perform analysis of a Dashboard" you can download the graphics you want to by clicking the `Download` icon beside their name.  
@@ -214,14 +251,14 @@ Nice to know:
   Unfortunately it's not possible to perform an automated check to reveal the reason for an empty visualisation.
   If you experience this error the reason can be one of the following:
   1. You tried to apply an analysis from the predefined analysis set onto an unsupported source data set.  
-     Please refer to section "Predefined Analyses" to get information on which xAPI Profiles are supported, explanations on the single analyses and their usage.
+     Please refer to section [Predefined Analyses](#predefined-analyses) to get information on which xAPI Profiles are supported, explanations on the single analyses and their usage.
   2. The analysis description has the correct syntax but contains errors like inconsistently named variables in the query and graph description or the usage of wrong variables to apply in the graph description.  
-     Please refer to section "DAVE Analysis" to get further information on the syntax of query and graph descriptions and some examples.
+     Please refer to section [DAVE Analysis](#dave-analysis) to get further information on the syntax of query and graph descriptions and some examples.
   3. The specified source data set does not contain the requested data. In this case the analysis result is correctly empty.
   
 #### Adding an Analysis
 1. You have two options when adding an analysis:
-    1. You can import an analysis description saved as JSON. For more information see section "Import of Analysis".
+    1. You can import an analysis description saved as JSON. For more information see section [Import of Analysis](#import-of-analysis).
     2. You can create a new analysis description by clicking `Create new analysis`.
 2. Set an analysis name.  
    It will be used in the dashboard and for naming the output file. 
@@ -229,22 +266,22 @@ Nice to know:
    You have two options for doing so:
    1. Select a query from the dropdown menu.    
       The corresponding description is shown.  
-      If you want to, you can adapt it as you like. Please refer to section "DAVE Analysis" for information on the syntax and examples.  
+      If you want to, you can adapt it as you like. Please refer to section [DAVE Analysis](#dave-analysis) for information on the syntax and examples.  
       If the query is used in another analysis a hint will be shown. Please note that, by giving your consent you allow that your changes are applied to **all** affected analysis and dashboards which use them.
    2. Write a new query.  
-      Choose a suitable name for the query and write its description following the rules provided in section "DAVE Analysis".
+      Choose a suitable name for the query and write its description following the rules provided in section [DAVE Analysis](#dave-analysis).
 4. Configure the Graph Description.  
    You have two options for doing so:
     1. Select a graph description from the dropdown menu.    
        The corresponding description is shown.  
-       If you want to, you can adapt it as you like. Please refer to section "DAVE Analysis" for information on the syntax and examples.
+       If you want to, you can adapt it as you like. Please refer to section [DAVE Analysis](#dave-analysis) for information on the syntax and examples.
        If the graph description is used in another analysis a hint will be shown. Please note that, by giving your consent you allow that your changes are applied to **all** affected analysis and dashboards which use them.
     2. Write a new graph description.  
-       Choose a suitable name for the graph description and write its description following the rules provided in section "DAVE Analysis".
+       Choose a suitable name for the graph description and write its description following the rules provided in section [DAVE Analysis](#dave-analysis).
 
 #### Editing an Analysis description
 1. On the card with the analysis you want to edit, click the `Edit` button.
-2. Proceed with the corresponding step of the section "Adding an Analysis".
+2. Proceed with the corresponding step of the section [Adding an Analysis](#adding-an-analysis).
    If the analysis or some part of it is used in another analysis description or a dashboard you will be prompted a hint. Please note that, by giving your consent you allow that your changes are applied to **all** affected analysis or dashboards.
 
 #### Creating a copy of an Analysis
@@ -271,7 +308,7 @@ This section contains an explanation for each analysis from the predefined analy
 Nice to know:
 1. Supported data  
    The analyses can be executed on xAPI Statements which comply with the cmi5 xAPI Profile and are stored in an LRS. This could either be real-life data of learners (in the context of the VerDatAs project) or data simulated with the help of DATASIM.  
-   This limitation is conditioned by the available Query Parameters in the DAVE framework. Please refer to section "DAVE Analysis" to get further information.
+   This limitation is conditioned by the available Query Parameters in the DAVE framework. Please refer to section [DAVE Analysis](#dave-analysis) to get further information.
 2. Different analysis for simulated or real-life data
    At this moment there are some differences between these types of data sets.
    1. Simulations which are created using DATASIM do **not** contain information on the amount of points that a learner scored while solving an Activity. Therefore, performing an analysis which will examine these points will always provide an empty visualization.  
@@ -286,8 +323,11 @@ Nice to know:
    1. The predefined analyses use either a bar chart or a scatter plot to visualise the results.  
       More information can be found in the following table.
    2. As default the top ten analyses' results are shown and ordered descending when a bar chart is used.  
-      Further information on how to change the order of the results are provided in the following table and section "DAVE Analysis".
+      Further information on how to change the order of the results are provided in the following table and section [DAVE Analysis](#dave-analysis).  
       **Important:** Because of a failure in the DAVE application diagrams may not apply to the chosen sorting.
+
+The column "limitation possible" in the following table indicates, if the corresponding analysis can be executed on a chosen Activity or only on the entire data set.  
+Whenever the data set is specified as "VerDatAs" the analysis can be performed on real-life data which comply with the cmi5 xAPI Profile. Correspondingly, if the data set "DATASIM" is profided, the analysis should only be executed on simulated data to assure correct and detailed results. 
 
 | name                                                                     |                                illustrates                                 | learners distinguished by |         x-axis         |              y-axis              |   diagram    | data set | unification | limitation possible |  change order of results   |
 |:-------------------------------------------------------------------------|:--------------------------------------------------------------------------:|:-------------------------:|:----------------------:|:--------------------------------:|:------------:|:--------:|:-----------:|:-------------------:|:--------------------------:|
@@ -312,9 +352,9 @@ Nice to know:
 | Learners' average scaled score \[VerDatAs\]                              | average of points a learner has scored for all Activities for each learner |        user agents        |  name of user agents   |           scaled score           |  bar chart   | VerDatAs |      ✔      |          ❌          | 'Top 10 average value ASC' |
 | Linear regression of learners' scaled scores by hour of day \[VerDatAs\] |     linear regression on the points all learners scored during the day     |             -             |        timeline        |           scaled score           | scatter plot | VerDatAs |      -      |          ✔          |             -              |
 
-The analyses "Learners' scaled scores over time \[VerDatAs\]" and "Learners' average scaled score \[VerDatAs\]" use the points a user has scored and scale them on an axis from 0 to 1, which leads to a representation of the scored points as percentage of the maximal amount of points reachable. Because of this it is easier to compare the learners' achievement for different Activities with different maximal amount of points reachable.  
+The analyses "Learners' scaled scores over time [VerDatAs]" and "Learners' average scaled score [VerDatAs]" use the points a user has scored and scale them on an axis from 0 to 1, which leads to a representation of the scored points as percentage of the maximal amount of points reachable. Because of this it is easier to compare the learners' achievement for different Activities with different maximal amount of points reachable.  
 Since simulated data does not provide information on the learners' scored points (see 'Nice to know' of this section) the analysis "Learners success over time \[DATASIM\]" illustrates the completion of Activities over time by each learner by collecting all xAPI Statements which indicate the completion of an Activity and also scales them on an axis from 0 to 1. Here 0 is seen as an unsuccessful completion.  
-To make the diagrams for the analyses "Learners' scaled scores over time \[VerDatAs\]" and "Learners' success over time \[DATASIM\]" easily readable, both use different colors and a legend to match them to the single learners.
+To make the diagrams for the analyses "Learners' scaled scores over time [VerDatAs]" and "Learners' success over time [DATASIM]" easily readable, both use different colors and a legend to match them to the single learners.
 
 #### DAVE Analysis
 This section provides explanation on how to use the DAVE framework and write valid analyses descriptions.
@@ -387,7 +427,7 @@ to limit the execution of a DAVE Query to a special Activity. Therefore, you can
 This section shows the structure of a VEGA visualization description using an example from the predefined analysis set.
 Please refer to the tutorials found at the [VEGA documentation](https://vega.github.io/vega/) to get to know the different parts possible for a graph description and their functionality.
 
-If you want to visualize the Top 10 results of the Query 'Successful learners per activity' described in section "Query description" you can use this visualization description:
+If you want to visualize the Top 10 results of the Query 'Successful learners per activity' described in section [Query description](#query-description) you can use this visualization description:
 ```
 {
   "$schema": "https://vega.github.io/schema/vega/v5.json",
@@ -471,9 +511,11 @@ If you want to visualize the Top 10 results of the Query 'Successful learners pe
 ```
 Please note that the naming of your return values of your DAVE Query has to be identical to the naming of the values you access and assign in your graph description.  
 Return values of a query can be referred to like this:
-| Value in DAVE Query        | Value in VEGA description |  example                                  |
-|:---------------------------|:--------------------------|:------------------------------------------|
-|   `value`                  |   `value`                 |  ?v and "?v"                              |
-|   `count` `value`          |   `count`_`value`         |  count ?v and "count_?v"                  |
-|   `count-distinct` `value` | `count-distinct`_`value`  | count-distinct ?v and "count-distinct_?v" |
+
+|     Value in DAVE Query     | Value in VEGA description  |                  example                   |
+|:---------------------------:|:--------------------------:|:------------------------------------------:|
+|           `value`           |          `value`           |                ?v and "?v"                 |
+|       `count` `value`       |      `count`_`value`       |          count ?v and "count_?v"           |
+|  `count-distinct` `value`   |  `count-distinct`_`value`  | count-distinct ?v and "count-distinct_?v"  |
+
 This scheme can also be applied when using other functions on the return values of the DAVE query.
