@@ -3,7 +3,9 @@
 | Project Title          | Version |    Date    | Author                          |
 |:-----------------------|:-------:|:----------:|:--------------------------------|
 | xAPI Toolkit - DATASIM |   v1    | 08.02.2022 | Konstantin Köhring (@Galaxy102) |
-| xAPI Toolkit - DAVE    |   v2    | 08.03.2022 | Ylvi Sarah Bachmann (@ylvion)   |
+| xAPI Toolkit - DAVE    |   v2    | 19.03.2022 | Ylvi Sarah Bachmann (@ylvion)   |
+
+[[toc]]
 
 ## Intro
 
@@ -140,7 +142,7 @@ Nice to know:
    When the DAVE connector is ready the status indicator turns green.
 4. Select and add Analyses.  
    First select all Analyses you want to use from the defined Analysis set by selecting them in the `Add analysis` form and hitting the `+` button. You can limit them to a specific activity by selecting its identifier from the dropdown menu. Note that not every analysis can be limited. Please refer to the section "Managing Analyses" for further information. By default, the selected analysis is performed using the whole data set specified.  
-   Afterwards, you can change the order of the analysis which have been added to the dashboard by clicking the `cb84` or `cb85` icons in the `Selected analyses` form. You can also delete an analysis from the dashboard by clicking the `Trash can` icon.  
+   Afterwards, you can change the order of the analysis which have been added to the dashboard by clicking the ⬆ or ⬇ icons in the `Selected analyses` form. You can also delete an analysis from the dashboard by clicking the 🗑 icon.  
    To improve performance the specified LRS' activities are requested once and cached. After 10 minutes the cache is cleared and the activities are requested again, if needed. If you don't want to use the cache and request them again click the `Refresh` icon in the `Add analysis` form.
 
 #### Editing a Dashboard configuration
@@ -266,157 +268,53 @@ Nice to know:
 #### Predefined Analyses
 This section contains an explanation for each analysis from the predefined analysis set and if their performance can be limited to a single Activity of an LRS as data source.
 
-% TODO: Naming of Activities different
-% TODO: Learners activity over time
 Nice to know:
 1. Supported data  
    The analyses can be executed on xAPI Statements which comply with the cmi5 xAPI Profile and are stored in an LRS. This could either be real-life data of learners (in the context of the VerDatAs project) or data simulated with the help of DATASIM.  
    This limitation is conditioned by the available Query Parameters in the DAVE framework. Please refer to section "DAVE Analysis" to get further information.
 2. Different analysis for simulated or real-life data
    At this moment there are some differences between these types of data sets.
-   1. Simulations which are created using DATASIM do **not** contain information on the amount of points that a learner scored while solving an Activity. Therefor, performing an analysis which will examine these points will always provide an empty visualization.  
+   1. Simulations which are created using DATASIM do **not** contain information on the amount of points that a learner scored while solving an Activity. Therefore, performing an analysis which will examine these points will always provide an empty visualization.  
       Every predefined analysis using the scored points specifies this in its name. To highlight this further they are also marked with the label \[VerDatAs\].
       As soon as DATASIM simulations are able to simulate the amount of scored points this limitation will become invalid.
-   2. At this moment the provided real-life data sets of the VerDatAs project allows the grouping of data from different accounts of a user if they belong to the same user agent. Because of this the grouping by the user agent's name will lead to the loss of information to distinguish the different accounts.  
-      To examine and preserve this data, special analysis descriptions which use the name corresponding to the provided user agents' **accounts** should be used. To highlight these analysis they are marked with the label \[VerDatAs].
+   2. Simulated data does **not** contain names for Activities. Therefore, each analysis of this predefined set uses the Activity ID to address an Activity.
+      As soon as DATASIM simulations are able to simulate human-readable and meaningful naming of Activities this limitation will become invalid.
+   3. At this moment the provided real-life data sets of the VerDatAs project allows the grouping of data from different accounts of a user if they belong to the same user agent. This process is called unification. Because of this there will be a loss of information to distinguish the different accounts.  
+      To examine and preserve this data, special analysis descriptions which use the name corresponding to the provided user agents' **accounts** should be used. To highlight these analyses they are marked with the label \[VerDatAs].
       If you are not interested in illustrating this data you can examine the data by using the analysis which don't have the label \[VerDatAs\]. **Exclusion:** The decision made in 1. is not changed by this.
+3. Used diagrams and order of results
+   1. The predefined analyses use either a bar chart or a scatter plot to visualise the results.  
+      More information can be found in the following table.
+   2. As default the top ten analyses' results are shown and ordered descending when a bar chart is used.  
+      Further information on how to change the order of the results are provided in the following table and section "DAVE Analysis".
+      **Important:** Because of a failure in the DAVE application diagrams may not apply to the chosen sorting.
 
-##### Learners' activity
-To illustrate the activity of learners, this analysis counts the amount of xAPI Statements provided by each learner in the source data set and groups them accordingly, while distinguishing the learners by the agents they used.  
-To visualize this analysis the Top 10 most active learners' data is arranged in a bar chart. The y-axis shows the number of xAPI Statements and the x-axis shows the names belonging to the selected user agents.  
-If you want to visualize the Top 10 least active learners, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 statements ASC'. Section "DAVE Analysis" explains why.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the most active learners in this Activity.  
-This analysis can be applied to simulated or real-life data (if you're not interested in illustrating data from different accounts of a learner). Please refer to the 'Nice to know' of this section to get more information.
+| name                                                                     |                                illustrates                                 | learners distinguished by |         x-axis         |              y-axis              |   diagram    | data set | unification | limitation possible |  change order of results   |
+|:-------------------------------------------------------------------------|:--------------------------------------------------------------------------:|:-------------------------:|:----------------------:|:--------------------------------:|:------------:|:--------:|:-----------:|:-------------------:|:--------------------------:|
+| Learners' activity                                                       |                 amount of xAPI Statements by each learner                  |        user agents        |  names of user agents  |       number of statements       |  bar chart   |   both   |      ✔      |          ✔          |  'Top 10 statements ASC'   |
+| Learners' activity \[VerDatAs\]                                          |                 amount of xAPI Statements by each learner                  |       user account        | names of user accounts |       number of statements       |  bar chart   | VerDatAs |      ❌      |          ✔          |  'Top 10 statements ASC'   |
+| Learners' activity per Activity                                          |                amount of xAPI Statements for each Activity                 |             -             |      Activity IDs      |       number of statements       |  bar chart   |   both   |      -      |          ✔          |  'Top 10 statements ASC'   |
+| Learners per Activity                                                    |                    number of learners for each Activity                    |        user agents        |      Activity IDs      |        number of learners        |  bar chart   |   both   |      ✔      |          ✔          |   'Top 10 distinct ASC'    |
+| Learners per Activity \[VerDatAs\]                                       |                    number of learners for each Activity                    |       user accounts       |      Activity IDs      |        number of learners        |  bar chart   | VerDatAs |      ❌      |          ✔          |   'Top 10 distinct ASC'    |
+| Learners' task determination                                             |      number of Activities a learner could not pass with the first try      |        user agents        |  names of user agents  |       number of Activities       |  bar chart   |   both   |      ✔      |          ❌          |   'Top 10 distinct ASC'    |
+| Learners' task determination \[VerDatAs\]                                |      number of Activities a learner could not pass with the first try      |       user accounts       | names of user accounts |       number of Activities       |  bar chart   | VerDatAs |      ❌      |          ❌          |   'Top 10 distinct ASC'    |
+| Learners' unlearning                                                     |         number of Activities a learner has passed and later failed         |        user agents        |  names of user agents  |       number of Activities       |  bar chart   |   both   |      ✔      |          ❌          |   'Top 10 distinct ASC'    |
+| Learners' unlearning \[VerDatAs\]                                        |         number of Activities a learner has passed and later failed         |       user accounts       | names of user accounts |       number of Activities       |  bar chart   | VerDatAs |      ❌      |          ❌          |   'Top 10 distinct ASC'    |
+| Successful execution per Activity                                        |             number of successful completions for each Activity             |             -             |      Activity IDs      | number of successful completions |  bar chart   |   both   |      -      |          ✔          |     'Top 10 value ASC'     |
+| Unsuccessful execution per Activity                                      |            number of unsuccessful completions for each Activity            |             -             |      Activity IDs      |   number of failed completions   |  bar chart   |   both   |      -      |          ✔          |     'Top 10 value ASC'     |
+| Successful learners per Activity                                         |              amount of successful learners for each Activity               |        user agents        |      Activity IDs      |  number of successful learners   |  bar chart   |   both   |      ✔      |          ✔          |   'Top 10 distinct ASC'    |
+| Successful learners per Activity \[VerDatAs\]                            |              amount of successful learners for each Activity               |       user accounts       |      Activity IDs      |  number of successful learners   |  bar chart   | VerDatAs |      ❌      |          ✔          |   'Top 10 distinct ASC'    |
+| Unsuccessful learners per Activity                                       |             amount of unsuccessful learners for each Activity              |        user agents        |      Activity IDs      |    number of failed learners     |  bar chart   |   both   |      ✔      |          ✔          |   'Top 10 distinct ASC'    |
+| Unsuccessful learners per Activity \[VerDatAs\]                          |             amount of unsuccessful learners for each Activity              |       user accounts       |      Activity IDs      |    number of failed learners     |  bar chart   | VerDatAs |      ❌      |          ✔          |   'Top 10 distinct ASC'    |
+| Learners' scaled scores over time \[VerDatAs\]                           |                  points scored over time by each learner                   |        user agents        |        timeline        |           scaled score           | scatter plot | VerDatAs |      ✔      |          ✔          |             -              |
+| Learners' success over time \[DATASIM\]                                  |             completion of Activities over time by each learner             |        user agents        |        timeline        |            completion            | scatter plot | DATASIM  |      -      |          ✔          |             -              |
+| Learners' raw score per Activity \[VerDatAs\]                            |              points scored for each Activity by each learner               |        user agents        |      Activity IDs      |            raw score             |  bar chart   | VerDatAs |      ✔      |          ✔          |     'Top 10 value ASC'     |
+| Learners' average scaled score \[VerDatAs\]                              | average of points a learner has scored for all Activities for each learner |        user agents        |  name of user agents   |           scaled score           |  bar chart   | VerDatAs |      ✔      |          ❌          | 'Top 10 average value ASC' |
+| Linear regression of learners' scaled scores by hour of day \[VerDatAs\] |     linear regression on the points all learners scored during the day     |             -             |        timeline        |           scaled score           | scatter plot | VerDatAs |      -      |          ✔          |             -              |
 
-##### Learners' activity \[VerDatAs\]
-To illustrate the activity of learners, this analysis counts the amount of xAPI Statements provided by each learner in the source data set and groups them accordingly, while distinguishing the learners by the accounts provided by the user agents they used.  
-To visualize this analysis the Top 10 most active learners' data is arranged in a bar chart. The y-axis shows the number of xAPI Statements and the x-axis shows the names belonging to the different accounts of the user agents.  
-If you want to visualize the Top 10 least active learners, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 statements ASC'. Section "DAVE Analysis" explains why.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the most active learners in this Activity.  
-Please note that, this analysis should be applied to study a set of data from the VerDatAs project if you want to illustrate the data belonging to a single user agent divided by the corresponding user accounts. Please refer to the 'Nice to know' of this section to get more information.
-
-##### Learners' activity per Activity
-To illustrate the activity of learners in relation to the different Activities saved in the source LRS, this analysis counts the amount of xAPI Statements belonging to one Activity and groups it accordingly, while distinguishing the Activities by their identification.  
-To visualize this analysis the Top 10 Activities which were most interacted with by the learners are arranged in a bar chart. The y-axis shows the number of xAPI Statements and the x-axis shows the Activities' identification.  
-If you want to visualize the Top 10 Activities least interacted with, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 statements ASC'. Section "DAVE Analysis" explains why.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the number of interactions for this Activity.  
-It can be applied to simulated or real-life data sets.
-
-##### Learners per Activity
-To illustrate the number of learners in relation to the different Activities of the source LRS, this analysis counts how many learners have interacted with a special Activity by using the learners' user agents and groups this data accordingly to the different Activities by using their identification.    
-To visualize this analysis the Top 10 Activities which have the highest number of active learners are arranged in a bar chart. The y-axis shows the number of learners and the x-axis shows the Activities' identification.  
-If you want to visualize the Top 10 Activities with the lowest number of learners, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 distinct ASC'. Section "DAVE Analysis" explains why.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the number of learners for this Activity.  
-It can be applied to simulated or real-life data sets (if you're not interested in illustrating data from different accounts of a learner). Please refer to the 'Nice to know' of this section to get more information.
-
-##### Learners per Activity \[VerDatAs\]
-To illustrate the number of learners in relation to the different Activities of the source LRS, this analysis counts how many learners have interacted with a special Activity by using the learners' user accounts belonging to the user agents and groups this data accordingly to the different Activities by using their identification.    
-To visualize this analysis the Top 10 Activities which have the highest number of active learners are arranged in a bar chart. The y-axis shows the number of learners and the x-axis shows the Activities' identification.  
-If you want to visualize the Top 10 Activities with the lowest number of learners, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 distinct ASC'. Section "DAVE Analysis" explains why.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the number of learners for this Activity.  
-It can be applied to real-life data sets if you're interested in illustrating data from different accounts of a learner. Please refer to the 'Nice to know' of this section to get more information.
-
-##### Learners' task determination
-To illustrate the amount of Activities a learner could not pass with the first try, this analysis scans for xAPI Statements which indicate both unsuccessful and successful completions of an Activity and distinguishes them by the user agent they belong to. After this the found xAPI Statements are filtered using their timestamp to find all successful completions of an Activity for which at least one unsuccessful try was made in the past. The resulting data is grouped by the user agent it belongs to and the amount of Activities needing multiple tries are counted.  
-To visualize this analysis the Top 10 learners having trouble with multiple Activities are arranged in a bar chart. The y-axis shows the number of Activities that weren't completed in the first try and the x-axis shows the names belonging to the selected user agents.  
-If you want to visualize the Top 10 Activities with the lowest number of Activities satisfying the condition, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 distinct ASC'. Section "DAVE Analysis" explains why.
-This analysis can **not** be limited to a special Activity.  
-It can be applied to simulated or real-life data sets (if you're not interested in illustrating data from different accounts of a learner). Please refer to the 'Nice to know' of this section to get more information.
-
-##### Learners' task determination \[VerDatAs\]
-To illustrate the amount of Activities a learner could not pass with the first try, this analysis scans for xAPI Statements which indicate both unsuccessful and successful completions of an Activity and distinguishes them by the user accounts they belong to. After this the found xAPI Statements are filtered using their timestamp to find all successful completions of an Activity for which at least one unsuccessful try was made in the past. The resulting data is grouped by the user accounts it belongs to and the amount of Activities needing multiple tries are counted.  
-To visualize this analysis the Top 10 learners having trouble with multiple Activities are arranged in a bar chart. The y-axis shows the number of Activities that weren't completed in the first try and the x-axis shows the names belonging to the selected user accounts.  
-If you want to visualize the Top 10 learners with the lowest number of Activities satisfying the condition, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 distinct ASC'. Section "DAVE Analysis" explains why.
-This analysis can **not** be limited to a special Activity.  
-It can be applied to real-life data sets if you're interested in illustrating data from different accounts of a learner. Please refer to the 'Nice to know' of this section to get more information.
-
-##### Learners' unlearning
-To illustrate the amount of Activities a learner has passed and later failed, this analysis scans for xAPI Statements which indicate both unsuccessful and successful completions of an Activity and distinguishes them by the user agent they belong to. After this the found xAPI Statements are filtered using their timestamp to find all unsuccessful completions of an Activity for which a successful try was made in the past. The resulting data is grouped by the user agent it belongs to and the amount of Activities which satisfy the condition are counted.  
-To visualize this analysis the Top 10 learners having trouble with multiple Activities are arranged in a bar chart. The y-axis shows the number of Activities that were completed and afterwarts failed and the x-axis shows the names belonging to the selected user agents.  
-If you want to visualize the Top 10 Activities with the lowest number of Activities satisfying the condition, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 distinct ASC'. Section "DAVE Analysis" explains why.
-This analysis can **not** be limited to a special Activity.  
-It can be applied to simulated or real-life data sets (if you're not interested in illustrating data from different accounts of a learner). Please refer to the 'Nice to know' of this section to get more information.
-
-##### Learners' unlearning \[VerDatAs\]
-To illustrate the amount of Activities a learner has passed and later failed, this analysis scans for xAPI Statements which indicate both unsuccessful and successful completions of an Activity and distinguishes them by the user accounts they belong to. After this the found xAPI Statements are filtered using their timestamp to find all unsuccessful completions of an Activity for which a successful try was made in the past. The resulting data is grouped by the user accounts it belongs to and the amount of Activities which satisfy the condition are counted.  
-To visualize this analysis the Top 10 learners having trouble with multiple Activities are arranged in a bar chart. The y-axis shows the number of Activities that were completed and afterwarts failed and the x-axis shows the names belonging to the selected user accounts.  
-If you want to visualize the Top 10 Activities with the lowest number of Activities satisfying the condition, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 distinct ASC'. Section "DAVE Analysis" explains why.
-This analysis can **not** be limited to a special Activity.  
-It can be applied to real-life data sets if you're interested in illustrating data from different accounts of a learner. Please refer to the 'Nice to know' of this section to get more information.
-
-##### Successful execution per Activity
-To illustrate the difficulty of an Activity by the number of successful completions, this analysis scans for xAPI Statements which indicate a successful completion and groups them by the Activity they belong to using the Activity's identifier.  
-To visualize this analysis the Top 10 Activities with the highest number of successful completions are arranged in a bar chart. The y-axis shows the number of successful completions and the x-axis shows the Activities' identification.  
-If you want to visualize the Top 10 Activities with the lowest number of successful completions, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 value DESC'. Section "DAVE Analysis" explains why.
-This analysis can be limited to a special Activity of an LRS and will then illustrate the number of successful completions for this Activity.
-It can be applied to simulated or real-life data sets.
-
-##### Unsuccessful execution per Activity
-To illustrate the difficulty of an Activity by the number of unsuccessful completions, this analysis scans for xAPI Statements which indicate an unsuccessful completion and groups them by the Activity they belong to using the Activity's identifier.  
-To visualize this analysis the Top 10 Activities with the highest number of unsuccessful completions are arranged in a bar chart. The y-axis shows the number of unsuccessful completions and the x-axis shows the Activities' identification.  
-If you want to visualize the Top 10 Activities with the lowest number of unsuccessful completions, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 value DESC'. Section "DAVE Analysis" explains why.
-This analysis can be limited to a special Activity of an LRS and will then illustrate the number of unsuccessful completions for this Activity.
-It can be applied to simulated or real-life data sets.
-
-##### Successful learners per Activity
-To illustrate the difficulty of an Activity by the number of successful learners, this analysis counts how many learners have successfully completed a special Activity by using the learners' user agents and groups this data accordingly to the different Activities by using their identification.    
-To visualize this analysis the Top 10 Activities which have the highest number of successful learners are arranged in a bar chart. The y-axis shows the number of successful learners and the x-axis shows the Activities' identification.  
-If you want to visualize the Top 10 Activities with the lowest number of successful learners, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 distinct ASC'. Section "DAVE Analysis" explains why.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the number of successful learners for this Activity.  
-It can be applied to simulated or real-life data sets (if you're not interested in illustrating data from different accounts of a learner). Please refer to the 'Nice to know' of this section to get more information.
-
-##### Successful learners per Activity \[VerDatAs\]
-To illustrate the difficulty of an Activity by the number of successful learners, this analysis counts how many learners have successfully completed a special Activity by using the learners' user accounts belonging to the user agents and groups this data accordingly to the different Activities by using their identification.    
-To visualize this analysis the Top 10 Activities which have the highest number of successful learners are arranged in a bar chart. The y-axis shows the number of successful learners and the x-axis shows the Activities' identification.  
-If you want to visualize the Top 10 Activities with the lowest number of successful learners, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 distinct ASC'. Section "DAVE Analysis" explains why.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the number of successful learners for this Activity.  
-It can be applied to real-life data sets if you're interested in illustrating data from different accounts of a learner. Please refer to the 'Nice to know' of this section to get more information.
-
-##### Unsuccessful learners per Activity
-To illustrate the difficulty of an Activity by the number of unsuccessful learners, this analysis counts how many learners have unsuccessfully completed a special Activity by using the learners' user agents and groups this data accordingly to the different Activities by using their identification.    
-To visualize this analysis the Top 10 Activities which have the highest number of unsuccessful learners are arranged in a bar chart. The y-axis shows the number of unsuccessful learners and the x-axis shows the Activities' identification.  
-If you want to visualize the Top 10 Activities with the lowest number of unsuccessful learners, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 distinct ASC'. Section "DAVE Analysis" explains why.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the number of unsuccessful learners for this Activity.  
-It can be applied to simulated or real-life data sets (if you're not interested in illustrating data from different accounts of a learner). Please refer to the 'Nice to know' of this section to get more information.
-
-##### Unsuccessful learners per Activity \[VerDatAs\]
-To illustrate the difficulty of an Activity by the number of unsuccessful learners, this analysis counts how many learners have unsuccessfully completed a special Activity by using the learners' user accounts belonging to the user agents and groups this data accordingly to the different Activities by using their identification.    
-To visualize this analysis the Top 10 Activities which have the highest number of unsuccessful learners are arranged in a bar chart. The y-axis shows the number of unsuccessful learners and the x-axis shows the Activities' identification.  
-If you want to visualize the Top 10 Activities with the lowest number of unsuccessful learners, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 distinct ASC'. Section "DAVE Analysis" explains why.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the number of unsuccessful learners for this Activity.  
-It can be applied to real-life data sets if you're interested in illustrating data from different accounts of a learner. Please refer to the 'Nice to know' of this section to get more information.
-
-##### Learners' scaled scores over time \[VerDatAs\]
-To illustrate the learners progress, this analysis visualizes the points a learner has scored over time by collecting them, scaling them on an axis from 0 to 1 (seen as points scored from amount of possible points in percent) and grouping the data by the user agent it belongs to.  
-To visualize this analysis a scatter plot is used. The y-axis shows the scaled score that was reached and the x-axis shows a timeline. The use of different colors and a legend to match them to the different learners makes the diagram more readable.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the scaled score the learners have scored over time for this Activity.  
-It can **only** be applied to real-life data sets and will use the unification of user accounts. Therefore, it is possible to examine the progress of a single learner more easily.
-
-##### Learners' success over time \[DATASIM\]
-To illustrate the learners progress, this analysis visualizes the success of a learner over time adapted on simulated data. As it has been explained in the 'Nice to know' of this section, DATASIM can not simulate Activities with points that can be scored. Therefore, this analysis collects all xAPI Statements which indicate the completion of an Activity, scaling them on an axis from 0 to 1 (seen as 0 equals unsuccessful completion) and groups the data by the user agent it belongs to.  
-To visualize this analysis a scatter plot is used. The y-axis shows the scaled score that was reached and the x-axis shows a timeline. The use of different colors and a legend to match them to the different learners makes the diagram more readable.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the scaled score the learners have scored over time for this Activity.  
-It should **only** be applied to simulated data because otherwise useful information on the point a learner scored will not be examined.
-
-##### Learners' raw score per Activity \[VerDatAs\]
-To illustrate the learners raw results for the completion of an Activity, this analysis visualizes the raw points a learner has scored for a special Activity by collecting them and grouping the data by the user agent it belongs to.  
-To visualize this analysis the Top 10 Activities which have the highest raw score are arranged in a bar chart. The y-axis shows the raw score that was reached and the x-axis shows the Activities' identification.  
-If you want to visualize the Top 10 Activities with the lowest number of unsuccessful learners, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 value ASC'. Section "DAVE Analysis" explains why.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the scaled score the learners have scored over time for this Activity.  
-It can **only** be applied to real-life data sets and will use the unification of user accounts. Therefore, it is possible to examine the results of a single learner more easily.
-
-##### Learners' average scaled score \[VerDatAs\]
-To illustrate the learners average score, this analysis visualizes the average of points a learner has scored for all Activities by collecting them, scaling them on an axis from 0 to 1 (seen as points scored from amount of possible points in percent), calculating the average scored points in relation to all Activities and grouping the data by the user agent it belongs to.
-To visualize this analysis the Top 10 Activities which have the highest average scaled score are arranged in a bar chart. The y-axis shows the scaled score that was reached and the x-axis shows the names belonging to the selected user agents.  
-If you want to visualize the Top 10 Activities with the lowest average scaled score, edit the analysis description as explained in "Editing an Analysis description". **Hint:** You have to select the graph description, which is named 'Top 10 average value ASC'. Section "DAVE Analysis" explains why.  
-This analysis can **not** be limited to a special Activity of an LRS.  
-It can **only** be applied to real-life data sets and will use the unification of user accounts. Therefore, it is possible to examine the results of a single learner more easily.
-
-##### Linear regression of learners' scaled scores by hour of day \[VerDatAs\]
-To illustrate the learners progress during the day, this analysis visualizes the points a learner has scored during the day by collecting them, scaling them on an axis from 0 to 1 (seen as points scored from amount of possible points in percent) and grouping the data by the user agent it belongs to.  
-To visualize this analysis a scatter plot is used. The y-axis shows the scaled score that was reached and the x-axis shows a timeline with the hours of a day. The use of different colors and a legend to match them to the different learners makes the diagram more readable.  
-This analysis can be limited to a special Activity of an LRS and will then illustrate the scaled score the learners have scored during the day for this Activity.  
-It can **only** be applied to real-life data sets and will use the unification of user accounts. Therefore, it is possible to examine the progress of a single learner more easily.
+The analyses "Learners' scaled scores over time \[VerDatAs\]" and "Learners' average scaled score \[VerDatAs\]" use the points a user has scored and scale them on an axis from 0 to 1, which leads to a representation of the scored points as percentage of the maximal amount of points reachable. Because of this it is easier to compare the learners' achievement for different Activities with different maximal amount of points reachable.  
+Since simulated data does not provide information on the learners' scored points (see 'Nice to know' of this section) the analysis "Learners success over time \[DATASIM\]" illustrates the completion of Activities over time by each learner by collecting all xAPI Statements which indicate the completion of an Activity and also scales them on an axis from 0 to 1. Here 0 is seen as an unsuccessful completion.  
+To make the diagrams for the analyses "Learners' scaled scores over time \[VerDatAs\]" and "Learners' success over time \[DATASIM\]" easily readable, both use different colors and a legend to match them to the single learners.
 
 #### DAVE Analysis
 This section provides explanation on how to use the DAVE framework and write valid analyses descriptions.
