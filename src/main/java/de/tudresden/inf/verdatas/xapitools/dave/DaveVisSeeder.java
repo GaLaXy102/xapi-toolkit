@@ -57,7 +57,8 @@ public class DaveVisSeeder {
                                   :where
                                   [?s :statement/object ?o]
                                   [?o :activity/id ?c]
-                                  [?s :statement/actor ?ac]]"""));
+                                  [?s :statement/actor ?a]
+                                  [?a :agent.account/name ?ac]"""));
                 this.daveQueryRepository.save(new DaveQuery("Learners' task determination",
                         """
                                 [:find (count-distinct ?ac) ?c
