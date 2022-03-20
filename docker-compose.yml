@@ -3,9 +3,13 @@ version: "3.9"
 networks:
   xapitools0: {}
   selenium0: {}
+  frontend0:
+    name: frontend0
+    external: true
 volumes:
   xapitools_simulations: {}
   xapitools_mongo: {}
+  xapitools_mariadb: {}
 
 services:
   mariadb:
@@ -13,6 +17,8 @@ services:
     restart: always
     networks:
       - xapitools0
+    volumes:
+      - xapitools_mariadb:/var/lib/mysql
     environment:
       MARIADB_RANDOM_ROOT_PASSWORD: 1
       MARIADB_DATABASE: xapitools
@@ -26,8 +32,6 @@ services:
     volumes:
       - ./init/mongodb:/docker-entrypoint-initdb.d:ro
       - xapitools_mongo:/data/db
-    ports:
-      - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -43,8 +47,6 @@ services:
       - xapitools0
     environment:
       credentials: foo:bar  # sic!
-    ports:
-      - "9090:9090"
   dave:
     # Image is built by CI of DAVE "mirror"
     image: nexus.galaxion.de:5050/yetanalytics/dave:latest
@@ -54,8 +56,6 @@ services:
     networks:
       - xapitools0
       - selenium0
-    ports:
-      - "9091:8043"
   selenium-node-docker:
     image: selenium/node-docker:4.1.2-20220217
     restart: always
@@ -74,13 +74,18 @@ services:
     image: selenium/hub:4.1.2-20220217
     container_name: selenium-hub
     restart: always
-    ports:
-      - "4442:4442"
-      - "4443:4443"
-      - "4444:4444"
     networks:
       - xapitools0
       - selenium0
+      - frontend0
+    labels:
+      traefik.enable: "true"
+      traefik.providers.docker.network: frontend0
+      traefik.http.routers.selenium-hub.rule: Host(`${SELENIUM_HOSTNAME}`)
+      traefik.http.routers.selenium-hub.entrypoints: traefik-dash  # This is for internal purposes only.
+      traefik.http.routers.selenium-hub.tls: "true"
+      traefik.http.routers.selenium-hub.service: selenium-wui
+      traefik.http.services.selenium-wui.loadbalancer.server.port: "4444"
   permission_control:
     image: busybox
     command: /bin/sh -c 'touch /data/.initialized && chown -R 1000:1000 /data'
@@ -91,6 +96,7 @@ services:
       - mariadb
       - datasim
       - dave
+      - selenium-hub
       - permission_control
     restart: on-failure
     # Image is built by CI of this project.
@@ -98,13 +104,14 @@ services:
     networks:
       - xapitools0
       - selenium0
+      - frontend0
+    expose:
+      - 8080
     volumes:
       - xapitools_simulations:/data
-    ports:
-      - "8888:8080"                                                 # The service is mapped to port 8888 on localhost without TLS. Perhaps integrate Træfik?
     environment:
-      XAPITOOLS_SEC_USERNAME: foo
-      XAPITOOLS_SEC_PASSWORD: bar
+      XAPITOOLS_SEC_USERNAME: ${WEB_AUTH_USER}
+      XAPITOOLS_SEC_PASSWORD: ${WEB_AUTH_PASSWORD}
       XAPITOOLS_SIM_BACKEND_BASE_URL: http://datasim:9090   # This is the Docker-relative base path.
       XAPITOOLS_SIM_BACKEND_USERNAME: foo
       XAPITOOLS_SIM_BACKEND_PASSWORD: bar
@@ -116,3 +123,9 @@ services:
       XAPITOOLS_DB_CONNECTION_PASSWORD: toolkit
       XAPITOOLS_MONGO_CONNECTION_STRING: mongodb://xapi:toolkit@mongodb:27017/xapitools
       TZ: Europe/Berlin
+    labels:
+      traefik.enable: "true"
+      traefik.providers.docker.network: frontend0
+      traefik.http.routers.xapitools.rule: Host(`${WEB_HOSTNAME}`)
+      traefik.http.routers.xapitools.entrypoints: websecure
+      traefik.http.routers.xapitools.tls: "true"
