@@ -138,6 +138,7 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
      * Sets the health-Property and logs the result.
      */
     private void healthChangedCallback(boolean newHealth) {
+        if (this.health == newHealth) return;
         this.health = newHealth;
         if (this.health && this.lrsConnection != null) {
             this.logger.info("DAVE-" + this.lrsConnection.getFriendlyName() + " connection is alive.");
