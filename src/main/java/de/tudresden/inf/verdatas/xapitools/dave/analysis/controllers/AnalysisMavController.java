@@ -236,7 +236,7 @@ public class AnalysisMavController implements IUIManagementFlow {
             if (!(dashboardNames.isEmpty())) {
                 messages.add("Modification of " + analysis.get().getName()
                         + " not possible.\n Still in use for dashboard(s) " + dashboardNames);
-                hints.add("Please make a copy the analysis first and modify it afterwarts " +
+                hints.add("Please make a copy the analysis first and modify it afterwards " +
                         "if you do not want the dashboard(s) to be changed.\n Otherwise, continue the modification.");
             }
         }
