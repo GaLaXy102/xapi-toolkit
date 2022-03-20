@@ -58,7 +58,7 @@ public class DaveVisSeeder {
                                   [?s :statement/object ?o]
                                   [?o :activity/id ?c]
                                   [?s :statement/actor ?a]
-                                  [?a :agent.account/name ?ac]"""));
+                                  [?a :agent.account/name ?ac]]"""));
                 this.daveQueryRepository.save(new DaveQuery("Learners' task determination",
                         """
                                 [:find (count-distinct ?ac) ?c
@@ -696,6 +696,166 @@ public class DaveVisSeeder {
                                     }
                                   ]
                                 }"""));
+                this.daveGraphDescriptionRepository.save(new DaveGraphDescription("Top 10 count value DESC",
+                        """
+                                {
+                                  "$schema": "https://vega.github.io/schema/vega/v5.json",
+                                  "width": 400,
+                                  "height": 200,
+                                  "padding": 20,
+
+                                  "data": [
+                                    {
+                                      "name": "table",
+                                      "source": "result",
+                                      "transform": [
+                                        { "type": "collect", "sort": {"field": "count_?v", "order" : "descending"} },
+                                        {
+                                          "type": "window",
+                                          "sort": {"field": "count_?v", "order": "descending"},
+                                          "ops": ["rank"],
+                                          "fields": [null],
+                                          "as": ["rank"]
+                                        },
+                                        { "type": "filter", "expr": "datum.rank < 11"}
+                                      ]
+                                    }
+                                  ],
+
+                                  "signals": [
+                                    {
+                                      "name": "tooltip",
+                                      "value": {},
+                                      "on": [
+                                        {"events": "rect:mouseover", "update": "datum"},
+                                        {"events": "rect:mouseout",  "update": "{}"}
+                                      ]
+                                    }
+                                  ],
+
+                                  "scales": [
+                                    {
+                                      "name": "xscale",
+                                      "type": "band",
+                                      "domain": {"data": "table", "field": "?c"},
+                                      "range": "width",
+                                      "padding": 0.05,
+                                      "round": true
+                                    },
+                                    {
+                                      "name": "yscale",
+                                      "domain": {"data": "table", "field": "count_?v"},
+                                      "nice": true,
+                                      "range": "height"
+                                    }
+                                  ],
+
+                                  "axes": [
+                                    { "orient": "bottom", "scale": "xscale", "labelAngle": -35, "zindex": 2 },
+                                    { "orient": "left", "scale": "yscale" }
+                                  ],
+
+                                  "marks": [
+                                    {
+                                      "type": "rect",
+                                      "from": {"data":"table"},
+                                      "encode": {
+                                        "enter": {
+                                          "x": {"scale": "xscale", "field": "?c"},
+                                          "width": {"scale": "xscale", "band": 1},
+                                          "y": {"scale": "yscale", "field": "count_?v"},
+                                          "y2": {"scale": "yscale", "value": 0}
+                                        },
+                                        "update": {
+                                          "fill": {"value": "steelblue"}
+                                        },
+                                        "hover": {
+                                          "fill": {"value": "red"}
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }"""));
+                this.daveGraphDescriptionRepository.save(new DaveGraphDescription("Top 10 count value ASC",
+                        """
+                                {
+                                  "$schema": "https://vega.github.io/schema/vega/v5.json",
+                                  "width": 400,
+                                  "height": 200,
+                                  "padding": 20,
+
+                                  "data": [
+                                    {
+                                      "name": "table",
+                                      "source": "result",
+                                      "transform": [
+                                        { "type": "collect", "sort": {"field": "count_?v", "order" : "ascending"} },
+                                        {
+                                          "type": "window",
+                                          "sort": {"field": "count_?v", "order": "ascending"},
+                                          "ops": ["rank"],
+                                          "fields": [null],
+                                          "as": ["rank"]
+                                        },
+                                        { "type": "filter", "expr": "datum.rank < 11"}
+                                      ]
+                                    }
+                                  ],
+
+                                  "signals": [
+                                    {
+                                      "name": "tooltip",
+                                      "value": {},
+                                      "on": [
+                                        {"events": "rect:mouseover", "update": "datum"},
+                                        {"events": "rect:mouseout",  "update": "{}"}
+                                      ]
+                                    }
+                                  ],
+
+                                  "scales": [
+                                    {
+                                      "name": "xscale",
+                                      "type": "band",
+                                      "domain": {"data": "table", "field": "?c"},
+                                      "range": "width",
+                                      "padding": 0.05,
+                                      "round": true
+                                    },
+                                    {
+                                      "name": "yscale",
+                                      "domain": {"data": "table", "field": "count_?v"},
+                                      "nice": true,
+                                      "range": "height"
+                                    }
+                                  ],
+
+                                  "axes": [
+                                    { "orient": "bottom", "scale": "xscale", "labelAngle": -35, "zindex": 2 },
+                                    { "orient": "left", "scale": "yscale" }
+                                  ],
+
+                                  "marks": [
+                                    {
+                                      "type": "rect",
+                                      "from": {"data":"table"},
+                                      "encode": {
+                                        "enter": {
+                                          "x": {"scale": "xscale", "field": "?c"},
+                                          "width": {"scale": "xscale", "band": 1},
+                                          "y": {"scale": "yscale", "field": "count_?v"},
+                                          "y2": {"scale": "yscale", "value": 0}
+                                        },
+                                        "update": {
+                                          "fill": {"value": "steelblue"}
+                                        },
+                                        "hover": {
+                                          "fill": {"value": "red"}
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }"""));
                 this.daveGraphDescriptionRepository.save(new DaveGraphDescription("Top 10 average value DESC",
                         """
                                 {
@@ -1135,10 +1295,10 @@ public class DaveVisSeeder {
                         this.daveGraphDescriptionRepository.findByName("Top 10 distinct DESC").get(), true));
                 this.daveVisRepository.save(new DaveVis("Successful execution per Activity",
                         this.daveQueryRepository.findByName("Successful execution per Activity").get(),
-                        this.daveGraphDescriptionRepository.findByName("Top 10 value DESC").get(), true));
+                        this.daveGraphDescriptionRepository.findByName("Top 10 count value DESC").get(), true));
                 this.daveVisRepository.save(new DaveVis("Unsuccessful execution per Activity",
                         this.daveQueryRepository.findByName("Unsuccessful execution per Activity").get(),
-                        this.daveGraphDescriptionRepository.findByName("Top 10 value DESC").get(), true));
+                        this.daveGraphDescriptionRepository.findByName("Top 10 count value DESC").get(), true));
                 this.daveVisRepository.save(new DaveVis("Successful learners per Activity",
                         this.daveQueryRepository.findByName("Successful learners per Activity").get(),
                         this.daveGraphDescriptionRepository.findByName("Top 10 distinct DESC").get(), true));
