@@ -6,3 +6,4 @@
 
 Version: ${application.version}
 Authors: Konstantin Koehring (@Galaxy102)
+         Ylvi Sarah Bachmann (@ylvion)
