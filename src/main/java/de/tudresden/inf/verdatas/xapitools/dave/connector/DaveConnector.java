@@ -3,6 +3,7 @@ package de.tudresden.inf.verdatas.xapitools.dave.connector;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import de.tudresden.inf.verdatas.xapitools.ui.IExternalService;
 import lombok.Getter;
+import lombok.NonNull;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.task.TaskExecutor;
@@ -137,8 +138,8 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
      * <p>
      * Sets the health-Property and logs the result.
      */
-    private void healthChangedCallback(boolean newHealth) {
-        if (this.health == newHealth) return;
+    private void healthChangedCallback(@NonNull Boolean newHealth) {
+        if (newHealth.equals(this.health)) return;
         this.health = newHealth;
         if (this.health && this.lrsConnection != null) {
             this.logger.info("DAVE-" + this.lrsConnection.getFriendlyName() + " connection is alive.");
