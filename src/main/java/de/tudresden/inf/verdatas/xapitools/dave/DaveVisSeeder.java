@@ -222,7 +222,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 15,
+                                  "padding": 20,
 
                                   "data": [
                                     {
@@ -302,7 +302,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 15,
+                                  "padding": 20,
 
                                   "data": [
                                     {
@@ -382,7 +382,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 15,
+                                  "padding": 20,
 
                                   "data": [
                                     {
@@ -462,7 +462,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 15,
+                                  "padding": 20,
 
                                   "data": [
                                     {
@@ -542,7 +542,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 15,
+                                  "padding": 20,
 
                                   "data": [
                                     {
@@ -622,7 +622,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 15,
+                                  "padding": 20,
 
                                   "data": [
                                     {
@@ -702,7 +702,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 15,
+                                  "padding": 20,
 
                                   "data": [
                                     {
@@ -782,7 +782,7 @@ public class DaveVisSeeder {
                                   "$schema": "https://vega.github.io/schema/vega/v5.json",
                                   "width": 400,
                                   "height": 200,
-                                  "padding": 15,
+                                  "padding": 20,
 
                                   "data": [
                                     {
@@ -859,7 +859,6 @@ public class DaveVisSeeder {
                 this.daveGraphDescriptionRepository.save(new DaveGraphDescription("Scatter Plot",
                         """
                                 {
-                                  "autosize": "fit",
                                   "legends": [
                                     {
                                       "fill": "color"
@@ -912,7 +911,7 @@ public class DaveVisSeeder {
                                       }
                                     }
                                   ],
-                                  "padding": 15,
+                                  "padding": 20,
                                   "marks": [
                                     {
                                       "type": "group",
@@ -965,7 +964,6 @@ public class DaveVisSeeder {
                 this.daveGraphDescriptionRepository.save(new DaveGraphDescription("Linear Regression by hour of day",
                         """
                                 {
-                                  "autosize": "fit",
                                   "data": [
                                     {
                                       "name": "cleaned",
@@ -1034,7 +1032,7 @@ public class DaveVisSeeder {
                                       }
                                     }
                                   ],
-                                  "padding": 15,
+                                  "padding": 20,
                                   "marks": [
                                     {
                                       "type": "group",
