@@ -549,10 +549,10 @@ public class DaveVisSeeder {
                                       "name": "table",
                                       "source": "result",
                                       "transform": [
-                                        { "type": "collect", "sort": {"field": "count_?v", "order" : "descending"} },
+                                        { "type": "collect", "sort": {"field": "?v", "order" : "descending"} },
                                         {
                                           "type": "window",
-                                          "sort": {"field": "count_?v", "order": "descending"},
+                                          "sort": {"field": "?v", "order": "descending"},
                                           "ops": ["rank"],
                                           "fields": [null],
                                           "as": ["rank"]
@@ -584,7 +584,7 @@ public class DaveVisSeeder {
                                     },
                                     {
                                       "name": "yscale",
-                                      "domain": {"data": "table", "field": "count_?v"},
+                                      "domain": {"data": "table", "field": "?v"},
                                       "nice": true,
                                       "range": "height"
                                     }
@@ -603,7 +603,7 @@ public class DaveVisSeeder {
                                         "enter": {
                                           "x": {"scale": "xscale", "field": "?c"},
                                           "width": {"scale": "xscale", "band": 1},
-                                          "y": {"scale": "yscale", "field": "count_?v"},
+                                          "y": {"scale": "yscale", "field": "?v"},
                                           "y2": {"scale": "yscale", "value": 0}
                                         },
                                         "update": {
@@ -629,10 +629,10 @@ public class DaveVisSeeder {
                                       "name": "table",
                                       "source": "result",
                                       "transform": [
-                                        { "type": "collect", "sort": {"field": "count_?v", "order" : "ascending"} },
+                                        { "type": "collect", "sort": {"field": "?v", "order" : "ascending"} },
                                         {
                                           "type": "window",
-                                          "sort": {"field": "count_?v", "order": "ascending"},
+                                          "sort": {"field": "?v", "order": "ascending"},
                                           "ops": ["rank"],
                                           "fields": [null],
                                           "as": ["rank"]
@@ -664,7 +664,7 @@ public class DaveVisSeeder {
                                     },
                                     {
                                       "name": "yscale",
-                                      "domain": {"data": "table", "field": "count_?v"},
+                                      "domain": {"data": "table", "field": "?v"},
                                       "nice": true,
                                       "range": "height"
                                     }
@@ -683,7 +683,7 @@ public class DaveVisSeeder {
                                         "enter": {
                                           "x": {"scale": "xscale", "field": "?c"},
                                           "width": {"scale": "xscale", "band": 1},
-                                          "y": {"scale": "yscale", "field": "count_?v"},
+                                          "y": {"scale": "yscale", "field": "?v"},
                                           "y2": {"scale": "yscale", "value": 0}
                                         },
                                         "update": {
