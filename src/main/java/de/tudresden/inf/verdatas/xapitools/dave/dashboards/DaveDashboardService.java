@@ -123,6 +123,9 @@ public class DaveDashboardService {
     @Transactional
     public void setDashboardVisualisations(DaveDashboard dashboard, List<Pair<String, UUID>> visualisations) {
         dashboard.setVisualisations(visualisations);
+        if (visualisations.isEmpty()) {
+            dashboard.setFinalized(false);
+        }
         this.dashboardRepository.save(dashboard);
     }
 
@@ -136,7 +139,6 @@ public class DaveDashboardService {
         }
     }
 
-    // TODO Hinweis in Benutzerdokumentation
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
     @CacheEvict(
             cacheNames = "lrsActivities",
