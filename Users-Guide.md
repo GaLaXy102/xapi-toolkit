@@ -3,7 +3,7 @@
 | Project Title          | Version |    Date    | Author                          |
 |:-----------------------|:-------:|:----------:|:--------------------------------|
 | xAPI Toolkit - DATASIM |   v1    | 08.02.2022 | Konstantin Köhring (@Galaxy102) |
-| xAPI Toolkit - DAVE    |   v2    | 19.03.2022 | Ylvi Sarah Bachmann (@ylvion)   |
+| xAPI Toolkit - DAVE    |   v2    | 21.03.2022 | Ylvi Sarah Bachmann (@ylvion)   |
 
 - [Intro](#intro)
 - [Application Overview](#application-overview)
@@ -70,7 +70,6 @@ In the Sidebar, there are three sections (from top to bottom):
    Yellow means that there was an application error which can perhaps be fixed by reloading the application by hitting Refresh or `F5`.
 
 You can access all Settings and Flows at any time by clicking the corresponding sidebar item.
-
 
 ## Step-by-Step Guides: Flows
 
@@ -161,6 +160,7 @@ Nice to know:
 * Finalized Dashboards  
   After the configuration of a dashboard is completed it is marked as finalized.
   This happens if the dashboards has a connected LRS as data source and contains at least one analysis.
+  ![Dashboard card example](doc/ui-dashboard-finalised.png)
   Finalized dashboards can still be edited e.g. to add new Analyses. Unfinalized dashboards can't be performed.
 * Use of Selenium  
   The application uses the browser automation tool Selenium to access the functionality of DAVE because it has been developed as a single-page web application with no REST API.
@@ -178,6 +178,7 @@ Nice to know:
    If an LRS connection is added, reactivated or the application has just been started the DAVE connector can not be used until all xAPI Statements are read from the corresponding LRS. The waiting state is indicated by the yellow status indicator. Depending on the amount of data that should be read this step will take a few minutes.
    When the DAVE connector is ready the status indicator turns green.
 4. Select and add Analyses.  
+   ![Adding analyses to dashboard](doc/ui-dashboard-analyses.png)
    First select all Analyses you want to use from the defined Analysis set by selecting them in the `Add analysis` form and hitting the `+` button. You can limit them to a specific activity by selecting its identifier from the dropdown menu. Note that not every analysis can be limited. Please refer to the section [Managing Analyses](#managing-analyses) for further information. By default, the selected analysis is performed using the whole data set specified.  
    Afterwards, you can change the order of the analysis which have been added to the dashboard by clicking the ⬆ or ⬇ icons in the `Selected analyses` form. You can also delete an analysis from the dashboard by clicking the 🗑 icon.  
    To improve performance the specified LRS' activities are requested once and cached. After 10 minutes the cache is cleared and the activities are requested again, if needed. If you don't want to use the cache and request them again click the `Refresh` icon in the `Add analysis` form.
@@ -208,7 +209,10 @@ Nice to know:
 ## Step-by-Step Guides: Settings
 
 ### Managing LRS Connections
-For all guides below, please access the appropriate setting by clicking `LRS Connections` in the sidebar.
+For all guides below, please access the appropriate setting by clicking `LRS Connections` in the sidebar.  
+**Important:** Due to the usage of Selenium Grid to access DAVE, the server running this application **must** have at least one CPU core per connected LRS (+1 extra).
+With some extra configuration, this limit is changeable (see [Selenium Grid Documentation](https://www.selenium.dev/documentation/grid/))
+Please note, that DAVE Connectors can not spawn correctly when this limit is reached and the application may behave unexpectedly.
 
 #### Adding a connection
 1. Click the Card `Create new Connection`.
@@ -340,8 +344,8 @@ Whenever the data set is specified as "VerDatAs" the analysis can be performed o
 | Learners' task determination \[VerDatAs\]                                |      number of Activities a learner could not pass with the first try      |       user accounts       | names of user accounts |       number of Activities       |  bar chart   | VerDatAs |      ❌      |          ❌          |   'Top 10 distinct ASC'    |
 | Learners' unlearning                                                     |         number of Activities a learner has passed and later failed         |        user agents        |  names of user agents  |       number of Activities       |  bar chart   |   both   |      ✔      |          ❌          |   'Top 10 distinct ASC'    |
 | Learners' unlearning \[VerDatAs\]                                        |         number of Activities a learner has passed and later failed         |       user accounts       | names of user accounts |       number of Activities       |  bar chart   | VerDatAs |      ❌      |          ❌          |   'Top 10 distinct ASC'    |
-| Successful execution per Activity                                        |             number of successful completions for each Activity             |             -             |      Activity IDs      | number of successful completions |  bar chart   |   both   |      -      |          ✔          |     'Top 10 value ASC'     |
-| Unsuccessful execution per Activity                                      |            number of unsuccessful completions for each Activity            |             -             |      Activity IDs      |   number of failed completions   |  bar chart   |   both   |      -      |          ✔          |     'Top 10 value ASC'     |
+| Successful execution per Activity                                        |             number of successful completions for each Activity             |             -             |      Activity IDs      | number of successful completions |  bar chart   |   both   |      -      |          ✔          |  'Top 10 count value ASC'  |
+| Unsuccessful execution per Activity                                      |            number of unsuccessful completions for each Activity            |             -             |      Activity IDs      |   number of failed completions   |  bar chart   |   both   |      -      |          ✔          |  'Top 10 count value ASC'  |
 | Successful learners per Activity                                         |              amount of successful learners for each Activity               |        user agents        |      Activity IDs      |  number of successful learners   |  bar chart   |   both   |      ✔      |          ✔          |   'Top 10 distinct ASC'    |
 | Successful learners per Activity \[VerDatAs\]                            |              amount of successful learners for each Activity               |       user accounts       |      Activity IDs      |  number of successful learners   |  bar chart   | VerDatAs |      ❌      |          ✔          |   'Top 10 distinct ASC'    |
 | Unsuccessful learners per Activity                                       |             amount of unsuccessful learners for each Activity              |        user agents        |      Activity IDs      |    number of failed learners     |  bar chart   |   both   |      ✔      |          ✔          |   'Top 10 distinct ASC'    |
