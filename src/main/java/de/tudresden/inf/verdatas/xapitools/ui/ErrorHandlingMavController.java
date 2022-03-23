@@ -92,7 +92,7 @@ public class ErrorHandlingMavController {
      * @param e Exception to be handled
      * @return ModelAndView for this Exception
      */
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ResponseStatus(code = HttpStatus.CONFLICT)
     @ExceptionHandler({AnalysisExceptions.ConfigurationConflict.class, AnalysisExceptions.SideEffectsError.class, DashboardExceptions.ConfigurationConflict.class})
     public ModelAndView convertConfigurationConflicts(Exception e) {
         return this.baseModelAndView(e, HttpStatus.CONFLICT);
