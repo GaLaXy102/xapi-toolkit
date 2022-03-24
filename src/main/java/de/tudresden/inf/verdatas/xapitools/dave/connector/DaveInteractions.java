@@ -162,7 +162,8 @@ class DaveInteractions {
         driver.findElement(By.cssSelector(".mdc-snackbar.dave-snackbar:not(.mdc-snackbar--active)"));
         driver.manage().timeouts().implicitlyWait(750, TimeUnit.MILLISECONDS);
 
-        return driver.findElement(By.cssSelector(".dave-vega-container svg")).getAttribute("outerHTML");
+        String svg = driver.findElement(By.cssSelector(".dave-vega-container svg")).getAttribute("outerHTML");
+        return svg.replaceFirst("<svg", "<svg xmlns=\"http://www.w3.org/2000/svg\"");
     }
 
     private static String getResultsForAnalysis(WebDriver driver) {
