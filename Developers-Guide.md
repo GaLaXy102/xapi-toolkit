@@ -3,6 +3,7 @@
 | Project Title          | Version |    Date    | Author                          |
 |:-----------------------|:-------:|:----------:|:--------------------------------|
 | xAPI Toolkit - DATASIM |   v1    | 27.01.2022 | Konstantin Köhring (@Galaxy102) |
+| xAPI Toolkit - DAVE    |   v2    | 04.04.2022 | Ylvi Sarah Bachmann (@ylvion)   |
 
 ## Intro
 
@@ -16,15 +17,16 @@ and think of great values for the variables in [application-dev.properties](src/
 
 For my setup, I have chosen the following parameters:
 
-| Environment Variable           | Value                               |
-|:-------------------------------|:------------------------------------|
-| XAPITOOLS_SEC_USERNAME         | foo                                 |
-| XAPITOOLS_SEC_PASSWORD         | bar                                 |
-| XAPITOOLS_SIM_BACKEND_BASE_URL | http://localhost:9090               |
-| XAPITOOLS_SIM_BACKEND_USERNAME | foo                                 |
-| XAPITOOLS_SIM_BACKEND_PASSWORD | bar                                 |
-| XAPITOOLS_SIM_STORAGE_DIR      | /tmp/xapitools                      |
-| XAPITOOLS_VIZ_BACKEND_BASE_URL | http://dave:password@localhost:9091 |
+| Environment Variable              | Value                                          |
+|:----------------------------------|:-----------------------------------------------|
+| XAPITOOLS_SEC_USERNAME            | foo                                            |
+| XAPITOOLS_SEC_PASSWORD            | bar                                            |
+| XAPITOOLS_SIM_BACKEND_BASE_URL    | http://localhost:9090                          |
+| XAPITOOLS_SIM_BACKEND_USERNAME    | foo                                            |
+| XAPITOOLS_SIM_BACKEND_PASSWORD    | bar                                            |
+| XAPITOOLS_SIM_STORAGE_DIR         | /tmp/xapitools                                 |
+| XAPITOOLS_VIZ_BACKEND_BASE_URL    | http://dave:password@localhost:9091            |
+ | XAPITOOLS_MONGO_CONNECTION_STRING | mongodb://xapi:toolkit@mongodb:27017/xapitools | 
 
 Their semantic is explained in the README.
 
