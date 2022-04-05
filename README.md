@@ -20,9 +20,7 @@ Die Verbindung zu diesem Programm kann mit der Umgebungsvariable `XAPITOOLS_VIZ_
 
 Im produktiven Einsatz müssen die Variablen `XAPITOOLS_DB_CONNECTION_STRING`, `XAPITOOLS_DB_CONNECTION_USER` und `XAPITOOLS_DB_CONNECTION_PASSWORD` mit Zugangsdaten für eine relationale Datenbank wie MariaDB gefüllt werden. Ein Beispiel hierzu findet sich in der [Compose-Datei](docker-compose.yml).
 
-Da eine dokumentenbasierte Speicherung von Analysen und Visualisierungsdashboard vorgesehen ist muss die nötige Datenbankverbindung mithilfe der Variablen `XAPITOOLS_MONGO_CONNECTION_STRING` festgelegt werden.
-
-Während der Entwicklung wurde zu diesem Zweck eine MongoDB eingesetzt.
+Da eine MongoDB zur Speicherung von Analysen und Visualisierungsdashboard vorgesehen ist, muss die nötige Datenbankverbindung mithilfe der Variablen `XAPITOOLS_MONGO_CONNECTION_STRING` festgelegt werden.
 
 Da die Anwendung in Docker läuft, weiß sie nichts über die Systemzeitzone. Deshalb kann die Standardzeitzone `Etc/UTC` mit der Umgebungsvariable `TZ` überschrieben werden.
 

@@ -26,7 +26,7 @@ For my setup, I have chosen the following parameters:
 | XAPITOOLS_SIM_BACKEND_PASSWORD    | bar                                            |
 | XAPITOOLS_SIM_STORAGE_DIR         | /tmp/xapitools                                 |
 | XAPITOOLS_VIZ_BACKEND_BASE_URL    | http://dave:password@localhost:9091            |
- | XAPITOOLS_MONGO_CONNECTION_STRING | mongodb://xapi:toolkit@mongodb:27017/xapitools | 
+| XAPITOOLS_MONGO_CONNECTION_STRING | mongodb://xapi:toolkit@mongodb:27017/xapitools | 
 
 Their semantic is explained in the README.
 
