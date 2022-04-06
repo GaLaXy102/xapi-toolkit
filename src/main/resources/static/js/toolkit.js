@@ -157,6 +157,10 @@ function replaceSvgVis(element) {
         .then(() => element.firstElementChild.setAttribute('height', 1.2 * element.firstElementChild.getAttribute('height')));
 }
 
+function showLoadingModal(element) {
+    $('#openModal').click();
+}
+
 // Inspired by https://thecoderain.blogspot.com/2020/11/generate-valid-random-email-js-jquery.html
 const emailChars = '1234567890';
 
