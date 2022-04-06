@@ -19,12 +19,22 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Rest Controller for the Exchange of Analyses
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 @RestController
 @RequestMapping("/api/v1/dave/analysis")
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class AnalysisRestController {
     private final DaveAnalysisService daveAnalysisService;
 
+    /**
+     * Download an existing Analysis
+     *
+     * @param analysisId UUID of the Analysis to download
+     */
     @GetMapping("/description")
     public ResponseEntity<DaveVis> getAnalysisDescription(@RequestParam("flow") UUID analysisId) {
         DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
@@ -36,6 +46,11 @@ public class AnalysisRestController {
         return ResponseEntity.ok().headers(headers).body(analysis);
     }
 
+    /**
+     * Import Analyses
+     *
+     * @param analysisFiles List of files containing the Analyses to add. Duplication inhibited
+     */
     @PostMapping("/insert")
     @Transactional
     public RedirectView createAnalysisFromFile(@RequestParam List<MultipartFile> analysisFiles) {

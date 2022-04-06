@@ -19,23 +19,18 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
 
+/**
+ * ModelAndView Controller for DAVE Analyses Management
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 @Controller
 @Order(2)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class AnalysisMavController implements IUIManagementFlow {
-    private final DaveAnalysisService daveAnalysisService;
-
     private static final String BASE_URL = "/ui/dave/manage/analysis";
-
-    /**
-     * UI helper enum, controls button states
-     */
-    enum Mode {
-        CREATING,
-        EDITING
-    }
+    private final DaveAnalysisService daveAnalysisService;
 
     /**
      * Get the Human readable name of this Setting.
@@ -67,6 +62,12 @@ public class AnalysisMavController implements IUIManagementFlow {
         return BootstrapUIIcon.CLIPBOARD;
     }
 
+    /**
+     * Show a List with all Analyses, or only a specific on
+     *
+     * @param analysisId    Filter for a specific Analyis ID
+     * @param finalizedOnly if true: only Analyses, whose configuration is completed are shown
+     */
     @GetMapping(BASE_URL + "/show")
     public ModelAndView showAnalysis(@RequestParam("flow") Optional<UUID> analysisId,
                                      @RequestParam(name = "finalized_only") Optional<Boolean> finalizedOnly) {
@@ -88,6 +89,11 @@ public class AnalysisMavController implements IUIManagementFlow {
         return mav;
     }
 
+    /**
+     * Copy an Analysis
+     *
+     * @param analysisId UUID of the {@link DaveVis} to copy
+     */
     @PostMapping(BASE_URL + "/copy")
     public RedirectView copyAnalysis(@RequestParam("flow") UUID analysisId) {
         DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
@@ -96,6 +102,11 @@ public class AnalysisMavController implements IUIManagementFlow {
         return new RedirectView("./show");
     }
 
+    /**
+     * Delete an Analysis
+     *
+     * @param analysisId UUID of the {@link DaveVis} to delete. Must not be used in a {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard}
+     */
     @PostMapping(BASE_URL + "/delete")
     public RedirectView deleteAnalysis(@RequestParam("flow") UUID analysisId) {
         DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
@@ -103,6 +114,9 @@ public class AnalysisMavController implements IUIManagementFlow {
         return new RedirectView("./show");
     }
 
+    /**
+     * Show the Add page for Analyses
+     */
     @GetMapping(BASE_URL + "/add")
     public ModelAndView showAddAnalysis() {
         ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/detail");
@@ -112,6 +126,15 @@ public class AnalysisMavController implements IUIManagementFlow {
         return mav;
     }
 
+    /**
+     * Handle the creation of an Analysis
+     *
+     * @param name             Title of the new Analysis. Must not be already used
+     * @param queryName        Title of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} to use or create. If a new {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} should be created this title must not be already used
+     * @param query            Query Description of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} to use or create. Duplication inhibited
+     * @param graphName        Title of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} to use or create. If a new {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} should be created this title must not be used already
+     * @param graphDescription Graph Description of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} to use or create. Duplication inhibited
+     */
     @PostMapping(BASE_URL + "/add")
     public RedirectView createAnalysis(@RequestParam("name") String name,
                                        @RequestParam("queryContent") String query,
@@ -123,7 +146,7 @@ public class AnalysisMavController implements IUIManagementFlow {
         graphDescription = graphDescription.replace("\r", "");
 
         this.daveAnalysisService.checkValidityOfAnalysisDescription(query, graphDescription);
-        Optional<Map<String, Object>> objectMap = this.checkForSideEffects(Mode.CREATING, name, Optional.empty(),
+        Optional<Map<String, Object>> objectMap = this.daveAnalysisService.checkForSideEffects(Mode.CREATING, name, Optional.empty(),
                 queryName, query, graphName, graphDescription);
         if (objectMap.isPresent()) {
             RedirectView red = new RedirectView("./ack");
@@ -134,6 +157,11 @@ public class AnalysisMavController implements IUIManagementFlow {
         return new RedirectView("./show");
     }
 
+    /**
+     * Show the Edit page for the given Analysis
+     *
+     * @param analysisId UUID of the Analysis to edit
+     */
     @GetMapping(BASE_URL + "/edit")
     public ModelAndView showEditAnalysis(@RequestParam("flow") UUID analysisId) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/detail");
@@ -145,6 +173,16 @@ public class AnalysisMavController implements IUIManagementFlow {
         return mav;
     }
 
+    /**
+     * Handle the editing of an Analysis
+     *
+     * @param analysisId       UUID of the Analysis to edit
+     * @param name             Title of the Analysis. Must not be already used
+     * @param queryName        Title of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} to use or create. If a new {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} should be created this title must not be already used
+     * @param query            Query Description of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} to use or create. Duplication inhibited
+     * @param graphName        Title of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} to use or create. If a new {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} should be created this title must not be used already
+     * @param graphDescription Graph Description of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} to use or create. Duplication inhibited
+     */
     @PostMapping(BASE_URL + "/edit")
     public RedirectView editAnalysis(@RequestParam("flow") UUID analysisId,
                                      @RequestParam("name") String name,
@@ -157,7 +195,7 @@ public class AnalysisMavController implements IUIManagementFlow {
 
         this.daveAnalysisService.checkValidityOfAnalysisDescription(query, graphDescription);
         DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
-        Optional<Map<String, Object>> objectMap = this.checkForSideEffects(Mode.EDITING, name, Optional.of(analysis),
+        Optional<Map<String, Object>> objectMap = this.daveAnalysisService.checkForSideEffects(Mode.EDITING, name, Optional.of(analysis),
                 queryName, query, graphName, graphDescription);
         if (objectMap.isPresent()) {
             RedirectView red = new RedirectView("./ack");
@@ -169,18 +207,36 @@ public class AnalysisMavController implements IUIManagementFlow {
         return new RedirectView("./show");
     }
 
-    // TODO Error page if parameters not there
+    /**
+     * Get user acknowledgement in case of conflicting Analyses
+     *
+     * @param request contains details of Analysis, whose creation or modification has led to conflicts
+     */
     @GetMapping(BASE_URL + "/ack")
     public ModelAndView getUserAcknowledgement(HttpServletRequest request) {
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
-        assert inputFlashMap != null;
 
-        return this.prepareAcknowledge((Mode) inputFlashMap.get("mode"), Optional.ofNullable((UUID) inputFlashMap.get("flow")),
-                (String) inputFlashMap.get("name"), (String) inputFlashMap.get("queryContent"), (String) inputFlashMap.get("queryName"),
-                (String) inputFlashMap.get("graphContent"), (String) inputFlashMap.get("graphName"), (List<String>) inputFlashMap.get("messages"),
+        return this.prepareAcknowledge((Mode) inputFlashMap.get("mode"),
+                Optional.ofNullable((UUID) inputFlashMap.get("flow")),
+                (String) inputFlashMap.get("name"),
+                (String) inputFlashMap.get("queryContent"),
+                (String) inputFlashMap.get("queryName"),
+                (String) inputFlashMap.get("graphContent"),
+                (String) inputFlashMap.get("graphName"),
+                (List<String>) inputFlashMap.get("messages"),
                 (List<String>) inputFlashMap.get("hints"));
     }
 
+    /**
+     * Handle the editing of an Analysis after user acknowledgement was given
+     *
+     * @param analysisId       UUID of the Analysis to edit
+     * @param name             Title of the Analysis. Must not be already used
+     * @param queryName        Title of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} to use or create. If a new {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} should be created this title must not be already used
+     * @param query            Query Description of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} to use or create. Duplication inhibited
+     * @param graphName        Title of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} to use or create. If a new {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} should be created this title must not be used already
+     * @param graphDescription Graph Description of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} to use or create. Duplication inhibited
+     */
     @PostMapping(BASE_URL + "/ack")
     public RedirectView finalizeModifyingOfAnalysis(@RequestParam("flow") Optional<UUID> analysisId,
                                                     @RequestParam("name") String name,
@@ -199,71 +255,21 @@ public class AnalysisMavController implements IUIManagementFlow {
         return new RedirectView("./show");
     }
 
-    public Optional<Map<String, Object>> checkForSideEffects(Mode mode, String name, Optional<DaveVis> analysis, String queryName, String query,
-                                            String graphName, String graphDescription) {
-        Set<String> analysisWithQueryConflict = Set.of();
-        Set<String> analysisWithGraphConflict = Set.of();
-        Set<String> dashboardNames = Set.of();
-        Map<String, Object> objectMap = new HashMap<>();
-        List<String> messages = new LinkedList<>();
-        List<String> hints = new LinkedList<>();
-
-        if (mode.equals(Mode.CREATING)) {
-            analysisWithQueryConflict = this.daveAnalysisService.checkForQueryConflicts(queryName, query)
-                    .stream()
-                    .map(DaveVis::getName)
-                    .collect(Collectors.toSet());
-            analysisWithGraphConflict = this.daveAnalysisService.checkForGraphDescriptionConflicts(graphName, graphDescription)
-                    .stream()
-                    .map(DaveVis::getName)
-                    .collect(Collectors.toSet());
-        } else if (analysis.isPresent()){
-            dashboardNames = this.daveAnalysisService.checkUsageOfAnalysis(analysis.get());
-            analysisWithQueryConflict = this.daveAnalysisService.checkUsageOfQuery(analysis.get(), queryName, query);
-            analysisWithGraphConflict = this.daveAnalysisService.checkUsageOfGraphDescription(analysis.get(), graphName, graphDescription);
-        }
-
-        // Needed if checking for side effects provides error and user has to acknowledge changes
-        objectMap.put("mode", mode);
-        objectMap.put("name", name);
-        objectMap.put("queryContent", query);
-        objectMap.put("queryName", queryName);
-        objectMap.put("graphContent", graphDescription);
-        objectMap.put("graphName", graphName);
-
-        if (mode.equals(Mode.EDITING) && analysis.isPresent()) {
-            objectMap.put("flow", analysis.get().getId());
-            if (!(dashboardNames.isEmpty())) {
-                messages.add("Modification of " + analysis.get().getName()
-                        + " not possible.\n Still in use for dashboard(s) " + dashboardNames);
-                hints.add("Please make a copy the analysis first and modify it afterwards " +
-                        "if you do not want the dashboard(s) to be changed.\n Otherwise, continue the modification.");
-            }
-        }
-
-        if (!(analysisWithQueryConflict.isEmpty())) {
-            messages.add("Modification of query not possible.\n Still in use for analysis "
-                    + analysisWithQueryConflict);
-            hints.add("Please use a different name for your query " +
-                    "if you do not want the other analysis to be changed.\n Otherwise, continue the modification.");
-        }
-        if (!(analysisWithGraphConflict.isEmpty())) {
-            messages.add("Modification of graph description not possible.\n Still in use for analysis "
-                    + analysisWithGraphConflict);
-            hints.add("Please use a different name for your graphDescription " +
-                    "if you do not want the other analysis to be changed.\n Otherwise, continue the modification.");
-        }
-
-        if (!(messages.isEmpty())) {
-            objectMap.put("messages", messages);
-            objectMap.put("hints", hints);
-            return Optional.of(objectMap);
-        }
-        return Optional.empty();
-    }
-
+    /**
+     * Prepare user acknowledgement page in case of conflicting Analyses
+     *
+     * @param mode             used to distinguish between creation and modification of Analyses
+     * @param analysisId       UUID of Analysis to be modified. Only available if mode equals {@link Mode}.EDITING
+     * @param name             Title of the Analysis. Must not be already used
+     * @param queryName        Title of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} to use or create. If a new {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} should be created this title must not be already used
+     * @param query            Query Description of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery} to use or create. Duplication inhibited
+     * @param graphName        Title of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} to use or create. If a new {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} should be created this title must not be used already
+     * @param graphDescription Graph Description of the {@link de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription} to use or create. Duplication inhibited
+     * @param errorMessages    List of errors, which have occurred
+     * @param hints            List of hints to solve the occurred errors
+     */
     public ModelAndView prepareAcknowledge(Mode mode, Optional<UUID> analysisId, String name, String query, String queryName,
-                                         String graphDescription, String graphName, List<String> errorMessages, List<String> hints) {
+                                           String graphDescription, String graphName, List<String> errorMessages, List<String> hints) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/conflict");
         mav.addObject("mode", mode);
         mav.addObject("name", name);
@@ -276,5 +282,12 @@ public class AnalysisMavController implements IUIManagementFlow {
         analysisId.ifPresent(uuid -> mav.addObject("flow", uuid));
         return mav;
     }
-}
 
+    /**
+     * UI helper enum, controls button states
+     */
+    public enum Mode {
+        CREATING,
+        EDITING
+    }
+}

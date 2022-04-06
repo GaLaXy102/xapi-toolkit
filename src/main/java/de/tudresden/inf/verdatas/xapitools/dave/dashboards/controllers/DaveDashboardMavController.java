@@ -2,6 +2,7 @@ package de.tudresden.inf.verdatas.xapitools.dave.dashboards.controllers;
 
 import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveDashboardService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
+import de.tudresden.inf.verdatas.xapitools.ui.BasepageMavController;
 import de.tudresden.inf.verdatas.xapitools.ui.BootstrapUIIcon;
 import de.tudresden.inf.verdatas.xapitools.ui.IUIFlow;
 import de.tudresden.inf.verdatas.xapitools.ui.UIIcon;
@@ -20,23 +21,21 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * ModelAndView Controller for the Dashboard Application
+ * By implementing {@link IUIFlow}, it is bound automatically to the main UI in {@link BasepageMavController}.
+ * It contains all Views that are not part of {@link DashboardStep}s.
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 @Controller
 @Order(3)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DaveDashboardMavController implements IUIFlow {
 
-    /**
-     * UI helper enum, controls button states
-     */
-    enum Mode {
-        CREATING,
-        EDITING
-    }
-
+    static final String BASE_URL = "/ui/dave/dashboards";
     private final DaveDashboardService daveDashboardService;
     private final List<DashboardStep> children;
-
-    static final String BASE_URL = "/ui/dave/dashboards";
 
     /**
      * Get the Human readable name of this sub-application.
@@ -78,6 +77,12 @@ public class DaveDashboardMavController implements IUIFlow {
         return BootstrapUIIcon.CHART;
     }
 
+    /**
+     * Show a List with all Dashboards, or only a specific on
+     *
+     * @param dashboardId   Filter for a specific Dashboard ID
+     * @param finalizedOnly if true: only Dashboards, whose configuration is completed are shown
+     */
     @GetMapping(BASE_URL + "/show")
     public ModelAndView showDetails(@RequestParam(name = "flow") Optional<UUID> dashboardId,
                                     @RequestParam(name = "finalized_only") Optional<Boolean> finalizedOnly) {
@@ -99,12 +104,22 @@ public class DaveDashboardMavController implements IUIFlow {
         return mav;
     }
 
+    /**
+     * Start execution of all Analyses for the given Dashboard
+     *
+     * @param dashboardId UUID of the Dashboard to execute
+     */
     @PostMapping(BASE_URL + "/show")
     public RedirectView executeDashboard(@RequestParam(name = "flow") UUID dashboardId, RedirectAttributes attributes) {
         attributes.addAttribute("flow", dashboardId.toString());
         return new RedirectView("./execute");
     }
 
+    /**
+     * Execute all Analyses of the given Dashboard and show the resulting diagrams
+     *
+     * @param dashboardId UUID of the Dashboard to execute
+     */
     @GetMapping(BASE_URL + "/execute")
     public ModelAndView executeVisualisationsOfDashboard(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/show");
@@ -122,6 +137,11 @@ public class DaveDashboardMavController implements IUIFlow {
         return mav;
     }
 
+    /**
+     * Create a copy of the given Dashboard
+     *
+     * @param dashboardId UUID of the Dashboard to copy
+     */
     @PostMapping(BASE_URL + "/copy")
     public RedirectView copyDashboard(@RequestParam(name = "flow") UUID dashboardId) {
         DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
@@ -130,10 +150,23 @@ public class DaveDashboardMavController implements IUIFlow {
         return new RedirectView("../dashboards/show");
     }
 
+    /**
+     * Delete the given Dashboard
+     *
+     * @param dashboardId UUID of the Dashboard to delete
+     */
     @PostMapping(BASE_URL + "/delete")
     public RedirectView deleteDashboard(@RequestParam(name = "flow") UUID dashboardId) {
         DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
         this.daveDashboardService.deleteDashboard(dashboard);
         return new RedirectView("../dashboards/show");
+    }
+
+    /**
+     * UI helper enum, controls button states
+     */
+    enum Mode {
+        CREATING,
+        EDITING
     }
 }

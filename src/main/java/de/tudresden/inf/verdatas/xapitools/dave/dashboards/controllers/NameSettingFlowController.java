@@ -17,6 +17,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+/**
+ * ModelAndView Controller for Setting of a Dashboards' Title
+ * By implementing {@link DashboardStep}, it is automatically bound in {@link DaveDashboardMavController}.
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 @Controller
 @Order(1)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -45,6 +51,11 @@ public class NameSettingFlowController implements DashboardStep {
         return Pattern.compile(DaveDashboardMavController.BASE_URL + "/(new|edit)$");
     }
 
+    /**
+     * Show the page to set the Title of a Dashboard
+     *
+     * @param dashboardId Optionally the UUID of the current Dashboard in creation
+     */
     @GetMapping(DaveDashboardMavController.BASE_URL + "/new")
     public ModelAndView showSetTitle(@RequestParam(name = "flow") Optional<UUID> dashboardId) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/identifier");
@@ -59,6 +70,11 @@ public class NameSettingFlowController implements DashboardStep {
         return mav;
     }
 
+    /**
+     * Show the page to edit the Title of an existing Dashboard
+     *
+     * @param dashboardId UUID of the Dashboard to modify
+     */
     @GetMapping(DaveDashboardMavController.BASE_URL + "/edit")
     public ModelAndView showEditTitle(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = this.showSetTitle(Optional.of(dashboardId));
@@ -66,6 +82,13 @@ public class NameSettingFlowController implements DashboardStep {
         return mav;
     }
 
+    /**
+     * Set the Title of a Dashboard. Creates a new Dashboard if {@param dashboardId} is empty
+     *
+     * @param dashboardId UUID of the Dashboard to modify. If missing a new Dashboard will be created
+     * @param identifier  Title to set. Must not be already used
+     * @param mode        -- Page mode, used for redirection
+     */
     @PostMapping(DaveDashboardMavController.BASE_URL + "/new")
     public RedirectView setTitleAndCreate(@RequestParam(name = "flow") Optional<UUID> dashboardId, String identifier,
                                           DaveDashboardMavController.Mode mode, RedirectAttributes attributes) {

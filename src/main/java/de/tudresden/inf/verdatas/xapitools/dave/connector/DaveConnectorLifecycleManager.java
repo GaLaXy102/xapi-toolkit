@@ -23,16 +23,16 @@ import java.net.URL;
  * Magic piece of Java that can spawn and despawn Beans.
  * Here it is used to control the Lifecycle of {@link DaveConnector}s.
  *
+ * @author Ylvi Sarah Bachmann (@ylvion)
  */
 @Component
 @Validated
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DaveConnectorLifecycleManager implements BeanFactoryAware {
-    private DefaultListableBeanFactory beanFactory;
     private final ScheduledAnnotationBeanPostProcessor schedulingRegistrar;
     private final TaskExecutor taskExecutor;
     private final SeleniumWebDriverProvider webDriverProvider;
-
+    private DefaultListableBeanFactory beanFactory;
     @Value("${xapi.dave.backend-base-url}")
     private URL daveEndpoint;
 
@@ -67,6 +67,9 @@ public class DaveConnectorLifecycleManager implements BeanFactoryAware {
         this.taskExecutor.execute(connector::initialize);
     }
 
+    /**
+     * Create an additional {@link DaveConnector}, which is used to validate Analyses descriptions
+     */
     public void createTestConnector() {
         String targetBeanName = "DaveConnector-Test";
         DaveConnector connector = new DaveConnector(daveEndpoint, this.webDriverProvider::getWebDriver, taskExecutor);
@@ -84,6 +87,9 @@ public class DaveConnectorLifecycleManager implements BeanFactoryAware {
         return this.beanFactory.getBean(targetBeanName, DaveConnector.class);
     }
 
+    /**
+     * Get the additional Test-{@link DaveConnector}
+     */
     public DaveConnector getTestConnector() {
         String targetBeanName = "DaveConnector-Test";
         return this.beanFactory.getBean(targetBeanName, DaveConnector.class);
@@ -101,6 +107,9 @@ public class DaveConnectorLifecycleManager implements BeanFactoryAware {
         this.beanFactory.destroySingleton(targetBeanName);
     }
 
+    /**
+     * Destroy the additional Test-{@link DaveConnector}
+     */
     public void deleteTestConnector() {
         String targetBeanName = "DaveConnector-Test";
         // Disable Scheduling

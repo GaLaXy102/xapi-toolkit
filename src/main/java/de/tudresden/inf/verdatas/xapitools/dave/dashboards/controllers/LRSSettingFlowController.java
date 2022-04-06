@@ -18,6 +18,12 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+/**
+ * ModelAndView Controller for Setting of a Dashboards' source LRS
+ * By implementing {@link DashboardStep}, it is automatically bound in {@link DaveDashboardMavController}.
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 @Controller
 @Order(2)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
@@ -47,6 +53,11 @@ public class LRSSettingFlowController implements DashboardStep {
         return Pattern.compile(DaveDashboardMavController.BASE_URL + "/(new|edit)/source$");
     }
 
+    /**
+     * Show page to set the source LRS of an existing Dashboard
+     *
+     * @param dashboardId UUID of the associated Dashboard
+     */
     @GetMapping(DaveDashboardMavController.BASE_URL + "/new/source")
     public ModelAndView showSelectLRS(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/source");
@@ -56,6 +67,11 @@ public class LRSSettingFlowController implements DashboardStep {
         return mav;
     }
 
+    /**
+     * Show page to edit the source LRS of an existing Dashboard
+     *
+     * @param dashboardId UUID of the associated Dashboard to modify
+     */
     @GetMapping(DaveDashboardMavController.BASE_URL + "/edit/source")
     public ModelAndView showEditLRS(@RequestParam(name = "flow") UUID dashboardId) {
         ModelAndView mav = this.showSelectLRS(dashboardId);
@@ -63,6 +79,13 @@ public class LRSSettingFlowController implements DashboardStep {
         return mav;
     }
 
+    /**
+     * Set the source LRS for an existing Dashboard
+     *
+     * @param dashboardId UUID of the associated Dashboard
+     * @param lrsId       UUID of the {@link LrsConnection} to add to the Dashboard
+     * @param mode        -- Page mode, used for redirection
+     */
     @PostMapping(DaveDashboardMavController.BASE_URL + "/new/source")
     public RedirectView selectLRS(@RequestParam(name = "flow") UUID dashboardId, @RequestParam(name = "lrs_id") UUID lrsId,
                                   DaveDashboardMavController.Mode mode, RedirectAttributes attributes) {

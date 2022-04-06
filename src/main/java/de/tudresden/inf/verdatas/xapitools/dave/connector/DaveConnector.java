@@ -19,6 +19,11 @@ import java.util.logging.Logger;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
+/**
+ * This Service provides a connection to a DAVE instance with the help of Selenium
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 public class DaveConnector implements IExternalService, Closeable, DisposableBean {
     private static final String HEALTH_ENDPOINT = "";
 
@@ -31,6 +36,14 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
     @Getter
     private Boolean health = null;
 
+    /**
+     * Constructor of a DAVE Connector for an existing LRS Connection. Used by {@link DaveConnectorLifecycleManager}
+     *
+     * @param daveEndpoint      URL to reach the DAVE framework
+     * @param lrsConnection     Valid {@link LrsConnection} Entity
+     * @param getDriverFunction {@link WebDriver} for Selenium
+     * @param taskExecutor      used for scheduling of tasks
+     */
     DaveConnector(URL daveEndpoint, LrsConnection lrsConnection, Supplier<WebDriver> getDriverFunction,
                   TaskExecutor taskExecutor) {
         this.daveEndpoint = daveEndpoint;
@@ -39,16 +52,26 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
         this.taskExecutor = taskExecutor;
     }
 
+    /**
+     * Constructor of the additional DAVE Connector for validation of Analyses descriptions. Used by {@link DaveConnectorLifecycleManager}
+     *
+     * @param daveEndpoint      URL to reach the DAVE framework
+     * @param getDriverFunction {@link WebDriver} for Selenium
+     * @param taskExecutor      used for scheduling of tasks
+     */
     DaveConnector(URL daveEndpoint, Supplier<WebDriver> getDriverFunction, TaskExecutor taskExecutor) {
         this.daveEndpoint = daveEndpoint;
         this.getDriverFunction = getDriverFunction;
         this.taskExecutor = taskExecutor;
     }
 
+    /**
+     * Initialize the DAVE Connector
+     */
     void initialize() {
         if (this.driver != null) return;
         // Try to initialize DAVE connector, because of random errors caused by the use of selenium multiple tries could be necessary
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             this.driver = DaveInteractions.startNewSession(this.daveEndpoint, this.getDriverFunction);
             try {
                 DaveInteractions.initializeDave(this.driver, this.lrsConnection.getFriendlyName(),
@@ -65,6 +88,9 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
         this.healthChangedCallback(false);
     }
 
+    /**
+     * Initialize the additional DAVE Connector for validation of Analyses
+     */
     void startTestSession() {
         if (this.driver != null) return;
         this.driver = DaveInteractions.startNewSession(this.daveEndpoint, this.getDriverFunction);
@@ -80,7 +106,9 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
 
     }
 
-    // TODO prevent null pointer exception
+    /**
+     * Close the connection to DAVE. Used if an exception occurred while executing
+     */
     public void close() {
         if (this.driver == null) return;
         this.driver.quit();
@@ -124,6 +152,11 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
         }
     }
 
+    /**
+     * Check whether the connected instance is alive
+     * <p>
+     * To run manually, call this method and afterwards get the result from getHealth()
+     */
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
     protected void healthCheck() {
         if (this.health != null && this.driver != null) {
@@ -144,17 +177,26 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
         if (this.health && this.lrsConnection != null) {
             this.logger.info("DAVE-" + this.lrsConnection.getFriendlyName() + " connection is alive.");
         } else if (this.health) {
-            this.logger.info("DAVE" + " connection is alive.");
+            this.logger.info("DAVE connection is alive.");
         }
         if (!this.health && this.lrsConnection != null) {
             this.logger.warning("DAVE-" + this.lrsConnection.getFriendlyName()
                     + " is not responding correctly. Tried URL " + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
         } else if (!this.health) {
-            this.logger.warning("DAVE" + " is not responding correctly. Tried URL "
+            this.logger.warning("DAVE is not responding correctly. Tried URL "
                     + this.daveEndpoint.toString() + HEALTH_ENDPOINT);
         }
     }
 
+    /**
+     * Get the visualisation for an Analysis.
+     * Uses files to store the descriptions and uploads them to DAVE with the help of Selenium to ensure their correctly delivered.
+     *
+     * @param queryPath Path, where the Query description can be found
+     * @param graphPath Path, where the Graph Description can be found
+     * @return result of Analysis as diagram
+     * @throws de.tudresden.inf.verdatas.xapitools.dave.connector.DaveExceptions.NoDaveConnection when there's an error with the DAVE Connector
+     */
     public synchronized String executeAnalysis(String queryPath, String graphPath) {
         if (this.getHealth()) {
             try {
@@ -169,10 +211,19 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
             throw new DaveExceptions.NoDaveConnection("Interaction with "
                     + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
         } else {
-            throw new DaveExceptions.NoDaveConnection("Interaction with " + "DAVE" + " not possible.");
+            throw new DaveExceptions.NoDaveConnection("Interaction with DAVE not possible.");
         }
     }
 
+    /**
+     * Validate if the given Analysis matches the scheme for DAVE Analyses
+     *
+     * @param query Query description to validate
+     * @param graph Graph Description to validate
+     * @return errors, if validation failed
+     * @throws de.tudresden.inf.verdatas.xapitools.dave.connector.DaveExceptions.AnalysisConfigurationException when an Exception occurred while executing the Analysis
+     * @throws de.tudresden.inf.verdatas.xapitools.dave.connector.DaveExceptions.NoDaveConnection               when there's an error with the DAVE Connector
+     */
     public Optional<String> testAnalysisExecution(String query, String graph) {
         if (this.getHealth()) {
             try {
@@ -192,9 +243,19 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
                 throw new DaveExceptions.AnalysisConfigurationException(e.getMessage());
             }
         }
-        throw new DaveExceptions.NoDaveConnection("Interaction with " + "DAVE" + " not possible.");
+        throw new DaveExceptions.NoDaveConnection("Interaction with DAVE not possible.");
     }
 
+    /**
+     * Get the execution results of the given Analysis.
+     * This is the information, which was filtered by the corresponding Query and is used to create the visualisation.
+     *
+     * @param queryPath Path, where the Query description can be found
+     * @param graphPath Path, where the Graph Description can be found
+     * @return results of the Analysis as nested {@link List}
+     * @throws de.tudresden.inf.verdatas.xapitools.dave.connector.DaveExceptions.AnalysisResultError when an Exception occurred while executing the Analysis
+     * @throws de.tudresden.inf.verdatas.xapitools.dave.connector.DaveExceptions.NoDaveConnection    when there's an error with the DAVE Connector
+     */
     public List<String> getAnalysisResult(String queryPath, String graphPath) {
         if (this.getHealth()) {
             try {
@@ -219,7 +280,7 @@ public class DaveConnector implements IExternalService, Closeable, DisposableBea
             throw new DaveExceptions.NoDaveConnection("Interaction with "
                     + "DAVE-" + this.lrsConnection.getFriendlyName() + " not possible.");
         } else {
-            throw new DaveExceptions.NoDaveConnection("Interaction with " + "DAVE" + " not possible.");
+            throw new DaveExceptions.NoDaveConnection("Interaction with DAVE not possible.");
         }
     }
 }

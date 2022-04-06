@@ -14,22 +14,26 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Rest Controller for DAVE Health Checks
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 @RestController
 @Validated
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DaveHealthRestController {
-    private final LrsService lrsService;
-    private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
-
     /**
      * Endpoint for Health Checks
      */
     public static final String HEALTH_ENDPOINT = "/api/v1/dave/health";
+    private final LrsService lrsService;
+    private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
 
     /**
      * Respond to Health Check Queries
      *
-     * @param connectionId ID of {@link LrsConnection} which belongs to the DAVEConnector of which the Health shall be queried.
+     * @param connectionId ID of {@link LrsConnection} which belongs to the DAVE Connector of which the Health shall be queried.
      * @return 200 and true if alive, 200 and false if dead, 400 and error page if not found or inactive connection.
      */
     @GetMapping(HEALTH_ENDPOINT)

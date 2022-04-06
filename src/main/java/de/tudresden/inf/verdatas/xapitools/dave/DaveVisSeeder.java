@@ -3,6 +3,11 @@ package de.tudresden.inf.verdatas.xapitools.dave;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.*;
 import org.springframework.stereotype.Component;
 
+/**
+ * Seeder for Analyses
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 @Component
 public class DaveVisSeeder {
     private final DaveVisRepository daveVisRepository;
@@ -20,7 +25,7 @@ public class DaveVisSeeder {
     }
 
     /**
-     * Create some connection samples
+     * Create the predefined analyses (refer to the user guide for further information)
      */
     private void seed() {
         try {

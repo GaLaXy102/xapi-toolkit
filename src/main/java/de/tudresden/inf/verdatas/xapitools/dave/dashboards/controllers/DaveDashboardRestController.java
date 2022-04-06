@@ -17,12 +17,25 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
+/**
+ * Rest Controller for the Exchange of Dashboard diagrams
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 @RestController
 @RequestMapping("/api/v1/dave")
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DaveDashboardRestController {
     private final DaveDashboardService daveDashboardService;
 
+    /**
+     * Download a diagram of an Analysis belonging to a Dashboard.
+     * It's the execution result of the corresponding Analysis
+     *
+     * @param dashboardId UUID of Dashboard, which contains the Analysis
+     * @param activityURL indicates if the Analysis is executed using the whole LRS data set or only the data belonging to a specific activity
+     * @param analysisId  UUID of the Analysis to execute
+     */
     @GetMapping("/visualisation")
     public ResponseEntity<String> downloadVisualisation(@RequestParam(name = "flow") UUID dashboardId,
                                                         @RequestParam(name = "activityURL") String activityURL,

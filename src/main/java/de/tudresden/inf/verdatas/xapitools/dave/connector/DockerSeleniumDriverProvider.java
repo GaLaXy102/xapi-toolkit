@@ -10,6 +10,13 @@ import org.springframework.stereotype.Component;
 
 import java.net.URL;
 
+/**
+ * Handle initialization of {@link WebDriver} for Selenium and use of Selenium Hub to manage sessions.
+ * <p>
+ * Only needed when not in dev mode.
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 @Component
 @Profile("!dev")
 public class DockerSeleniumDriverProvider implements SeleniumWebDriverProvider {

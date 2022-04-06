@@ -15,6 +15,12 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+/**
+ * This service handles the preparation of Analyses for execution.
+ * Their queries and graph descriptions have to be saved as files, so they can be delivered to DAVE and executed correctly
+ *
+ * @author Ylvi Sarah Bachmann (@ylvion)
+ */
 @Service
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class FileManagementService {
@@ -22,6 +28,13 @@ public class FileManagementService {
     @Value("${xapi.datasim.sim-storage}")  // TODO
     private String basepath;
 
+    /**
+     * Create a new file
+     *
+     * @param prefix  friendly name for the file
+     * @param content data to save
+     * @throws UncheckedIOException when an error occurs while creation
+     */
     private File writeFile(String prefix, String content) throws UncheckedIOException {
         try {
             File file = File.createTempFile(prefix, ".json", new File(this.basepath));
@@ -35,15 +48,33 @@ public class FileManagementService {
         }
     }
 
+    /**
+     * Save the Query description of the given Analysis in a file
+     *
+     * @param analysis   Entity to use
+     * @param activityId URL, indicates if the Analysis is executed using the whole LRS data set or only the data belonging to a specific activity
+     */
     public File prepareQuery(DaveVis analysis, String activityId) {
         Optional<String> activity = activityId.equals("all") ? Optional.empty() : Optional.of(activityId);
         return this.writeFile("query", DaveDashboardService.prepareQueryLimit(analysis, activity));
     }
 
+    /**
+     * Save the Graph description of the given Analysis in a file
+     *
+     * @param analysis Entity to use
+     */
     public File prepareVisualisation(DaveVis analysis) {
-        return this.writeFile("analysis", analysis.getDescription().getDescription());
+        return this.writeFile("graph description", analysis.getDescription().getDescription());
     }
 
+    /**
+     * Validate the given Analysis description parts if they use the scheme required by DAVE
+     *
+     * @param queryDescription query to validate
+     * @param graphDescription graph description to validate
+     * @return the absolute paths for both files as {@link Pair}
+     */
     public Pair<String, String> prepareValidityCheck(String queryDescription, String graphDescription) {
         File query = this.writeFile("query", queryDescription);
         File graph = this.writeFile("graph", graphDescription);
