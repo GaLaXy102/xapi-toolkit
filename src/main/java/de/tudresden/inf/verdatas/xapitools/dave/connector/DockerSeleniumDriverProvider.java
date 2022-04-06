@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import java.net.URL;
 
 /**
- * Handle initialization of {@link WebDriver} for Selenium and use of Selenium Hub to manage sessions.
+ * Handle initialization of {@link WebDriver} using Selenium Hub to manage sessions.
  * <p>
- * Only needed when not in dev mode.
+ * Used when not in dev mode.
  *
  * @author Ylvi Sarah Bachmann (@ylvion)
  */
@@ -23,6 +23,10 @@ public class DockerSeleniumDriverProvider implements SeleniumWebDriverProvider {
     @Value("${xapi.dave.selenium-hub-url}")
     private URL seleniumURL;
 
+    /**
+     * Create a {@link RemoteWebDriver} (Chrome) using the Selenium Hub at ${xapi.dave.selenium-hub-url}.
+     * A file detector is also added for commodity.
+     */
     @Override
     public WebDriver getWebDriver() {
         RemoteWebDriver driver = (RemoteWebDriver) WebDriverManager.chromedriver().remoteAddress(this.seleniumURL).create();

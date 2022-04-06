@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
- * Handle initialization of {@link WebDriver} for Selenium.
+ * Handle initialization of {@link WebDriver} for Selenium using a local Chrome Engine.
  * <p>
- * Only needed in dev mode.
+ * Used in dev mode.
  *
  * @author Ylvi Sarah Bachmann (@ylvion)
  */
@@ -21,6 +21,9 @@ public class LocalSeleniumDriverProvider implements SeleniumWebDriverProvider {
         WebDriverManager.chromedriver().setup();
     }
 
+    /**
+     * Spawn a headless {@link WebDriver} using a locally installed Chrome.
+     */
     @Override
     public WebDriver getWebDriver() {
         ChromeOptions options = new ChromeOptions();

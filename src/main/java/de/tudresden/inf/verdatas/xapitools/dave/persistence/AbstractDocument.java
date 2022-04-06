@@ -7,6 +7,9 @@ import lombok.Setter;
 import javax.persistence.Id;
 import java.util.UUID;
 
+/**
+ * Base Mongo Document class. Contains only an ID abstraction.
+ */
 @NoArgsConstructor
 public class AbstractDocument {
     @Id
