@@ -13,8 +13,8 @@
     </div>
     <div class="row">
       <div class="col">
-        <a href="#" th:if="${mode == mode.CREATING}">
-          <button class="col btn btn-outline-danger" type="button" disabled>Back</button>
+        <a href="#" th:if="${mode == mode.CREATING}" onclick="history.go(-1);">
+          <button class="col btn btn-outline-danger" type="button">Back</button>
         </a>
         <a th:href="'/ui/dave/dashboards/show?flow=' + ${flow}" th:if="${mode == mode.EDITING}">
           <button class="col btn btn-outline-danger" type="button">Back</button>
