@@ -135,11 +135,11 @@ public class DaveDashboardService {
      */
     @Transactional
     public DaveDashboard createEmptyDashboard(String name) {
-        Optional<DaveDashboard> duplicate = this.dashboardRepository.findByName(name);
-        // TODO Use stream
-        if (duplicate.isPresent()) {
-            throw new DashboardExceptions.ConfigurationConflict("Duplicate dashboard identifier. Please change the name of your dashboard.");
-        }
+        // Detect duplicates
+        this.dashboardRepository.findByName(name)
+                .orElseThrow(() -> new DashboardExceptions.ConfigurationConflict(
+                        "Duplicate dashboard identifier. Please change the name of your dashboard.")
+                );
         DaveDashboard emptyDashboard = new DaveDashboard(name, null, new LinkedList<>(), false);
         this.dashboardRepository.save(emptyDashboard);
         return emptyDashboard;

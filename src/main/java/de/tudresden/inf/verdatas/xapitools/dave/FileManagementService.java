@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class FileManagementService {
 
-    @Value("${xapi.datasim.sim-storage}")  // TODO
+    @Value("${xapi.datasim.sim-storage}")
     private String basepath;
 
     /**
