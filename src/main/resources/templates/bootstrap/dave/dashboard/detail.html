@@ -62,7 +62,7 @@
                     <li class="list-group-item dashboard-analyses">
                         <i class="bi-bar-chart-line"></i>
                         &nbsp;&nbsp;&nbsp;
-                        <span th:text="${dashboard.getVisualisations().size()}"></span> Visualisations
+                        <span th:text="${dashboard.getVisualisations().size()}"></span> Analyses
                         <a th:href="'/ui/dave/dashboards/edit/visualisations' + '?flow=' + ${dashboard.getId()}" onclick="showLoadingModal(this);" th:data-lrsName="${dashboard.getLrsConnection().getFriendlyName()}"
                            class="float-end text-dark"><i class="bi-pencil" title="Edit analyses"></i></a>
                     </li>
