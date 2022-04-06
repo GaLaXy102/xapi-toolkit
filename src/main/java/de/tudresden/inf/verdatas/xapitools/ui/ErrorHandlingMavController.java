@@ -1,6 +1,9 @@
 package de.tudresden.inf.verdatas.xapitools.ui;
 
 import de.tudresden.inf.verdatas.xapitools.datasim.DatasimExceptions;
+import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveExceptions;
+import de.tudresden.inf.verdatas.xapitools.dave.analysis.AnalysisExceptions;
+import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DashboardExceptions;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsExceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -83,14 +86,28 @@ public class ErrorHandlingMavController {
     }
 
     /**
-     * Handler for manually created ConnectionErrors (i.e. {@link DatasimExceptions.NoDatasimConnection} and {@link LrsExceptions.NoLrsConnection}).
+     * Handler for {@link AnalysisExceptions.ConfigurationConflict}, {@link AnalysisExceptions.SideEffectsError} and {@link DashboardExceptions.ConfigurationConflict} (all manually raised from code).
+     * The {@link HttpStatus} raised for this Exception class is 409 (Conflict).
+     *
+     * @param e Exception to be handled
+     * @return ModelAndView for this Exception
+     */
+    @ResponseStatus(code = HttpStatus.CONFLICT)
+    @ExceptionHandler({AnalysisExceptions.ConfigurationConflict.class, AnalysisExceptions.SideEffectsError.class, DashboardExceptions.ConfigurationConflict.class})
+    public ModelAndView convertConfigurationConflicts(Exception e) {
+        return this.baseModelAndView(e, HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Handler for manually created ConnectionErrors (i.e. {@link DatasimExceptions.NoDatasimConnection}, {@link LrsExceptions.NoLrsConnection} and {@link DaveExceptions.NoDaveConnection}).
      * The {@link HttpStatus} raised for this Exception class is 503 (Service Unavailable).
      *
      * @param e Exception to be handled
      * @return ModelAndView for this Exception
      */
     @ResponseStatus(code = HttpStatus.SERVICE_UNAVAILABLE)
-    @ExceptionHandler({DatasimExceptions.NoDatasimConnection.class, LrsExceptions.NoLrsConnection.class})
+    @ExceptionHandler({DatasimExceptions.NoDatasimConnection.class, LrsExceptions.NoLrsConnection.class,
+            DaveExceptions.NoDaveConnection.class})
     public ModelAndView convertExternalServiceNotConnected(Exception e) {
         return this.baseModelAndView(e, HttpStatus.SERVICE_UNAVAILABLE);
     }

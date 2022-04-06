@@ -1,0 +1,137 @@
+---
+version: "3.9"
+networks:
+  xapitools0: {}
+  selenium0: {}
+  frontend0:
+    name: frontend0
+    external: true
+volumes:
+  xapitools_simulations: {}
+  xapitools_mongo: {}
+  xapitools_mariadb: {}
+
+services:
+  # mariadb:
+  #   image: library/mariadb:10.7
+  #   restart: always
+  #   networks:
+  #     - xapitools0
+  #   volumes:
+  #     - xapitools_mariadb:/var/lib/mysql
+  #   environment:
+  #     MARIADB_RANDOM_ROOT_PASSWORD: 1
+  #     MARIADB_DATABASE: xapitools
+  #     MARIADB_USER: xapi
+  #     MARIADB_PASSWORD: toolkit
+  mongodb:
+    image: library/mongo:4.4.12
+    restart: always
+    networks:
+      - xapitools0
+    volumes:
+      - ./init/mongodb:/docker-entrypoint-initdb.d:ro
+      - xapitools_mongo:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: xapitools
+      MONGO_INITDB_USERNAME: xapi
+      MONGO_INITDB_PASSWORD: toolkit
+  datasim:
+    # Image is built by CI of DATASIM "mirror"
+    image: nexus.galaxion.de:5050/yetanalytics/datasim:latest
+    entrypoint: bin/server.sh                                       # The default is to run DATASIM in CLI mode. We probably want to override that.
+    restart: always
+    networks:
+      - xapitools0
+    ports:
+      - "9090:9090"
+    environment:
+      credentials: foo:bar  # sic!
+  dave:
+    # Image is built by CI of DAVE "mirror"
+    image: nexus.galaxion.de:5050/yetanalytics/dave:latest
+    # These credentials are read from command by webserver
+    command: --set-basic-auth dave:password
+    restart: always
+    networks:
+      - xapitools0
+      - selenium0
+    ports:
+      - "9091:8043"
+  # selenium-node-docker:
+  #   image: selenium/node-docker:4.1.2-20220217
+  #   restart: always
+  #   volumes:
+  #     - ./init/selenium/config.toml:/opt/bin/config.toml:ro
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     - selenium0
+  #   depends_on:
+  #     - selenium-hub
+  #   environment:
+  #     - SE_EVENT_BUS_HOST=selenium-hub
+  #     - SE_EVENT_BUS_PUBLISH_PORT=4442
+  #     - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+  # selenium-hub:
+  #   image: selenium/hub:4.1.2-20220217
+  #   container_name: selenium-hub
+  #   restart: always
+  #   networks:
+  #     - xapitools0
+  #     - selenium0
+  #     - frontend0
+  #   labels:
+  #     traefik.enable: "true"
+  #     traefik.providers.docker.network: frontend0
+  #     traefik.http.routers.selenium-hub.rule: Host(`${SELENIUM_HOSTNAME}`)
+  #     traefik.http.routers.selenium-hub.entrypoints: traefik-dash  # This is for internal purposes only.
+  #     traefik.http.routers.selenium-hub.tls: "true"
+  #     traefik.http.routers.selenium-hub.service: selenium-wui
+  #     traefik.http.services.selenium-wui.loadbalancer.server.port: "4444"
+  # permission_control:
+  #   image: busybox
+  #   command: /bin/sh -c 'touch /data/.initialized && chown -R 1000:1000 /data'
+  #   volumes:
+  #     - xapitools_simulations:/data
+  # xapitools:
+  #   depends_on:
+  #     - mariadb
+  #     - datasim
+  #     - dave
+  #     - selenium-hub
+  #     - permission_control
+  #   restart: on-failure
+  #   # Image is built by CI of this project.
+  #   image: nexus.galaxion.de:5050/de.tudresden.inf.verdatas/xapitools:latest
+  #   networks:
+  #     - xapitools0
+  #     - selenium0
+  #     - frontend0
+  #   expose:
+  #     - 8080
+  #   volumes:
+  #     - xapitools_simulations:/data
+  #   environment:
+  #     XAPITOOLS_SEC_USERNAME: ${WEB_AUTH_USER}
+  #     XAPITOOLS_SEC_PASSWORD: ${WEB_AUTH_PASSWORD}
+  #     XAPITOOLS_SIM_BACKEND_BASE_URL: http://datasim:9090   # This is the Docker-relative base path.
+  #     XAPITOOLS_SIM_BACKEND_USERNAME: foo
+  #     XAPITOOLS_SIM_BACKEND_PASSWORD: bar
+  #     XAPITOOLS_SIM_STORAGE_DIR: /data                              # This path also is Docker-relative. See volumes section.
+  #     XAPITOOLS_VIZ_SERVER_BASE_URL: http://dave:password@dave:8043/
+  #     XAPITOOLS_VIZ_SELENIUM_HUB_URL: http://selenium-hub:4444/wd/hub
+  #     XAPITOOLS_DB_CONNECTION_STRING: mariadb://mariadb:3306/xapitools
+  #     XAPITOOLS_DB_CONNECTION_USER: xapi
+  #     XAPITOOLS_DB_CONNECTION_PASSWORD: toolkit
+  #     XAPITOOLS_MONGO_CONNECTION_STRING: mongodb://xapi:toolkit@mongodb:27017/xapitools
+  #     TZ: Europe/Berlin
+  #   labels:
+  #     traefik.enable: "true"
+  #     traefik.providers.docker.network: frontend0
+  #     traefik.http.routers.xapitools.rule: Host(`${WEB_HOSTNAME}`)
+  #     traefik.http.routers.xapitools.entrypoints: websecure
+  #     traefik.http.routers.xapitools.tls: "true"

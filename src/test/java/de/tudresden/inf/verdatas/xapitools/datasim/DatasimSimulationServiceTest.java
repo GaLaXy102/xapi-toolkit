@@ -3,6 +3,7 @@ package de.tudresden.inf.verdatas.xapitools.datasim;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimPersona;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimPersonaTO;
 import de.tudresden.inf.verdatas.xapitools.datasim.persistence.DatasimSimulation;
+import de.tudresden.inf.verdatas.xapitools.util.TestContainerTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class DatasimSimulationServiceTest {
+class DatasimSimulationServiceTest extends TestContainerTest {
 
     @Autowired
     DatasimSimulationService service;

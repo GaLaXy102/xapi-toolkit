@@ -24,6 +24,16 @@
       "name": "xapi.datasim.sim-storage",
       "type": "java.lang.String",
       "description": "Storage directory for Simulation results."
+    },
+    {
+      "name": "xapi.dave.backend-base-url",
+      "type": "java.lang.String",
+      "description": "Base URL for DAVE backend."
+    },
+    {
+      "name": "xapi.dave.selenium-hub-url",
+      "type": "java.lang.String",
+      "description": "URL to Selenium Hub."
     }
   ]
 }

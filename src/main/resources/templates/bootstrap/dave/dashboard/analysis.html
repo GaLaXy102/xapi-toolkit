@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="bootstrap/header.html :: scripted_head ('Set Analysis')"></head>
+<body class="bg-dark">
+<div class="container">
+    <form method="POST" th:action="@{/ui/dave/dashboards/new/visualisations/add}">
+        <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
+        <input type="hidden" name="flow" th:value="${flow}">
+        <input type="hidden" name="mode" th:value="${mode}">
+        <div class="form-control mt-3 mb-3">
+            <div class="row">
+                <label>Add analysis</label>
+                <div class="col-10">
+                    <div class="mb-3 mt-3 input-group" id="componentSelectBase">
+                        <select class="form-select" id="componentSelectActivity" name="activity" required>
+                            <option selected value="all">Whole LRS</option>
+                            <option th:each="activity: ${possibleActivities}"
+                                    th:text="${activity}"
+                                    th:value="${activity}"></option>
+                        </select>
+                        <select class="form-select" name="analysis" required>
+                            <option selected value="">Select analysis</option>
+                            <option th:each="analysis: ${possibleAnalysis}" th:text="${analysis.getName()}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-1 align-self-center">
+                    <a th:href="'?flow=' + ${flow} + '&cache=false'">
+                        <button class="col btn" type="button">
+                            <i class="bi-arrow-repeat" title="Load Activities of LRS"></i>
+                        </button>
+                    </a>
+                </div>
+                <div class="col-1 align-self-center">
+                    <button class="col btn btn-success float-end" type="submit" title="Add analyses to dashboard">+</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="mb-3 form-control">
+        <h3 class="mb-3">Selected analyses</h3>
+        <table class="table table-hover" id="visualisationsInput">
+            <thead>
+            <tr>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col">#</th>
+                <th scope="col">activity</th>
+                <th scope="col">analysis</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="visualisation, stat: ${dashboardVisualisations}">
+                <td>
+                    <form method="POST" th:action="@{/ui/dave/dashboards/new/visualisations/up}" th:unless="${stat.first}">
+                        <input type="hidden" name="flow" th:value="${flow}">
+                        <input type="hidden" name="mode" th:value="${mode}">
+                        <input type="hidden" name="position" th:value="${stat.index}">
+                        <button class="btn" type="submit">
+                            <i class="bi-caret-up" title="Move up"></i>
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" th:action="@{/ui/dave/dashboards/new/visualisations/down}" th:unless="${stat.last}">
+                        <input type="hidden" name="flow" th:value="${flow}">
+                        <input type="hidden" name="mode" th:value="${mode}">
+                        <input type="hidden" name="position" th:value="${stat.index}">
+                        <button class="btn" type="submit">
+                            <i class="bi-caret-down" title="Move down"></i>
+                        </button>
+                    </form>
+                </td>
+                <th scope="row" th:text="${stat.index + 1}"></th>
+                <td th:text="${visualisation.getFirst()}"></td>
+                <td th:text="${visualisation.getSecond().getName()}"></td>
+                <td>
+                    <form method="POST" th:action="@{/ui/dave/dashboards/new/visualisations/delete}">
+                        <input type="hidden" name="flow" th:value="${flow}">
+                        <input type="hidden" name="mode" th:value="${mode}">
+                        <input type="hidden" name="position" th:value="${stat.index}">
+                        <button class="btn" type="submit">
+                            <i class="bi-trash" title="Delete analysis from dashboard"></i>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <form method="POST" th:action="@{/ui/dave/dashboards/new/visualisations}">
+        <input type="hidden" name="flow" th:value="${flow}">
+        <input type="hidden" name="mode" th:value="${mode}">
+        <!-- see https://getbootstrap.com/docs/5.0/forms/floating-labels/#example on why placeholder is needed -->
+        <div class="row">
+            <div class="col">
+                <a th:href="'/ui/dave/dashboards/new/source?flow=' + ${flow}" th:if="${mode == mode.CREATING}">
+                    <button class="col btn btn-outline-danger" type="button">Back</button>
+                </a>
+                <a th:href="'/ui/dave/dashboards/show?flow=' + ${flow}" th:if="${mode == mode.EDITING}">
+                    <button class="col btn btn-outline-danger" type="button">Back</button>
+                </a>
+            </div>
+            <div class="col">
+                <button class="col btn btn-success float-end" type="submit">Continue</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

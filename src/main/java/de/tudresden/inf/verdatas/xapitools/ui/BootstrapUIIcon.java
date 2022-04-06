@@ -14,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 public enum BootstrapUIIcon implements UIIcon {
     ARROW_LR("arrow-left-right"),
     CLOUD("cloud-arrow-up"),
-    SHUFFLE("shuffle");
+    SHUFFLE("shuffle"),
+    CHART("bar-chart-line"),
+    CLIPBOARD("clipboard-data");
 
     private final String iconName;
     private static final String PREFIX = "bi-";

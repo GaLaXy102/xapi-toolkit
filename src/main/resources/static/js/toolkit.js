@@ -39,7 +39,7 @@ function setHighlightOfStep(el, testPath) {
 function highlightFlowStep(event) {
     // This doesn't contain any query parameters :)
     const targetPath = event.currentTarget.contentWindow.location.pathname;
-    $('a.nav-link').first().parent().children('ol').children().each((_, el) => setHighlightOfStep(el, targetPath));
+    $('a.nav-link').parent().children('ol').children().each((_, el) => setHighlightOfStep(el, targetPath));
 }
 
 function addSpinner(el) {
@@ -87,6 +87,74 @@ function triggerComponentSelect(element) {
         setReqiured(this);
         setName(this, 'component')
     });
+}
+
+function triggerQuerySelect(element) {
+    $('#queryIdInput').val(element.dataset.qid);
+    $('#queryNameInput').val(element.innerText);
+    $('.xapi-query-content').each(function () {
+        setInvisible(this);
+        setNonReqiured(this);
+        unsetName(this);
+    });
+    $('#queryContentInput-' + element.dataset.qid).each(function () {
+        setVisible(this);
+        setReqiured(this);
+        setName(this, 'queryContent');
+    });
+}
+
+function triggerQueryShow(element) {
+    if ($('#queryIdInput')[0].value === '') return;
+    $('.xapi-query-content').each(function () {
+        setInvisible(this);
+        setNonReqiured(this);
+        unsetName(this);
+    });
+    $('#queryContentInput-' + element.value).each(function () {
+        setVisible(this);
+        setReqiured(this);
+        setName(this, 'queryContent');
+    });
+}
+
+function triggerGraphSelect(element) {
+    $('#graphIdInput').val(element.dataset.gid);
+    $('#graphNameInput').val(element.innerText);
+    $('.xapi-graph-content').each(function () {
+        setInvisible(this);
+        setNonReqiured(this);
+        unsetName(this);
+    });
+    $('#graphContentInput-' + element.dataset.gid).each(function () {
+        setVisible(this);
+        setReqiured(this);
+        setName(this, 'graphContent');
+    });
+}
+
+function triggerGraphShow(element) {
+    if ($('#graphIdInput')[0].value === '') return;
+    $('.xapi-graph-content').each(function () {
+        setInvisible(this);
+        setNonReqiured(this);
+        unsetName(this);
+    });
+    $('#graphContentInput-' + element.value).each(function () {
+        setVisible(this);
+        setReqiured(this);
+        setName(this, 'graphContent');
+    });
+}
+
+function replaceSvgVis(element) {
+    fetch('/api/v1/dave/visualisation' + '?flow=' + element.dataset.did
+        + '&activityURL=' + element.dataset.aid
+        + '&visId=' + element.dataset.vid)
+        .then(response => response.text())
+        .then(data => element.innerHTML = data)
+        .then(() => element.firstElementChild.removeAttribute('viewport'))
+        .then(() => element.firstElementChild.setAttribute('height', 1.2 * element.firstElementChild.getAttribute('height')));
 }
 
 // Inspired by https://thecoderain.blogspot.com/2020/11/generate-valid-random-email-js-jquery.html
@@ -148,6 +216,18 @@ $(document).ready(function () {
     // Toasts
     $('.toast').each(function () {
         (new bootstrap.Toast(this, {})).show();
+    });
+    // DAVE Analysis Editor
+    $('#queryIdInput').each(function () {
+        triggerQueryShow(this);
+    });
+    $('#graphIdInput').each(function () {
+        triggerGraphShow(this);
+    });
+    // Dashboard presenter
+    $('.xapi-dashboard-vis').each(function () {
+        replaceSvgVis(this);
+        setInterval(() => replaceSvgVis(this), 300000);
     });
     // Tooltips
     $('.xapi-alignment-tooltip').each(function () {

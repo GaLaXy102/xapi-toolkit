@@ -1,0 +1,34 @@
+---
+version: "3.9"
+networks:
+  frontend0:
+    name: frontend0
+services:
+  traefik:
+    image: traefik:2.5
+    restart: always
+    command: >
+      --api.dashboard=true
+      --providers.docker
+      --providers.docker.exposedbydefault=false
+      --providers.docker.network=frontend0
+      --providers.file.directory=/dynconf/
+      --providers.file.watch=true
+      --entrypoints.web.address=:80
+      --entrypoints.websecure.address=:443
+      --entrypoints.traefik-dash.address=:8080
+      --entrypoints.web.http.redirections.entryPoint.to=websecure
+      --entrypoints.web.http.redirections.entryPoint.scheme=https
+    volumes:
+      - ./traefik/dynconf:/dynconf
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.dashboard.entrypoints: traefik-dash
+      traefik.http.routers.dashboard.rule: Host(`${DASH_HOSTNAME}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      traefik.http.routers.dashboard.service: api@internal
+      traefik.http.routers.dashboard.tls: "true"
