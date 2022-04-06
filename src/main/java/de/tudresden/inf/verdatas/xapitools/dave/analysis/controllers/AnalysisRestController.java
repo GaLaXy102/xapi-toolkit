@@ -67,7 +67,7 @@ public class AnalysisRestController {
                     try {
                         return mapper.<JsonNode>readValue(input, JsonNode.class);
                     } catch (IOException e) {
-                        throw new InputMismatchException("Could not read input file. Input was expected to be a List of analysis.");
+                        throw new InputMismatchException("Could not read input file. Input was expected to be a List of analyses.");
                     }
                 })
                 .toList();

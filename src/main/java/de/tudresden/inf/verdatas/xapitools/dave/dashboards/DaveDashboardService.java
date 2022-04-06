@@ -355,7 +355,7 @@ public class DaveDashboardService {
                     visAndFiles.getSecond().getSecond().delete();
                     return visAndFiles.getFirst();
                 })
-                .orElseThrow(() -> new DashboardExceptions.InvalidConfiguration("Could not find dashboard visualisation for execution."));
+                .orElseThrow(() -> new DashboardExceptions.InvalidConfiguration("Could not find dashboard analyses for execution."));
     }
 
     /**

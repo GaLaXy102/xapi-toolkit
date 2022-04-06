@@ -92,7 +92,7 @@ public class DaveAnalysisService {
     public DaveVis createAnalysis(String name, String query, String queryName, String graphDescription, String graphName) {
         this.checkValidityOfInput(query, queryName, graphDescription, graphName);
         if (this.visRepository.findByName(name).isPresent()) {
-            throw new AnalysisExceptions.ConfigurationConflict("Conflicting analysis objects. Please rename your analysis.");
+            throw new AnalysisExceptions.ConfigurationConflict("The chosen name is already used. Please rename your analysis.");
         }
         DaveVis created = new DaveVis(
                 name,
