@@ -63,7 +63,7 @@
                         <i class="bi-bar-chart-line"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${dashboard.getVisualisations().size()}"></span> Analyses
-                        <a th:href="'/ui/dave/dashboards/edit/visualisations' + '?flow=' + ${dashboard.getId()}" onclick="showLoadingModal(this);" th:data-lrsName="${dashboard.getLrsConnection().getFriendlyName()}"
+                        <a th:href="'/ui/dave/dashboards/edit/visualisations' + '?flow=' + ${dashboard.getId()}" onclick="showLoadingModal(this);"
                            class="float-end text-dark"><i class="bi-pencil" title="Edit analyses"></i></a>
                     </li>
                 </ul>
@@ -92,24 +92,24 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary visually-hidden" id="openModal" data-bs-toggle="modal" data-bs-target="#loadingModal">
-        Launch demo modal
-    </button>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary visually-hidden" id="openModal" data-bs-toggle="modal" data-bs-target="#loadingModal">
+                Launch demo modal
+            </button>
 
-    <!-- Modal -->
-    <div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loadingModalLabel">Loading</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Requesting activities of LRS.
-                    Please wait.
+            <!-- Modal -->
+            <div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="loadingModalLabel">Loading</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Requesting activities of LRS&nbsp;<span th:text="${dashboard.getLrsConnection().getFriendlyName()}"></span>&nbsp;.<br>
+                            Please wait.
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
