@@ -17,11 +17,10 @@
                 </div>
                 <div class="card-footer bg-light d-flex">
                     <form method="GET" class="flex-fill d-flex">
-                        <input type="hidden" name="finalized_only" th:value="${#strings.equals(param.get('finalized_only'), 'false')}">
+                        <input type="hidden" name="finalized_only" th:value="${!#strings.equals(param.get('finalized_only'), 'true')}">
                         <button type="submit" class="btn btn-primary flex-fill">
-                            <span th:unless="${#strings.equals(param.get('finalized_only'), 'false')}">Also</span>
-                            <span th:if="${#strings.equals(param.get('finalized_only'), 'false')}">Don't</span>
-                            show unfinalized dashboards
+                            <span th:if="${#strings.equals(param.get('finalized_only'), 'true')}">Also show unfinalized dashboards</span>
+                            <span th:unless="${#strings.equals(param.get('finalized_only'), 'true')}">Only show finalized dashboards</span>
                         </button>
                     </form>
                 </div>
@@ -88,26 +87,6 @@
                                 <input type="hidden" name="flow" th:value="${dashboard.getId()}">
                                 <button type="submit" class="btn btn-outline-success button-spinner flex-fill">Perform</button>
                             </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary visually-hidden" id="openModal" data-bs-toggle="modal" data-bs-target="#loadingModal">
-                Launch demo modal
-            </button>
-
-            <!-- Modal -->
-            <div class="modal fade" id="loadingModal" tabindex="-1" aria-labelledby="loadingModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="loadingModalLabel">Loading</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Requesting activities of LRS&nbsp;<span th:text="${dashboard.getLrsConnection().getFriendlyName()}"></span>&nbsp;.<br>
-                            Please wait.
                         </div>
                     </div>
                 </div>

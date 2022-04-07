@@ -92,7 +92,7 @@ public class DaveDashboardMavController implements IUIFlow {
                 .map(List::of)
                 .orElseGet(
                         () -> this.daveDashboardService
-                                .getAllDashboards(finalizedOnly.orElse(true))
+                                .getAllDashboards(finalizedOnly.orElse(false))
                                 .sorted(
                                         Comparator
                                                 .comparing(DaveDashboard::getName, Comparator.naturalOrder())
