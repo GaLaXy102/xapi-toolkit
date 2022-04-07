@@ -166,15 +166,30 @@ public class DaveDashboardMavController implements IUIFlow {
         return new RedirectView("../dashboards/show");
     }
 
+    /**
+     * Show an error page when the user either tried to interact with a DAVE-Connector, which was not initialised or tried to limit the execution of an Analysis, for which it is not supported
+     *
+     * @param dashboardId UUID of the Dashboard which was used
+     * @param analysisName Title of the Analysis which was used
+     */
     @GetMapping(BASE_URL + "/error")
-    public ModelAndView showErrorMessage(@RequestParam(name = "flow") UUID dashboardId) {
+    public ModelAndView showErrorMessage(@RequestParam(name = "flow") UUID dashboardId,
+                                         @RequestParam(name = "analysisName") Optional<String> analysisName) {
         DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/error");
-        mav.addObject("title", "Unsuccessful interaction with DAVE-Connector.");
-        mav.addObject("message", "The DAVE-Connector "
-                + this.daveConnectorLifecycleManager.getConnector(dashboard.getLrsConnection()).getName()
-                + " is not ready for interaction. \n"
-                + "Please wait, until its initialisation is completed.");
+        if (analysisName.isPresent()) {
+            mav.addObject("title", "Invalid configuration of analysis' execution.");
+            mav.addObject("message", "The analysis '"
+                    + analysisName.get()
+                    + "' is to complex to be executed on a single activity. \n"
+                    + "Please select the whole LRS for its execution.");
+        } else {
+            mav.addObject("title", "Unsuccessful interaction with DAVE-Connector.");
+            mav.addObject("message", "The DAVE-Connector '"
+                    + this.daveConnectorLifecycleManager.getConnector(dashboard.getLrsConnection()).getName()
+                    + "' is not ready for interaction. \n"
+                    + "Please wait, until its initialisation is completed.");
+        }
         return mav;
     }
 

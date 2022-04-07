@@ -238,6 +238,25 @@ public class DaveDashboardService {
     }
 
     /**
+     * Check if the given Analysis' execution can be limited to a special Activity.
+     * Because of how the limitation of an Analysis' execution is done in the method prepareQueryLimit(), the occurrences of the {@link String} "statement/object" are counted.
+     * If it occurs more than twice in the Analysis it is assumed that this Analysis can not be limited to an Activity
+     *
+     * @param analysis {@link DaveVis} to check if the limitation of its execution is possible
+     * @return true, if it is assumed that the Analysis' execution can be limited to an Activity
+     */
+    public Boolean checkLimitationOfAnalysis(DaveVis analysis) {
+        String query = analysis.getQuery().getQuery();
+        List<String> queryParts = Arrays.stream(query.substring(1, query.length() - 1)
+                        .split(" +"))
+                .toList();
+        long app = queryParts.stream()
+                .filter((s -> s.contains("statement/object")))
+                .count();
+        return app < 2L;
+    }
+
+    /**
      * Schedule to clean the cache for LRS' activities every ten minutes
      */
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)

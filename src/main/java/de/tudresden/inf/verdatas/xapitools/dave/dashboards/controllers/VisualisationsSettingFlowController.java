@@ -2,6 +2,7 @@ package de.tudresden.inf.verdatas.xapitools.dave.dashboards.controllers;
 
 import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveDashboardService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
+import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveVis;
 import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -104,10 +105,16 @@ public class VisualisationsSettingFlowController implements DashboardStep {
                                                     @RequestParam(name = "analysis") String analysisName,
                                                     DaveDashboardMavController.Mode mode, RedirectAttributes attributes) {
         DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
-        UUID analysisIdentifier = this.daveDashboardService.getAnalysisByName(analysisName).getId();
+        attributes.addAttribute("flow", dashboardId.toString());
+        DaveVis analysis = this.daveDashboardService.getAnalysisByName(analysisName);
+        if (!this.daveDashboardService.checkLimitationOfAnalysis(analysis)) {
+            attributes.addAttribute("analysisName", analysis.getName());
+            return new RedirectView("../../error");
+        }
+        UUID analysisIdentifier = analysis.getId();
         this.daveDashboardService.addVisualisationToDashboard(dashboard, activityId, analysisIdentifier);
 
-        attributes.addAttribute("flow", dashboardId.toString());
+
         return new RedirectView(DaveDashboardMavController.Mode.CREATING.equals(mode) ? "../visualisations" : "../../edit/visualisations");
     }
 
