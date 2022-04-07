@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 @Order(2)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class LRSSettingFlowController implements DashboardStep {
-    private final DaveDashboardService daveAnalysisService;
+    private final DaveDashboardService daveDashboardService;
     private final LrsService lrsService;
 
     /**
@@ -89,10 +89,10 @@ public class LRSSettingFlowController implements DashboardStep {
     @PostMapping(DaveDashboardMavController.BASE_URL + "/new/source")
     public RedirectView selectLRS(@RequestParam(name = "flow") UUID dashboardId, @RequestParam(name = "lrs_id") UUID lrsId,
                                   DaveDashboardMavController.Mode mode, RedirectAttributes attributes) {
-        DaveDashboard dashboard = this.daveAnalysisService.getDashboard(dashboardId);
+        DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
         LrsConnection lrsConnection = this.lrsService.getConnection(lrsId);
-        this.daveAnalysisService.setDashboardSource(dashboard, lrsConnection);
-        this.daveAnalysisService.checkDashboardConfiguration(dashboard);
+        this.daveDashboardService.setDashboardSource(dashboard, lrsConnection);
+        this.daveDashboardService.checkDashboardConfiguration(dashboard);
         attributes.addAttribute("flow", dashboardId.toString());
         return new RedirectView(DaveDashboardMavController.Mode.CREATING.equals(mode) ? "./visualisations" : "../show");
     }
