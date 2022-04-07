@@ -63,8 +63,8 @@
                         <i class="bi-bar-chart-line"></i>
                         &nbsp;&nbsp;&nbsp;
                         <span th:text="${dashboard.getVisualisations().size()}"></span> Analyses
-                        <a th:href="'/ui/dave/dashboards/edit/visualisations' + '?flow=' + ${dashboard.getId()}" onclick="showLoadingModal(this);"
-                           class="float-end text-dark"><i class="bi-pencil" title="Edit analyses"></i></a>
+                        <a th:href="'/ui/dave/dashboards/edit/visualisations' + '?flow=' + ${dashboard.getId()}"
+                           class="float-end text-dark replace-spinner"><i class="bi-pencil" title="Edit analyses"></i></a>
                     </li>
                 </ul>
                 <div class="card-footer">

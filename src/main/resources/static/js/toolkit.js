@@ -217,6 +217,10 @@ $(document).ready(function () {
     $('.button-spinner').click(function () {
         if (this.form.checkValidity()) addSpinner($(this));
     });
+    $('.replace-spinner').click(function () {
+        addSpinner($(this));
+        this.removeChild(this.lastElementChild);
+    });
     // Toasts
     $('.toast').each(function () {
         (new bootstrap.Toast(this, {})).show();
