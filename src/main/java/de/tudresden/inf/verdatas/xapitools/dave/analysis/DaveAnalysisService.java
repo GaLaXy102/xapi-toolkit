@@ -254,16 +254,22 @@ public class DaveAnalysisService {
 
     /**
      * Delete an Analysis description.
-     * This can only be done, if it's not in use in a {@link DaveDashboard}
+     * This can only be done, if it's not in use in a {@link DaveDashboard}.
+     * The corresponding {@link DaveQuery} and {@link DaveGraphDescription} will also be deleted, if they are not used by another Analysis
      *
      * @param analysis Entity to delete
      * @throws de.tudresden.inf.verdatas.xapitools.dave.analysis.AnalysisExceptions.SideEffectsError when the Analysis is still used in a {@link DaveDashboard}
      */
-    // TODO Delete option for query and graph description
     @Transactional
     public void deleteAnalysis(DaveVis analysis) {
         Set<String> used = this.checkUsageOfAnalysis(analysis);
         if (used.isEmpty()) {
+            if (this.getAnalysesWithSameQuery(analysis, analysis.getQuery()).isEmpty()) {
+                this.queryRepository.delete(analysis.getQuery());
+            }
+            if (this.getAnalysesWithSameGraphDescription(analysis, analysis.getDescription()).isEmpty()) {
+                this.graphDescriptionRepository.delete(analysis.getDescription());
+            }
             this.visRepository.delete(analysis);
         } else {
             throw new AnalysisExceptions.SideEffectsError("Deletion of "
@@ -290,7 +296,34 @@ public class DaveAnalysisService {
     }
 
     /**
-     * Get the Titles of all Analyses, which use the same Query
+     * Get all Analyses, which use the same Query
+     *
+     * @param analysis Entity as reference value
+     * @param query    {@link DaveQuery} which usage should be checked
+     */
+    public Set<DaveVis> getAnalysesWithSameQuery(DaveVis analysis, DaveQuery query) {
+        return this.getAllAnalysis(false)
+                .filter(daveVis -> daveVis.getQuery().getQuery().equals(query.getQuery()))
+                .filter(vis -> !(vis.getId().equals(analysis.getId())))
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Get all Analyses, which use the same Graph Description
+     *
+     * @param analysis         Entity as reference value
+     * @param graphDescription {@link DaveGraphDescription} which usage should be checked
+     */
+    public Set<DaveVis> getAnalysesWithSameGraphDescription(DaveVis analysis, DaveGraphDescription graphDescription) {
+        return this.getAllAnalysis(false)
+                .filter(daveVis -> daveVis.getDescription().getDescription().equals(graphDescription.getDescription()))
+                .filter(vis -> !(vis.getId().equals(analysis.getId())))
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Get the Titles of all Analyses, which use the same Query.
+     * This is used to check if the modification of this description would lead to errors
      *
      * @param analysis  Entity as reference value
      * @param queryName Title of the {@link DaveQuery}, which usage should be checked
@@ -305,7 +338,8 @@ public class DaveAnalysisService {
     }
 
     /**
-     * Get the Titles of all Analyses, which use the same Graph Description
+     * Get the Titles of all Analyses, which use the same Graph Description.
+     * This is used to check if the modification of this description would lead to errors
      *
      * @param analysis         Entity as reference value
      * @param graphName        Title of the {@link DaveGraphDescription}, which usage should be checked

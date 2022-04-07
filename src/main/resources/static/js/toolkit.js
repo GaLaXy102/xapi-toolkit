@@ -133,6 +133,29 @@ function triggerGraphSelect(element) {
     });
 }
 
+function adaptDataset(element) {
+    var openButton = element.querySelector('#openModal')
+    openButton.dataset.bsVisName = element.dataset.vname;
+    openButton.dataset.bsVisId = element.dataset.vid;
+}
+
+function adaptModal(element) {
+    // Adapted from https://getbootstrap.com/docs/5.0/components/modal/
+    element.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var analysisName = button.getAttribute('data-bs-vis-name')
+        var analysisId = button.getAttribute('data-bs-vis-id')
+        // Update the modal's content.
+        var modalText = element.querySelector('#visName')
+        var modalFlowInput = element.querySelector('#flow')
+
+        modalText.textContent = analysisName
+        modalFlowInput.value = analysisId
+    })
+}
+
 function triggerGraphShow(element) {
     if ($('#graphIdInput')[0].value === '') return;
     $('.xapi-graph-content').each(function () {
@@ -155,10 +178,6 @@ function replaceSvgVis(element) {
         .then(data => element.innerHTML = data)
         .then(() => element.firstElementChild.removeAttribute('viewport'))
         .then(() => element.firstElementChild.setAttribute('height', 1.2 * element.firstElementChild.getAttribute('height')));
-}
-
-function showLoadingModal(element) {
-    $('#openModal').click();
 }
 
 // Inspired by https://thecoderain.blogspot.com/2020/11/generate-valid-random-email-js-jquery.html
@@ -231,6 +250,13 @@ $(document).ready(function () {
     });
     $('#graphIdInput').each(function () {
         triggerGraphShow(this);
+    });
+    // Analyses deletion modal
+    $('.xapi-vis').each(function () {
+        adaptDataset(this)
+    });
+    $('.xapi-vis-modal').each(function () {
+        adaptModal(this)
     });
     // Dashboard presenter
     $('.xapi-dashboard-vis').each(function () {
