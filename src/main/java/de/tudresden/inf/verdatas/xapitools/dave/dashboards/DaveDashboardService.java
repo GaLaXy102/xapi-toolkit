@@ -228,6 +228,16 @@ public class DaveDashboardService {
     }
 
     /**
+     * Check if corresponding DAVE-Connector for the LRS use in the given Dashboard description is initialised
+     *
+     * @param dashboard Entity to use
+     * @return true, if the initialisation is completed
+     */
+    public Boolean checkConnectorInitialisation(DaveDashboard dashboard) {
+        return this.daveConnectorLifecycleManager.getConnector(dashboard.getLrsConnection()).getHealth() != null;
+    }
+
+    /**
      * Schedule to clean the cache for LRS' activities every ten minutes
      */
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)

@@ -94,6 +94,9 @@ public class LRSSettingFlowController implements DashboardStep {
         this.daveDashboardService.setDashboardSource(dashboard, lrsConnection);
         this.daveDashboardService.checkDashboardConfiguration(dashboard);
         attributes.addAttribute("flow", dashboardId.toString());
+        if (!this.daveDashboardService.checkConnectorInitialisation(dashboard)) {
+            return new RedirectView("../error");
+        }
         return new RedirectView(DaveDashboardMavController.Mode.CREATING.equals(mode) ? "./visualisations" : "../show");
     }
 }
