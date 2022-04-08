@@ -107,7 +107,7 @@ public class VisualisationsSettingFlowController implements DashboardStep {
         DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
         attributes.addAttribute("flow", dashboardId.toString());
         DaveVis analysis = this.daveDashboardService.getAnalysisByName(analysisName);
-        if (!this.daveDashboardService.checkLimitationOfAnalysis(analysis)) {
+        if (!(activityId.equals("all")) && !this.daveDashboardService.checkLimitationOfAnalysis(analysis)) {
             attributes.addAttribute("analysisName", analysis.getName());
             return new RedirectView("../../error");
         }
