@@ -133,6 +133,20 @@ function triggerGraphSelect(element) {
     });
 }
 
+function triggerGraphShow(element) {
+    if ($('#graphIdInput')[0].value === '') return;
+    $('.xapi-graph-content').each(function () {
+        setInvisible(this);
+        setNonReqiured(this);
+        unsetName(this);
+    });
+    $('#graphContentInput-' + element.value).each(function () {
+        setVisible(this);
+        setReqiured(this);
+        setName(this, 'graphContent');
+    });
+}
+
 function adaptDataset(element) {
     var openButton = element.querySelector('#openModal')
     openButton.dataset.bsVisName = element.dataset.vname;
@@ -154,20 +168,6 @@ function adaptModal(element) {
         modalText.textContent = analysisName
         modalFlowInput.value = analysisId
     })
-}
-
-function triggerGraphShow(element) {
-    if ($('#graphIdInput')[0].value === '') return;
-    $('.xapi-graph-content').each(function () {
-        setInvisible(this);
-        setNonReqiured(this);
-        unsetName(this);
-    });
-    $('#graphContentInput-' + element.value).each(function () {
-        setVisible(this);
-        setReqiured(this);
-        setName(this, 'graphContent');
-    });
 }
 
 function replaceSvgVis(element) {
