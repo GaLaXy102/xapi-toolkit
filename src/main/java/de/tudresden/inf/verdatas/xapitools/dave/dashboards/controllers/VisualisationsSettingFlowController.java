@@ -15,10 +15,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * ModelAndView Controller for Adding Analyses to a Dashboard
@@ -66,7 +68,10 @@ public class VisualisationsSettingFlowController implements DashboardStep {
         if (!cache.orElse(true)) this.daveDashboardService.cleanCaches();
         DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
         LrsConnection lrsConnection = dashboard.getLrsConnection();
-        List<String> activities = this.daveDashboardService.getActivitiesOfLrs(lrsConnection);
+        List<String> activities = this.daveDashboardService.getActivitiesOfLrs(lrsConnection)
+                .stream()
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toList());
 
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/analysis");
         mav.addObject("flow", dashboardId.toString());
