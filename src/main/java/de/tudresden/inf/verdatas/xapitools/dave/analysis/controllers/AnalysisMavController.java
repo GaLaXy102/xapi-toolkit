@@ -122,8 +122,12 @@ public class AnalysisMavController implements IUIManagementFlow {
     @GetMapping(BASE_URL + "/add")
     public ModelAndView showAddAnalysis() {
         ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/detail");
-        mav.addObject("possibleQueries", this.daveAnalysisService.getAllQueries().toList());
-        mav.addObject("possibleGraphs", this.daveAnalysisService.getAllGraphDescriptions().toList());
+        mav.addObject("possibleQueries", this.daveAnalysisService.getAllQueries()
+                .sorted(Comparator.comparing(DaveQuery::getName))
+                .toList());
+        mav.addObject("possibleGraphs", this.daveAnalysisService.getAllGraphDescriptions()
+                .sorted(Comparator.comparing(DaveGraphDescription::getName))
+                .toList());
         mav.addObject("method", "add");
         return mav;
     }
