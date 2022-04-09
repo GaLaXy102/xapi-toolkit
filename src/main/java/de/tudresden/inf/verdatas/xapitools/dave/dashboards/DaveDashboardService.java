@@ -247,13 +247,12 @@ public class DaveDashboardService {
      */
     public Boolean checkLimitationOfAnalysis(DaveVis analysis) {
         String query = analysis.getQuery().getQuery();
-        List<String> queryParts = Arrays.stream(query.substring(1, query.length() - 1)
-                        .split(" +"))
-                .toList();
-        long app = queryParts.stream()
+        return 2L > Arrays
+                .stream(
+                        query.substring(1, query.length() - 1).split(" +")
+                )
                 .filter((s -> s.contains("statement/object")))
                 .count();
-        return app < 2L;
     }
 
     /**

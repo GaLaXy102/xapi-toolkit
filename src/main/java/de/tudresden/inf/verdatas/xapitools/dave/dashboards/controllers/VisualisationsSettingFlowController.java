@@ -76,7 +76,9 @@ public class VisualisationsSettingFlowController implements DashboardStep {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/analysis");
         mav.addObject("flow", dashboardId.toString());
         mav.addObject("possibleActivities", activities);
-        mav.addObject("possibleAnalysis", this.daveDashboardService.getAllAnalysis(true).toList());
+        mav.addObject("possibleAnalysis", this.daveDashboardService.getAllAnalysis(true)
+                .sorted(Comparator.comparing(DaveVis::getName))
+                .toList());
         mav.addObject("dashboardVisualisations", this.daveDashboardService.getVisualisationsOfDashboard(dashboard));
         mav.addObject("mode", DaveDashboardMavController.Mode.CREATING);
         return mav;
