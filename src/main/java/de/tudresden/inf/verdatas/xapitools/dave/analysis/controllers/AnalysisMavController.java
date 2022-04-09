@@ -222,7 +222,7 @@ public class AnalysisMavController implements IUIManagementFlow {
     public ModelAndView getUserAcknowledgement(HttpServletRequest request) {
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
 
-        return this.prepareAcknowledge((Mode) inputFlashMap.get("mode"),
+        ModelAndView mav = this.prepareAcknowledge((Mode) inputFlashMap.get("mode"),
                 Optional.ofNullable((UUID) inputFlashMap.get("flow")),
                 (String) inputFlashMap.get("name"),
                 (String) inputFlashMap.get("queryContent"),
@@ -231,6 +231,8 @@ public class AnalysisMavController implements IUIManagementFlow {
                 (String) inputFlashMap.get("graphName"),
                 (List<String>) inputFlashMap.get("messages"),
                 (List<String>) inputFlashMap.get("hints"));
+        mav.addObject("referer", request.getHeader("Referer"));
+        return mav;
     }
 
     /**

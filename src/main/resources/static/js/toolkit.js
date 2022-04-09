@@ -105,7 +105,16 @@ function triggerQuerySelect(element) {
 }
 
 function triggerQueryShow(element) {
-    if ($('#queryIdInput')[0].value === '') return;
+    const qIdInpElem = $('#queryIdInput')[0];
+    if (qIdInpElem.value === '') {
+        // Try lookup by Name
+        const qName = $('#queryNameInput')[0].value;
+        $('#querySelectBase>ul>li>a').each(function () {
+            if (this.innerText === qName) qIdInpElem.value = this.dataset.qid;
+        });
+    }
+    // Not found
+    if (qIdInpElem.value === '') return;
     $('.xapi-query-content').each(function () {
         setInvisible(this);
         setNonReqiured(this);
@@ -134,7 +143,16 @@ function triggerGraphSelect(element) {
 }
 
 function triggerGraphShow(element) {
-    if ($('#graphIdInput')[0].value === '') return;
+    const gIdInpElem = $('#graphIdInput')[0];
+    if (gIdInpElem.value === '') {
+        // Try lookup by Name
+        const gName = $('#graphNameInput')[0].value;
+        $('#graphSelectBase>ul>li>a').each(function () {
+            if (this.innerText === gName) gIdInpElem.value = this.dataset.gid;
+        });
+    }
+    // Not found
+    if (gIdInpElem.value === '') return;
     $('.xapi-graph-content').each(function () {
         setInvisible(this);
         setNonReqiured(this);
@@ -248,6 +266,7 @@ $(document).ready(function () {
     $('#queryIdInput').each(function () {
         triggerQueryShow(this);
     });
+
     $('#graphIdInput').each(function () {
         triggerGraphShow(this);
     });

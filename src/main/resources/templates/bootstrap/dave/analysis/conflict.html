@@ -25,7 +25,10 @@
                 <div class="card-footer">
                     <div class="row mb-2">
                         <div class="col d-flex">
-                            <button class="btn btn-outline-danger flex-fill" type="button" onclick="history.go(-1);">Go Back</button>
+                            <a th:if="${flow}" class="flex-fill d-flex text-decoration-none" th:href="${referer}">
+                                <button class="btn btn-outline-danger flex-fill" type="button">Go Back</button>
+                            </a>
+                            <button th:unless="${flow}" class="btn btn-outline-danger flex-fill" onclick="history.go(-1);">Go Back</button>
                         </div>
                         <div class="col">
                             <form method="POST" class="flex-fill d-flex">
