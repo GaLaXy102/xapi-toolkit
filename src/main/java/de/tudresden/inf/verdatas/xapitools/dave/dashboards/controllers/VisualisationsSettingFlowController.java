@@ -1,5 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.dave.dashboards.controllers;
 
+import com.google.common.base.Supplier;
 import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveDashboardService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveVis;
@@ -7,6 +8,7 @@ import de.tudresden.inf.verdatas.xapitools.lrs.LrsConnection;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,10 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -68,18 +67,37 @@ public class VisualisationsSettingFlowController implements DashboardStep {
         if (!cache.orElse(true)) this.daveDashboardService.cleanCaches();
         DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
         LrsConnection lrsConnection = dashboard.getLrsConnection();
-        List<String> activities = this.daveDashboardService.getActivitiesOfLrs(lrsConnection)
+        Map<String, List<String>> activitiesByType = this.daveDashboardService.getActivitiesOfLrs(lrsConnection)
+                .entrySet()
                 .stream()
-                .sorted(Comparator.naturalOrder())
-                .collect(Collectors.toList());
+                .map((entry) -> Map.entry(
+                        Arrays.stream(entry.getKey().split("/"))
+                                .reduce((acc, s) -> s)
+                                .orElse(entry.getKey()),
+                        entry.getValue()
+                                .stream()
+                                .sorted()
+                                .collect(Collectors.toList())
+                ))
+                .collect(
+                        Collectors.groupingBy(
+                                Map.Entry::getKey,
+                                Collectors.collectingAndThen(Collectors.toList(),
+                                        (entries) -> entries.stream().map(Map.Entry::getValue).flatMap(List::stream).toList()
+                                )
+                        )
+                );
 
+        Map<String, String> activityToType = new HashMap<>();
+        activitiesByType.forEach((key, value) -> value.forEach((activity) -> activityToType.put(activity, key)));
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/analysis");
         mav.addObject("flow", dashboardId.toString());
-        mav.addObject("possibleActivities", activities);
+        mav.addObject("possibleActivities", activitiesByType);
         mav.addObject("possibleAnalysis", this.daveDashboardService.getAllAnalysis(true)
                 .sorted(Comparator.comparing(DaveVis::getName))
                 .toList());
         mav.addObject("dashboardVisualisations", this.daveDashboardService.getVisualisationsOfDashboard(dashboard));
+        mav.addObject("activityTypes", activityToType);
         mav.addObject("mode", DaveDashboardMavController.Mode.CREATING);
         return mav;
     }
@@ -120,7 +138,6 @@ public class VisualisationsSettingFlowController implements DashboardStep {
         }
         UUID analysisIdentifier = analysis.getId();
         this.daveDashboardService.addVisualisationToDashboard(dashboard, activityId, analysisIdentifier);
-
 
         return new RedirectView(DaveDashboardMavController.Mode.CREATING.equals(mode) ? "../visualisations" : "../../edit/visualisations");
     }
