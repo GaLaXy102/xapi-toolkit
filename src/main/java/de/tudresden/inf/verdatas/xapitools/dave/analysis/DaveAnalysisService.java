@@ -493,10 +493,15 @@ public class DaveAnalysisService {
      * @throws de.tudresden.inf.verdatas.xapitools.dave.analysis.AnalysisExceptions.ConfigurationConflict when there are duplicated Entities
      */
     public void checkValidityOfInput(String query, String queryName, String graphDescription, String graphName) {
-        if (!(this.checkForQueryDuplicates(queryName, query).isEmpty())) {
+        Set<DaveVis> queryDup = this.checkForQueryDuplicates(queryName, query);
+        Set<DaveVis> graphDup = this.checkForGraphDescriptionDuplicates(graphName, graphDescription);
+        if (!(queryDup.isEmpty()) && !(graphDup.isEmpty())) {
+            throw new AnalysisExceptions.ConfigurationConflict("Duplication of query and graph description objects.");
+        }
+        if (!(queryDup.isEmpty())) {
             throw new AnalysisExceptions.ConfigurationConflict("Duplication of query objects.");
         }
-        if (!(this.checkForGraphDescriptionDuplicates(graphName, graphDescription).isEmpty())) {
+        if (!(graphDup.isEmpty())) {
             throw new AnalysisExceptions.ConfigurationConflict("Duplication of graph description objects.");
         }
     }
