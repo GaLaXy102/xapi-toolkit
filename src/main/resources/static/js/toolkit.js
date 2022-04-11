@@ -167,8 +167,8 @@ function triggerGraphShow(element) {
 
 function adaptDataset(element) {
     var openButton = element.querySelector('#openModal')
-    openButton.dataset.bsVisName = element.dataset.vname;
-    openButton.dataset.bsVisId = element.dataset.vid;
+    openButton.dataset.bsVName = element.dataset.vname;
+    openButton.dataset.bsVId = element.dataset.vid;
 }
 
 function adaptModal(element) {
@@ -177,14 +177,14 @@ function adaptModal(element) {
         // Button that triggered the modal
         var button = event.relatedTarget
         // Extract info from data-bs-* attributes
-        var analysisName = button.getAttribute('data-bs-vis-name')
-        var analysisId = button.getAttribute('data-bs-vis-id')
+        var valueName = button.getAttribute('data-bs-v-name')
+        var valueId = button.getAttribute('data-bs-v-id')
         // Update the modal's content.
-        var modalText = element.querySelector('#visName')
+        var modalText = element.querySelector('#vName')
         var modalFlowInput = element.querySelector('#flow')
 
-        modalText.textContent = analysisName
-        modalFlowInput.value = analysisId
+        modalText.textContent = valueName
+        modalFlowInput.value = valueId
     })
 }
 
@@ -275,6 +275,13 @@ $(document).ready(function () {
         adaptDataset(this)
     });
     $('.xapi-vis-modal').each(function () {
+        adaptModal(this)
+    });
+    // Dashboard deletion modal
+    $('.xapi-dashboard').each(function () {
+        adaptDataset(this)
+    });
+    $('.xapi-dashboard-modal').each(function () {
         adaptModal(this)
     });
     // Dashboard presenter

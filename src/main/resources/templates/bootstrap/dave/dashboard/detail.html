@@ -41,7 +41,7 @@
         </div>
         <!-- Content Cards -->
         <div class="col d-flex align-items-stretch" th:each="dashboard: ${dashboards}">
-            <div class="card flex-fill">
+            <div class="card flex-fill xapi-dashboard" th:data-vname="${dashboard.getName()}" th:data-vid="${dashboard.getId()}">
                 <div class="card-header">
                     <h2>
                         <span th:text="${dashboard.getName()}"></span>
@@ -74,11 +74,34 @@
                                 <button type="submit" class="btn btn-primary flex-fill">Copy</button>
                             </form>
                         </div>
-                        <div class="col">
-                            <form method="POST" th:action="@{/ui/dave/dashboards/delete}" class="flex-fill d-flex">
-                                <input type="hidden" name="flow" th:value="${dashboard.getId()}">
-                                <button type="submit" class="btn btn-danger flex-fill">Delete</button>
-                            </form>
+                        <div class="col d-flex">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-danger flex-fill" id="openModal" data-bs-toggle="modal" data-bs-target="#deleteModal" >
+                                Delete
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade xapi-dashboard-modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel">Confirm deletion of dashboard</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Please confirm the deletion of the dashboard named: <br> &nbsp;<span id="vName"></span>&nbsp;. <br>
+                                            This action can <span style="font-weight:bold">not</span> be undone.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
+                                            <form method="POST" th:action="@{/ui/dave/dashboards/delete}">
+                                                <input type="hidden" id="flow" name="flow" value="">
+                                                <button type="submit" class="btn btn-danger button-spinner">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
