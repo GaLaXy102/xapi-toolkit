@@ -61,7 +61,7 @@
         </div>
         <!-- Content Cards -->
         <div class="col d-flex align-items-stretch" th:each="vis: ${analysis}">
-            <div class="card flex-fill">
+            <div class="card flex-fill xapi-vis" th:data-vname="${vis.getName()}" th:data-vid="${vis.getId()}">
                 <div class="card-header flex-fill">
                     <h3>
                         <span th:text="${vis.getName()}"></span>
@@ -77,11 +77,35 @@
                                 <button type="submit" class="btn btn-primary flex-fill">Copy</button>
                             </form>
                         </div>
-                        <div class="col">
-                            <form method="POST" th:action="@{/ui/dave/manage/analysis/delete}" class="flex-fill d-flex">
-                                <input type="hidden" name="flow" th:value="${vis.getId()}">
-                                <button type="submit" class="btn btn-danger flex-fill">Delete</button>
-                            </form>
+                        <div class="col d-flex">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-danger flex-fill" id="openModal" data-bs-toggle="modal" data-bs-target="#deleteModal" >
+                                Delete
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade xapi-vis-modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel">Confirm deletion of analysis</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Please confirm the deletion of the analysis named: <br> &nbsp;<span id="vName"></span>&nbsp;. <br>
+                                            The corresponding Query and Graph description will also be deleted, if they are not used by another analysis. <br>
+                                            This action can <span style="font-weight:bold">not</span> be undone.
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
+                                            <form method="POST" th:action="@{/ui/dave/manage/analysis/delete}">
+                                                <input type="hidden" id="flow" name="flow" value="">
+                                                <button type="submit" class="btn btn-danger button-spinner">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -95,7 +119,6 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </div>
 </body>

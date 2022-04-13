@@ -1,6 +1,8 @@
 package de.tudresden.inf.verdatas.xapitools.dave.analysis.controllers;
 
 import de.tudresden.inf.verdatas.xapitools.dave.analysis.DaveAnalysisService;
+import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveGraphDescription;
+import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveQuery;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveVis;
 import de.tudresden.inf.verdatas.xapitools.ui.BootstrapUIIcon;
 import de.tudresden.inf.verdatas.xapitools.ui.IUIManagementFlow;
@@ -120,8 +122,12 @@ public class AnalysisMavController implements IUIManagementFlow {
     @GetMapping(BASE_URL + "/add")
     public ModelAndView showAddAnalysis() {
         ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/detail");
-        mav.addObject("possibleQueries", this.daveAnalysisService.getAllQueries().toList());
-        mav.addObject("possibleGraphs", this.daveAnalysisService.getAllGraphDescriptions().toList());
+        mav.addObject("possibleQueries", this.daveAnalysisService.getAllQueries()
+                .sorted(Comparator.comparing(DaveQuery::getName))
+                .toList());
+        mav.addObject("possibleGraphs", this.daveAnalysisService.getAllGraphDescriptions()
+                .sorted(Comparator.comparing(DaveGraphDescription::getName))
+                .toList());
         mav.addObject("method", "add");
         return mav;
     }
@@ -167,8 +173,12 @@ public class AnalysisMavController implements IUIManagementFlow {
         ModelAndView mav = new ModelAndView("bootstrap/dave/analysis/detail");
         DaveVis analysis = this.daveAnalysisService.getAnalysis(analysisId);
         mav.addObject("analysis", analysis);
-        mav.addObject("possibleQueries", this.daveAnalysisService.getAllQueries().toList());
-        mav.addObject("possibleGraphs", this.daveAnalysisService.getAllGraphDescriptions().toList());
+        mav.addObject("possibleQueries", this.daveAnalysisService.getAllQueries()
+                .sorted(Comparator.comparing(DaveQuery::getName))
+                .toList());
+        mav.addObject("possibleGraphs", this.daveAnalysisService.getAllGraphDescriptions()
+                .sorted(Comparator.comparing(DaveGraphDescription::getName))
+                .toList());
         mav.addObject("method", "edit");
         return mav;
     }
@@ -216,7 +226,7 @@ public class AnalysisMavController implements IUIManagementFlow {
     public ModelAndView getUserAcknowledgement(HttpServletRequest request) {
         Map<String, ?> inputFlashMap = RequestContextUtils.getInputFlashMap(request);
 
-        return this.prepareAcknowledge((Mode) inputFlashMap.get("mode"),
+        ModelAndView mav = this.prepareAcknowledge((Mode) inputFlashMap.get("mode"),
                 Optional.ofNullable((UUID) inputFlashMap.get("flow")),
                 (String) inputFlashMap.get("name"),
                 (String) inputFlashMap.get("queryContent"),
@@ -225,6 +235,8 @@ public class AnalysisMavController implements IUIManagementFlow {
                 (String) inputFlashMap.get("graphName"),
                 (List<String>) inputFlashMap.get("messages"),
                 (List<String>) inputFlashMap.get("hints"));
+        mav.addObject("referer", request.getHeader("Referer"));
+        return mav;
     }
 
     /**

@@ -14,9 +14,10 @@
                     <div class="mb-3 mt-3 input-group" id="componentSelectBase">
                         <select class="form-select" id="componentSelectActivity" name="activity" required>
                             <option selected value="all">Whole LRS</option>
-                            <option th:each="activity: ${possibleActivities}"
-                                    th:text="${activity}"
-                                    th:value="${activity}"></option>
+                            <optgroup th:each="entry: ${possibleActivities.entrySet()}" th:label="${entry.getKey()}">
+                                <option th:each="activity: ${entry.getValue()}"
+                                        th:text="${activity}"
+                                        th:value="${activity}"></option>
                         </select>
                         <select class="form-select" name="analysis" required>
                             <option selected value="">Select analysis</option>
@@ -32,7 +33,7 @@
                     </a>
                 </div>
                 <div class="col-1 align-self-center">
-                    <button class="col btn btn-success float-end" type="submit" title="Add analyses to dashboard">+</button>
+                    <button class="col btn btn-success button-spinner float-end" type="submit" title="Add analyses to dashboard">+</button>
                 </div>
             </div>
         </div>
@@ -46,6 +47,7 @@
                 <th scope="col"></th>
                 <th scope="col"></th>
                 <th scope="col">#</th>
+                <th scope="col">activityType</th>
                 <th scope="col">activity</th>
                 <th scope="col">analysis</th>
                 <th scope="col"></th>
@@ -74,6 +76,7 @@
                     </form>
                 </td>
                 <th scope="row" th:text="${stat.index + 1}"></th>
+                <td th:text="${activityTypes.get(visualisation.getFirst())}"></td>
                 <td th:text="${visualisation.getFirst()}"></td>
                 <td th:text="${visualisation.getSecond().getName()}"></td>
                 <td>

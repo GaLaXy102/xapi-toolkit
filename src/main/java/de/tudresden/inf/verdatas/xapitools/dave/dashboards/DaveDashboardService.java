@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -228,6 +229,34 @@ public class DaveDashboardService {
     }
 
     /**
+     * Check if corresponding DAVE-Connector for the LRS use in the given Dashboard description is initialised
+     *
+     * @param dashboard Entity to use
+     * @return true, if the initialisation is completed
+     */
+    public Boolean checkConnectorInitialisation(DaveDashboard dashboard) {
+        return this.daveConnectorLifecycleManager.getConnector(dashboard.getLrsConnection()).getHealth() != null;
+    }
+
+    /**
+     * Check if the given Analysis' execution can be limited to a special Activity.
+     * Because of how the limitation of an Analysis' execution is done in the method prepareQueryLimit(), the occurrences of the {@link String} "statement/object" are counted.
+     * If it occurs more than twice in the Analysis it is assumed that this Analysis can not be limited to an Activity
+     *
+     * @param analysis {@link DaveVis} to check if the limitation of its execution is possible
+     * @return true, if it is assumed that the Analysis' execution can be limited to an Activity
+     */
+    public Boolean checkLimitationOfAnalysis(DaveVis analysis) {
+        String query = analysis.getQuery().getQuery();
+        return 2L > Arrays
+                .stream(
+                        query.substring(1, query.length() - 1).split(" +")
+                )
+                .filter((s -> s.contains("statement/object")))
+                .count();
+    }
+
+    /**
      * Schedule to clean the cache for LRS' activities every ten minutes
      */
     @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
@@ -240,26 +269,62 @@ public class DaveDashboardService {
     }
 
     /**
-     * Request all activities of the given LRS and save them in a cache
+     * Request all activities of the given LRS and save them in a cache.
+     * Has to request the activities' IDs and Types with separate queries because the query's result will be empty, if an activity type is not given for a single activity in the dataset
      *
      * @param connection {@link LrsConnection} to use
-     * @return {@link List} of IDs of LRS' activities
+     * @return {@link Map} with activity types as keys and IDs of the corresponding activities in a {@link List}
      */
     @Cacheable(
             cacheNames = "lrsActivities",
             key = "#connection.connectionId"
     )
-    public List<String> getActivitiesOfLrs(LrsConnection connection) {
-        DaveVis getActivities = this.prepareGetActivitiesOfLRS();
-        List<String> activities = this.daveConnectorLifecycleManager.getConnector(connection)
+    public Map<String, List<String>> getActivitiesOfLrs(LrsConnection connection) {
+        List<String> allActivities = getActivities(connection);
+        Map<String, List<String>> activitiesByType = getActivitiesByType(connection);
+        List<String> activitiesWithKnownType = activitiesByType.values().stream().flatMap(List::stream).toList();
+        List<String> activitiesWithUnknownType = allActivities.stream()
+                .filter((activity) -> !(activitiesWithKnownType.contains(activity)))
+                .toList();
+        if (!activitiesWithUnknownType.isEmpty()) {
+            activitiesByType.put("unknown", activitiesWithUnknownType);
+        }
+        return activitiesByType;
+    }
+
+    private List<String> getActivities(LrsConnection connection) {
+        DaveVis getActivities = this.prepareGetActivitiesOfLRS(false);
+        List<String> activityList = this.daveConnectorLifecycleManager.getConnector(connection)
                 .getAnalysisResult(this.fileManagementService.prepareQuery(getActivities, "all").getAbsolutePath(),
                         this.fileManagementService.prepareVisualisation(getActivities).getAbsolutePath());
-        return activities.stream()
+        return activityList.stream()
                 .map((s) -> s.replace("\n", ""))
                 .map((s) -> s.substring(1, s.length() - 1))
-                .map((s) -> s.split(" +")[1])
                 .map((s) -> s.replace("\"", ""))
+                .map((s) -> s.split(" +")[1])
                 .toList();
+    }
+
+    private Map<String, List<String>> getActivitiesByType(LrsConnection connection) {
+        DaveVis getActivitiesType = this.prepareGetActivitiesOfLRS(true);
+        List<String> activitiesWithType = this.daveConnectorLifecycleManager.getConnector(connection)
+                .getAnalysisResult(this.fileManagementService.prepareQuery(getActivitiesType, "all").getAbsolutePath(),
+                        this.fileManagementService.prepareVisualisation(getActivitiesType).getAbsolutePath());
+        return activitiesWithType.stream()
+                .map((s) -> s.replace("\n", ""))
+                .map((s) -> s.substring(1, s.length() - 1))
+                .map((s) -> s.replace("\"", ""))
+                .map((s) -> s.split(" +"))
+                .map((sarr) -> Pair.of(sarr[1], sarr[2]))
+                .collect(
+                        Collectors.groupingBy(
+                                Pair::getSecond,
+                                Collectors.collectingAndThen(
+                                        Collectors.toList(),
+                                        (list) -> list.stream().map(Pair::getFirst).toList()
+                                )
+                        )
+                );
     }
 
     /**
@@ -355,7 +420,7 @@ public class DaveDashboardService {
                     visAndFiles.getSecond().getSecond().delete();
                     return visAndFiles.getFirst();
                 })
-                .orElseThrow(() -> new DashboardExceptions.InvalidConfiguration("Could not find dashboard visualisation for execution."));
+                .orElseThrow(() -> new DashboardExceptions.InvalidConfiguration("Could not find dashboard analyses for execution."));
     }
 
     /**
@@ -370,11 +435,12 @@ public class DaveDashboardService {
     /**
      * Helper function to create Analysis for requesting the Activities of an LRS.
      * Must not be deleted or modified and is therefore not seeded like the predefined analyses
+     *
+     * @param withType indicates if Activities' type should also be requested
      */
-    public DaveVis prepareGetActivitiesOfLRS() {
-        return new DaveVis("Activities of LRS",
-                new DaveQuery("Activities of LRS", """
-                        [:find (count ?s) ?c :where [?s :statement/object ?o][?o :activity/id ?c]]"""),
+    public DaveVis prepareGetActivitiesOfLRS(Boolean withType) {
+        DaveVis analysis = new DaveVis("Activities of LRS",
+                new DaveQuery("Activities of LRS", ""),
                 new DaveGraphDescription("Top 10",
                         """
                                 {
@@ -456,6 +522,14 @@ public class DaveDashboardService {
                                     }
                                   ]
                                 }"""), true);
+        if (withType) {
+            analysis.setQuery(new DaveQuery("Activities of LRS", """
+                    [:find (count ?s) ?c ?t :where [?s :statement/object ?o][?o :activity/id ?c][?o :activity.definition/type ?t]]"""));
+        } else {
+            analysis.setQuery(new DaveQuery("Activities of LRS", """
+                    [:find (count ?s) ?c :where [?s :statement/object ?o][?o :activity/id ?c]]"""));
+        }
+        return analysis;
     }
 
     /**

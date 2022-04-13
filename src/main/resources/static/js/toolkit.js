@@ -105,7 +105,16 @@ function triggerQuerySelect(element) {
 }
 
 function triggerQueryShow(element) {
-    if ($('#queryIdInput')[0].value === '') return;
+    const qIdInpElem = $('#queryIdInput')[0];
+    if (qIdInpElem.value === '') {
+        // Try lookup by Name
+        const qName = $('#queryNameInput')[0].value;
+        $('#querySelectBase>ul>li>a').each(function () {
+            if (this.innerText === qName) qIdInpElem.value = this.dataset.qid;
+        });
+    }
+    // Not found
+    if (qIdInpElem.value === '') return;
     $('.xapi-query-content').each(function () {
         setInvisible(this);
         setNonReqiured(this);
@@ -134,7 +143,16 @@ function triggerGraphSelect(element) {
 }
 
 function triggerGraphShow(element) {
-    if ($('#graphIdInput')[0].value === '') return;
+    const gIdInpElem = $('#graphIdInput')[0];
+    if (gIdInpElem.value === '') {
+        // Try lookup by Name
+        const gName = $('#graphNameInput')[0].value;
+        $('#graphSelectBase>ul>li>a').each(function () {
+            if (this.innerText === gName) gIdInpElem.value = this.dataset.gid;
+        });
+    }
+    // Not found
+    if (gIdInpElem.value === '') return;
     $('.xapi-graph-content').each(function () {
         setInvisible(this);
         setNonReqiured(this);
@@ -145,6 +163,29 @@ function triggerGraphShow(element) {
         setReqiured(this);
         setName(this, 'graphContent');
     });
+}
+
+function adaptDataset(element) {
+    var openButton = element.querySelector('#openModal')
+    openButton.dataset.bsVName = element.dataset.vname;
+    openButton.dataset.bsVId = element.dataset.vid;
+}
+
+function adaptModal(element) {
+    // Adapted from https://getbootstrap.com/docs/5.0/components/modal/
+    element.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var valueName = button.getAttribute('data-bs-v-name')
+        var valueId = button.getAttribute('data-bs-v-id')
+        // Update the modal's content.
+        var modalText = element.querySelector('#vName')
+        var modalFlowInput = element.querySelector('#flow')
+
+        modalText.textContent = valueName
+        modalFlowInput.value = valueId
+    })
 }
 
 function replaceSvgVis(element) {
@@ -213,6 +254,10 @@ $(document).ready(function () {
     $('.button-spinner').click(function () {
         if (this.form.checkValidity()) addSpinner($(this));
     });
+    $('.replace-spinner').click(function () {
+        addSpinner($(this));
+        this.removeChild(this.lastElementChild);
+    });
     // Toasts
     $('.toast').each(function () {
         (new bootstrap.Toast(this, {})).show();
@@ -221,8 +266,23 @@ $(document).ready(function () {
     $('#queryIdInput').each(function () {
         triggerQueryShow(this);
     });
+
     $('#graphIdInput').each(function () {
         triggerGraphShow(this);
+    });
+    // Analyses deletion modal
+    $('.xapi-vis').each(function () {
+        adaptDataset(this)
+    });
+    $('.xapi-vis-modal').each(function () {
+        adaptModal(this)
+    });
+    // Dashboard deletion modal
+    $('.xapi-dashboard').each(function () {
+        adaptDataset(this)
+    });
+    $('.xapi-dashboard-modal').each(function () {
+        adaptModal(this)
     });
     // Dashboard presenter
     $('.xapi-dashboard-vis').each(function () {

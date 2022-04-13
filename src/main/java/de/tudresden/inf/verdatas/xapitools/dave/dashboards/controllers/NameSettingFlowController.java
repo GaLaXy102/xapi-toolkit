@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @Order(1)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class NameSettingFlowController implements DashboardStep {
-    private final DaveDashboardService daveAnalysisService;
+    private final DaveDashboardService daveDashboardService;
 
     /**
      * Get the Human readable name of this Step
@@ -61,7 +61,7 @@ public class NameSettingFlowController implements DashboardStep {
         ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/identifier");
         mav.addObject("dashboardIdentifier",
                 dashboardId
-                        .map(this.daveAnalysisService::getDashboard)
+                        .map(this.daveDashboardService::getDashboard)
                         .map(DaveDashboard::getName)
                         .orElse("")
         );
@@ -93,10 +93,10 @@ public class NameSettingFlowController implements DashboardStep {
     public RedirectView setTitleAndCreate(@RequestParam(name = "flow") Optional<UUID> dashboardId, String identifier,
                                           DaveDashboardMavController.Mode mode, RedirectAttributes attributes) {
         DaveDashboard dashboard = dashboardId
-                .map(this.daveAnalysisService::getDashboard)
-                .orElseGet(() -> this.daveAnalysisService.createEmptyDashboard(identifier));
-        this.daveAnalysisService.setDashboardName(dashboard, identifier);
-        this.daveAnalysisService.checkDashboardConfiguration(dashboard);
+                .map(this.daveDashboardService::getDashboard)
+                .orElseGet(() -> this.daveDashboardService.createEmptyDashboard(identifier));
+        this.daveDashboardService.setDashboardName(dashboard, identifier);
+        this.daveDashboardService.checkDashboardConfiguration(dashboard);
         attributes.addAttribute("flow", dashboard.getId().toString());
         return new RedirectView(DaveDashboardMavController.Mode.CREATING.equals(mode) ? "./new/source" : "./show");
     }

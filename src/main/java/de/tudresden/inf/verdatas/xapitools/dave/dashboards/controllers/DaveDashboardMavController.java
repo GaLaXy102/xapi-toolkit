@@ -1,5 +1,6 @@
 package de.tudresden.inf.verdatas.xapitools.dave.dashboards.controllers;
 
+import de.tudresden.inf.verdatas.xapitools.dave.connector.DaveConnectorLifecycleManager;
 import de.tudresden.inf.verdatas.xapitools.dave.dashboards.DaveDashboardService;
 import de.tudresden.inf.verdatas.xapitools.dave.persistence.DaveDashboard;
 import de.tudresden.inf.verdatas.xapitools.ui.BasepageMavController;
@@ -32,9 +33,9 @@ import java.util.stream.Collectors;
 @Order(3)
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public class DaveDashboardMavController implements IUIFlow {
-
     static final String BASE_URL = "/ui/dave/dashboards";
     private final DaveDashboardService daveDashboardService;
+    private final DaveConnectorLifecycleManager daveConnectorLifecycleManager;
     private final List<DashboardStep> children;
 
     /**
@@ -92,7 +93,7 @@ public class DaveDashboardMavController implements IUIFlow {
                 .map(List::of)
                 .orElseGet(
                         () -> this.daveDashboardService
-                                .getAllDashboards(finalizedOnly.orElse(true))
+                                .getAllDashboards(finalizedOnly.orElse(false))
                                 .sorted(
                                         Comparator
                                                 .comparing(DaveDashboard::getName, Comparator.naturalOrder())
@@ -112,6 +113,9 @@ public class DaveDashboardMavController implements IUIFlow {
     @PostMapping(BASE_URL + "/show")
     public RedirectView executeDashboard(@RequestParam(name = "flow") UUID dashboardId, RedirectAttributes attributes) {
         attributes.addAttribute("flow", dashboardId.toString());
+        if (!this.daveDashboardService.checkConnectorInitialisation(this.daveDashboardService.getDashboard(dashboardId))) {
+            return new RedirectView("../error");
+        }
         return new RedirectView("./execute");
     }
 
@@ -160,6 +164,33 @@ public class DaveDashboardMavController implements IUIFlow {
         DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
         this.daveDashboardService.deleteDashboard(dashboard);
         return new RedirectView("../dashboards/show");
+    }
+
+    /**
+     * Show an error page when the user either tried to interact with a DAVE-Connector, which was not initialised or tried to limit the execution of an Analysis, for which it is not supported
+     *
+     * @param dashboardId UUID of the Dashboard which was used
+     * @param analysisName Title of the Analysis which was used
+     */
+    @GetMapping(BASE_URL + "/error")
+    public ModelAndView showErrorMessage(@RequestParam(name = "flow") UUID dashboardId,
+                                         @RequestParam(name = "analysisName") Optional<String> analysisName) {
+        DaveDashboard dashboard = this.daveDashboardService.getDashboard(dashboardId);
+        ModelAndView mav = new ModelAndView("bootstrap/dave/dashboard/error");
+        if (analysisName.isPresent()) {
+            mav.addObject("title", "Invalid configuration of analysis' execution.");
+            mav.addObject("message", "The analysis '"
+                    + analysisName.get()
+                    + "' is to complex to be executed on a single activity. \n"
+                    + "Please select the whole LRS for its execution.");
+        } else {
+            mav.addObject("title", "Unsuccessful interaction with DAVE-Connector.");
+            mav.addObject("message", "The DAVE-Connector '"
+                    + this.daveConnectorLifecycleManager.getConnector(dashboard.getLrsConnection()).getName()
+                    + "' is not ready for interaction. \n"
+                    + "Please wait, until its initialisation is completed.");
+        }
+        return mav;
     }
 
     /**

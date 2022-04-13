@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:include="bootstrap/header.html :: scripted_head ('Error')"></head>
+<body class="bg-dark">
+<div class="container">
+  <div class="row row-cols-1">
+    <div class="col d-flex">
+      <div class="card flex-fill">
+        <h2 class="card-header">
+          <span th:text="${title}"></span>
+        </h2>
+        <div class="card-body">
+          <div class="mb-2">
+            Reason:&nbsp;<span th:text="${message}"></span>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="mb-2 d-flex">
+            <button class="btn btn-outline-success flex-fill" type="button" onclick="history.go(-1);">Go Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
